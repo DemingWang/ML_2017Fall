@@ -1,0 +1,336 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>qn3b_mcp &#8212; Bhishan&#39;s 1 documentation</title>
+    <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Bhishan&#39;s 1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for qn3b_mcp</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!python</span>
+<span class="c1"># -*- coding: utf-8 -*-#</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Multiclass perceptron</span>
+
+<span class="sd">@author: Bhishan Poudel</span>
+
+<span class="sd">@date: Nov 18, 2017</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="c1"># Imports</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="k">import</span> <span class="n">confusion_matrix</span>
+
+<span class="kn">from</span> <span class="nn">perceptron</span> <span class="k">import</span> <span class="n">perceptron</span>
+
+<span class="kn">from</span> <span class="nn">kperceptron</span> <span class="k">import</span> <span class="n">linear_kernel</span>
+<span class="kn">from</span> <span class="nn">kperceptron</span> <span class="k">import</span> <span class="n">polynomial_kernel</span>
+<span class="kn">from</span> <span class="nn">kperceptron</span> <span class="k">import</span> <span class="n">gaussian_kernel</span>
+
+<span class="kn">from</span> <span class="nn">kperceptron</span> <span class="k">import</span> <span class="n">kperceptron_train</span>
+<span class="kn">from</span> <span class="nn">kperceptron</span> <span class="k">import</span> <span class="n">kperceptron_test</span><span class="p">,</span><span class="n">read_data</span>
+
+
+<div class="viewcode-block" id="multiclass_perceptron"><a class="viewcode-back" href="../qn3b_mcp.html#qn3b_mcp.multiclass_perceptron">[docs]</a><span class="k">def</span> <span class="nf">multiclass_perceptron</span><span class="p">(</span><span class="n">data_pth_train</span><span class="p">,</span><span class="n">epoch</span><span class="p">,</span><span class="n">data_pth_devel_test</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Training data ==&gt;  data_pth_train+ str(i) + &#39;.txt&#39; </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="c1"># read devel data</span>
+    <span class="n">fdata</span> <span class="o">=</span> <span class="n">data_pth_devel_test</span><span class="o">+</span><span class="s1">&#39;.txt&#39;</span>
+    <span class="n">X</span><span class="p">,</span><span class="n">t_actu</span> <span class="o">=</span> <span class="n">read_data</span><span class="p">(</span><span class="n">fdata</span><span class="p">)</span>
+    
+    <span class="c1"># initialize big weights matrix</span>
+    <span class="n">nclass</span> <span class="o">=</span> <span class="mi">10</span>
+    <span class="n">weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">nclass</span><span class="p">])</span>
+        
+    <span class="c1"># fit the model</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nclass</span><span class="p">):</span>
+        <span class="n">fftrain</span>           <span class="o">=</span> <span class="n">data_pth_train</span><span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.txt&#39;</span>
+        <span class="n">X_train</span><span class="p">,</span> <span class="n">t_train</span>  <span class="o">=</span> <span class="n">read_data</span><span class="p">(</span><span class="n">fftrain</span><span class="p">)</span>
+        
+        <span class="c1"># get weight</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="n">perceptron</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">t_train</span><span class="p">,</span><span class="n">epoch</span><span class="p">)</span>        
+        
+        <span class="c1"># normalize w</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="n">w</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+        <span class="n">weights</span><span class="p">[:,</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">w</span>
+    
+    <span class="c1">##get the prediction</span>
+    <span class="n">hypothesis</span>    <span class="o">=</span>  <span class="n">X</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
+    <span class="n">t_pred</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">hypothesis</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    
+    <span class="c1"># accuracy</span>
+    <span class="n">correct</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">t_pred</span><span class="o">==</span><span class="n">t_actu</span><span class="p">)</span>
+    <span class="n">accuracy</span> <span class="o">=</span> <span class="n">correct</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">t_actu</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span>
+    
+    <span class="n">cm</span> <span class="o">=</span> <span class="n">confusion_matrix</span><span class="p">(</span><span class="n">t_actu</span><span class="p">,</span><span class="n">t_pred</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">accuracy</span><span class="p">,</span> <span class="n">cm</span></div>
+
+<div class="viewcode-block" id="multiclass_kperceptron"><a class="viewcode-back" href="../qn3b_mcp.html#qn3b_mcp.multiclass_kperceptron">[docs]</a><span class="k">def</span> <span class="nf">multiclass_kperceptron</span><span class="p">(</span><span class="n">data_pth_train</span><span class="p">,</span><span class="n">epochs</span><span class="p">,</span><span class="n">data_pth_devel_test</span><span class="p">,</span><span class="n">kernel</span><span class="p">,</span> <span class="n">kparam</span><span class="p">):</span>    
+    <span class="c1"># read devel data</span>
+    <span class="n">fdata</span> <span class="o">=</span> <span class="n">data_pth_devel_test</span><span class="o">+</span><span class="s1">&#39;.txt&#39;</span>
+    <span class="n">X</span><span class="p">,</span><span class="n">t_actu</span> <span class="o">=</span> <span class="n">read_data</span><span class="p">(</span><span class="n">fdata</span><span class="p">)</span>
+    
+    
+    <span class="c1"># initialize big hypothesis matrix</span>
+    <span class="n">nclass</span> <span class="o">=</span> <span class="mi">10</span>
+    <span class="n">hypothesis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">nclass</span><span class="p">])</span>
+    
+    <span class="c1"># initilaize support vector</span>
+    <span class="n">sv</span> <span class="o">=</span> <span class="p">[]</span>
+  
+    <span class="c1"># fit the model</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nclass</span><span class="p">):</span>
+        <span class="n">fftrain</span>           <span class="o">=</span> <span class="n">data_pth_train</span><span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.txt&#39;</span>
+        <span class="n">X_train</span><span class="p">,</span> <span class="n">t_train</span>  <span class="o">=</span> <span class="n">read_data</span><span class="p">(</span><span class="n">fftrain</span><span class="p">)</span>
+        
+        <span class="c1"># get alpha</span>
+        <span class="n">alpha</span><span class="p">,</span> <span class="n">sv</span><span class="p">,</span> <span class="n">sv_y</span> <span class="o">=</span> <span class="n">kperceptron_train</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span><span class="n">t_train</span><span class="p">,</span><span class="n">epochs</span><span class="p">,</span><span class="n">kernel</span><span class="p">,</span><span class="n">kparam</span><span class="p">)</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="n">kperceptron_test</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">kernel</span><span class="p">,</span><span class="n">kparam</span><span class="p">,</span><span class="n">alpha</span><span class="p">,</span><span class="n">sv</span><span class="p">,</span><span class="n">sv_y</span><span class="p">)</span>
+
+        <span class="n">hypothesis</span><span class="p">[:,</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">h</span>
+    
+    <span class="c1"># get the prediction</span>
+    <span class="n">t_pred</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">hypothesis</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    
+    <span class="c1"># accuracy</span>
+    <span class="n">correct</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">t_actu</span><span class="o">==</span><span class="n">t_pred</span><span class="p">)</span>
+    <span class="n">accuracy</span> <span class="o">=</span> <span class="n">correct</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">t_actu</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span>
+    
+    <span class="n">cm</span> <span class="o">=</span> <span class="n">confusion_matrix</span><span class="p">(</span><span class="n">t_actu</span><span class="p">,</span><span class="n">t_pred</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">accuracy</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">sv</span><span class="p">),</span> <span class="n">cm</span></div>
+
+<div class="viewcode-block" id="tune_T"><a class="viewcode-back" href="../qn3b_mcp.html#qn3b_mcp.tune_T">[docs]</a><span class="k">def</span> <span class="nf">tune_T</span><span class="p">(</span><span class="n">data_pth</span><span class="p">,</span><span class="n">tune_epochs</span><span class="p">,</span><span class="n">data_pth_devel_test</span><span class="p">):</span>
+    <span class="n">accuracies</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="n">tune_epochs</span><span class="p">:</span>
+        <span class="n">accuracy</span><span class="p">,</span><span class="n">_</span> <span class="o">=</span> <span class="n">multiclass_perceptron</span><span class="p">(</span><span class="n">data_pth</span><span class="p">,</span><span class="n">epoch</span><span class="p">,</span><span class="n">data_pth_devel_test</span><span class="p">)</span>
+        <span class="n">accuracies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">accuracy</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;epoch </span><span class="si">{}</span><span class="s2">: accuracy = </span><span class="si">{:.2f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">epoch</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">))</span>
+        
+    <span class="n">best_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">accuracies</span><span class="p">)</span>
+    <span class="n">tuned_epoch</span> <span class="o">=</span> <span class="n">tune_epochs</span><span class="p">[</span><span class="n">best_idx</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;tuned epoch = </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tuned_epoch</span><span class="p">))</span>
+    
+    <span class="k">return</span> <span class="n">tuned_epoch</span></div>
+
+<div class="viewcode-block" id="tune_d"><a class="viewcode-back" href="../qn3b_mcp.html#qn3b_mcp.tune_d">[docs]</a><span class="k">def</span> <span class="nf">tune_d</span><span class="p">(</span><span class="n">data_pth</span><span class="p">,</span><span class="n">epochs</span><span class="p">,</span><span class="n">data_pth_devel_test</span><span class="p">,</span><span class="n">tune_kparams</span><span class="p">):</span>
+    <span class="n">accuracies</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">kernel</span> <span class="o">=</span> <span class="n">polynomial_kernel</span>
+    <span class="k">for</span> <span class="n">kparam</span> <span class="ow">in</span> <span class="n">tune_kparams</span><span class="p">:</span>
+        <span class="n">accuracy</span><span class="p">,</span><span class="n">_</span><span class="p">,</span><span class="n">_</span> <span class="o">=</span> <span class="n">multiclass_kperceptron</span><span class="p">(</span><span class="n">data_pth</span><span class="p">,</span><span class="n">epochs</span><span class="p">,</span><span class="n">data_pth_devel_test</span><span class="p">,</span><span class="n">kernel</span><span class="p">,</span><span class="n">kparam</span><span class="p">)</span>
+        <span class="n">accuracies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">accuracy</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;degree </span><span class="si">{}</span><span class="s2">: accuracy = </span><span class="si">{:.2f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">kparam</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">))</span>
+        
+    <span class="n">best_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">accuracies</span><span class="p">)</span>
+    <span class="n">tuned_d</span> <span class="o">=</span> <span class="n">tune_kparams</span><span class="p">[</span><span class="n">best_idx</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;tuned d = </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tuned_d</span><span class="p">))</span>
+    
+    <span class="k">return</span> <span class="n">tuned_d</span></div>
+
+<div class="viewcode-block" id="tune_sigma"><a class="viewcode-back" href="../qn3b_mcp.html#qn3b_mcp.tune_sigma">[docs]</a><span class="k">def</span> <span class="nf">tune_sigma</span><span class="p">(</span><span class="n">data_pth</span><span class="p">,</span><span class="n">epochs</span><span class="p">,</span><span class="n">data_pth_devel_test</span><span class="p">,</span><span class="n">tune_kparams</span><span class="p">):</span>
+    <span class="n">accuracies</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">kernel</span> <span class="o">=</span> <span class="n">gaussian_kernel</span>
+    <span class="k">for</span> <span class="n">kparam</span> <span class="ow">in</span> <span class="n">tune_kparams</span><span class="p">:</span>
+        <span class="n">accuracy</span><span class="p">,</span><span class="n">_</span><span class="p">,</span><span class="n">_</span> <span class="o">=</span> <span class="n">multiclass_kperceptron</span><span class="p">(</span><span class="n">data_pth</span><span class="p">,</span><span class="n">epochs</span><span class="p">,</span><span class="n">data_pth_devel_test</span><span class="p">,</span><span class="n">kernel</span><span class="p">,</span><span class="n">kparam</span><span class="p">)</span>
+        <span class="n">accuracies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">accuracy</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;sigma </span><span class="si">{}</span><span class="s2">: accuracy = </span><span class="si">{:.2f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">kparam</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">))</span>
+        
+    <span class="n">best_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">accuracies</span><span class="p">)</span>
+    <span class="n">tuned_sigma</span> <span class="o">=</span> <span class="n">tune_kparams</span><span class="p">[</span><span class="n">best_idx</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;tuned sigma = </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tuned_sigma</span><span class="p">))</span>
+    
+    <span class="k">return</span> <span class="n">tuned_sigma</span>  </div>
+  
+
+<div class="viewcode-block" id="test_mperceptron"><a class="viewcode-back" href="../qn3b_mcp.html#qn3b_mcp.test_mperceptron">[docs]</a><span class="k">def</span> <span class="nf">test_mperceptron</span><span class="p">(</span><span class="n">dtrain</span><span class="p">,</span><span class="n">dtest</span><span class="p">,</span><span class="n">tuned_epoch</span><span class="p">):</span>      
+    <span class="n">acc</span><span class="p">,</span> <span class="n">cm</span> <span class="o">=</span> <span class="n">multiclass_perceptron</span><span class="p">(</span><span class="n">dtrain</span><span class="p">,</span><span class="n">tuned_epoch</span><span class="p">,</span><span class="n">dtest</span><span class="p">)</span>
+    
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Accuracy = </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">acc</span><span class="p">))</span>
+    <span class="c1"># print(&quot;Number of support vectors = {}&quot;.format(len_sv)) # no sv</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">cm</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="test_mkperceptron_linear"><a class="viewcode-back" href="../qn3b_mcp.html#qn3b_mcp.test_mkperceptron_linear">[docs]</a><span class="k">def</span> <span class="nf">test_mkperceptron_linear</span><span class="p">(</span><span class="n">dtrain</span><span class="p">,</span><span class="n">dtest</span><span class="p">,</span><span class="n">tuned_epoch</span><span class="p">):</span>        
+    <span class="n">acc</span><span class="p">,</span> <span class="n">len_sv</span><span class="p">,</span> <span class="n">cm</span> <span class="o">=</span> <span class="n">multiclass_kperceptron</span><span class="p">(</span><span class="n">dtrain</span><span class="p">,</span><span class="n">tuned_epoch</span><span class="p">,</span><span class="n">dtest</span><span class="p">,</span><span class="n">linear_kernel</span><span class="p">,</span><span class="kc">None</span><span class="p">)</span>
+    
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Accuracy = </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">acc</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Number of support vectors = </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">len_sv</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">cm</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="test_mkperceptron_poly"><a class="viewcode-back" href="../qn3b_mcp.html#qn3b_mcp.test_mkperceptron_poly">[docs]</a><span class="k">def</span> <span class="nf">test_mkperceptron_poly</span><span class="p">(</span><span class="n">dtrain</span><span class="p">,</span><span class="n">dtest</span><span class="p">,</span><span class="n">tuned_epoch</span><span class="p">,</span><span class="n">tuned_d</span><span class="p">):</span>        
+    <span class="n">kernel</span> <span class="o">=</span> <span class="n">polynomial_kernel</span>
+    <span class="n">acc</span><span class="p">,</span> <span class="n">len_sv</span><span class="p">,</span> <span class="n">cm</span> <span class="o">=</span> <span class="n">multiclass_kperceptron</span><span class="p">(</span><span class="n">dtrain</span><span class="p">,</span><span class="n">tuned_epoch</span><span class="p">,</span><span class="n">dtest</span><span class="p">,</span><span class="n">kernel</span><span class="p">,</span><span class="n">tuned_d</span><span class="p">)</span>
+    
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Accuracy = </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">acc</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Number of support vectors = </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">len_sv</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">cm</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="test_mkperceptron_gau"><a class="viewcode-back" href="../qn3b_mcp.html#qn3b_mcp.test_mkperceptron_gau">[docs]</a><span class="k">def</span> <span class="nf">test_mkperceptron_gau</span><span class="p">(</span><span class="n">dtrain</span><span class="p">,</span><span class="n">dtest</span><span class="p">,</span><span class="n">tuned_epoch</span><span class="p">,</span><span class="n">tuned_sigma</span><span class="p">):</span>    
+    <span class="n">kernel</span> <span class="o">=</span> <span class="n">gaussian_kernel</span>
+    <span class="n">acc</span><span class="p">,</span> <span class="n">len_sv</span><span class="p">,</span> <span class="n">cm</span> <span class="o">=</span> <span class="n">multiclass_kperceptron</span><span class="p">(</span><span class="n">dtrain</span><span class="p">,</span><span class="n">tuned_epoch</span><span class="p">,</span><span class="n">dtest</span><span class="p">,</span><span class="n">kernel</span><span class="p">,</span><span class="n">tuned_sigma</span><span class="p">)</span>
+    
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Accuracy = </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">acc</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Number of support vectors = </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">len_sv</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">cm</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../qn3b_mcp.html#qn3b_mcp.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Run main function.&quot;&quot;&quot;</span>
+    <span class="c1"># data path    </span>
+    <span class="n">dtrain</span> <span class="o">=</span> <span class="s1">&#39;../data/optdigits/train/train&#39;</span>
+    <span class="n">ddev</span> <span class="o">=</span> <span class="s1">&#39;../data/optdigits/devel/devel&#39;</span>
+    <span class="n">dtest</span> <span class="o">=</span> <span class="s1">&#39;../data/optdigits/test/test&#39;</span>
+
+    
+    <span class="c1"># create output folder</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="s1">&#39;outputs&#39;</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="s1">&#39;outputs&#39;</span><span class="p">)</span>
+    
+    <span class="c1"># tune hyperparameter T for linear kernel</span>
+    <span class="c1"># sys.stdout = open(&#39;outputs/tune_T.txt&#39;,&#39;w&#39;)  </span>
+    <span class="c1"># tune_epochs = list(range(1,21))   </span>
+    <span class="c1"># tune_T(dtrain,tune_epochs,ddev)</span>
+    
+    
+    <span class="c1"># tune hyperparameter d for polynomial_kernel</span>
+    <span class="c1"># sys.stdout = open(&#39;outputs/tune_d.txt&#39;,&#39;w&#39;)</span>
+    <span class="c1"># tuned_epoch = 13 # tuned value</span>
+    <span class="c1"># tune_kparams = [2,3,4,5,6]</span>
+    <span class="c1"># tune_d(dtrain,tuned_epoch,ddev,tune_kparams)</span>
+
+    <span class="c1"># hyperparameter sigma for gaussian_kernel</span>
+    <span class="c1"># sys.stdout = open(&#39;outputs/tune_sigma.txt&#39;,&#39;w&#39;)</span>
+    <span class="c1"># tuned_epoch = 13</span>
+    <span class="c1"># tune_kparams2 = [0.1,0.5,2,5,10]    </span>
+    <span class="c1"># tune_sigma(dtrain,tuned_epoch,ddev,tune_kparams2)</span>
+    
+    <span class="c1"># tuned parameters</span>
+    <span class="n">tuned_epoch</span> <span class="o">=</span> <span class="mi">13</span>
+    <span class="n">tuned_d</span> <span class="o">=</span> <span class="mi">5</span>
+    <span class="n">tuned_sigma</span> <span class="o">=</span> <span class="mi">10</span>
+    
+    <span class="c1"># testing</span>
+    <span class="c1"># sys.stdout = open(&#39;outputs/mcp.txt&#39;,&#39;w&#39;)</span>
+    <span class="c1"># test_mperceptron(dtrain,dtest,tuned_epoch)</span>
+    
+    <span class="c1"># test linear kernel</span>
+    <span class="c1"># sys.stdout = open(&#39;outputs/mckp_lin.txt&#39;,&#39;w&#39;)</span>
+    <span class="c1"># test_mkperceptron_linear(dtrain,dtest,tuned_epoch)</span>
+    
+    <span class="c1"># test poly kernel</span>
+    <span class="c1"># sys.stdout = open(&#39;outputs/mckp_poly.txt&#39;,&#39;w&#39;)</span>
+    <span class="c1"># test_mkperceptron_poly(dtrain,dtest,tuned_epoch,tuned_d)</span>
+
+    
+    <span class="c1"># test gaussian kernel</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;outputs/mckp_gau.txt&#39;</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">)</span>
+    <span class="n">test_mkperceptron_gau</span><span class="p">(</span><span class="n">dtrain</span><span class="p">,</span><span class="n">dtest</span><span class="p">,</span><span class="n">tuned_epoch</span><span class="p">,</span><span class="n">tuned_sigma</span><span class="p">)</span></div>
+    
+   
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">time</span>
+
+    <span class="c1"># Beginning time</span>
+    <span class="n">program_begin_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">begin_ctime</span>        <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">ctime</span><span class="p">()</span>
+
+    <span class="c1"># Run the main program</span>
+    <span class="n">main</span><span class="p">()</span>
+
+    <span class="c1"># Print the time taken</span>
+    <span class="n">program_end_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">end_ctime</span>        <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">ctime</span><span class="p">()</span>
+    <span class="n">seconds</span>          <span class="o">=</span> <span class="n">program_end_time</span> <span class="o">-</span> <span class="n">program_begin_time</span>
+    <span class="n">m</span><span class="p">,</span> <span class="n">s</span>             <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">seconds</span><span class="p">,</span> <span class="mi">60</span><span class="p">)</span>
+    <span class="n">h</span><span class="p">,</span> <span class="n">m</span>             <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="mi">60</span><span class="p">)</span>
+    <span class="n">d</span><span class="p">,</span> <span class="n">h</span>             <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="mi">24</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Begin time: &quot;</span><span class="p">,</span> <span class="n">begin_ctime</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;End   time: &quot;</span><span class="p">,</span> <span class="n">end_ctime</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Time taken: </span><span class="si">{0: .0f}</span><span class="s2"> days, </span><span class="si">{1: .0f}</span><span class="s2"> hours, </span><span class="se">\</span>
+<span class="s2">      </span><span class="si">{2: .0f}</span><span class="s2"> minutes, </span><span class="si">{3: f}</span><span class="s2"> seconds.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">s</span><span class="p">))</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Bhishan&#39;s 1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Bhishan Poudel.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.5.
+    </div>
+  </body>
+</html>

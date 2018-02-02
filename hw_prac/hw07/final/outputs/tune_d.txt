@@ -1,0 +1,12 @@
+Tuning Kernel parameter d
+d 2: accuracy = 91.10
+d 3: accuracy = 94.70
+d 4: accuracy = 96.40
+d 5: accuracy = 96.90
+d 6: accuracy = 96.80
+tuned d = 5
+
+Begin time:  Fri Nov 24 17:38:57 2017
+End   time:  Fri Nov 24 17:49:34 2017 
+
+Time taken:  0 days,  0 hours,        10 minutes,  37.070635 seconds.

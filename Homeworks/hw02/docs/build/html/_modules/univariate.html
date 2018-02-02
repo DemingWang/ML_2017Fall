@@ -1,0 +1,524 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>univariate &#8212; Bhishan&#39;s 1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Bhishan&#39;s 1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for univariate</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!python</span>
+<span class="c1"># -*- coding: utf-8 -*-#</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Univariate Linear Regression using Batch Gradient Descent</span>
+
+<span class="sd">@author: Bhishan Poudel</span>
+
+<span class="sd">@date: Oct 3, 2017</span>
+
+<span class="sd">@email: bhishanpdl@gmail.com</span>
+
+<span class="sd">:Outputs:</span>
+
+<span class="sd">  - ../images/univ_BGD.png</span>
+<span class="sd">  - ../images/univ_cost_history_BGD.png</span>
+
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="c1"># Imports</span>
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="k">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+
+<span class="kn">import</span> <span class="nn">scaling</span>
+
+<span class="n">np</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="n">formatter</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;float&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{:,.4f}</span><span class="s2"> &quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">x</span><span class="p">)})</span>
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+
+
+<span class="c1"># Results for random seed 100</span>
+<span class="c1"># epochs = 500 w_BGD = [[254,450.0000  93,308.9201 ]]</span>
+<span class="c1"># epochs = 100 w_SGD = [[254,433.4433  93,299.5155 ]]</span>
+
+
+<span class="c1"># Read data matrix X and labels t from text file.</span>
+<div class="viewcode-block" id="read_data"><a class="viewcode-back" href="../univariate.html#univariate.read_data">[docs]</a><span class="k">def</span> <span class="nf">read_data</span><span class="p">(</span><span class="n">file_name</span><span class="p">):</span>
+    <span class="o">*</span><span class="n">X</span><span class="p">,</span><span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span><span class="n">unpack</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="n">X</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">t</span><span class="p">),</span> <span class="n">t</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="p">),</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">X</span><span class="p">,</span> <span class="n">t</span></div>
+
+
+<div class="viewcode-block" id="train_norm_eqn"><a class="viewcode-back" href="../univariate.html#univariate.train_norm_eqn">[docs]</a><span class="k">def</span> <span class="nf">train_norm_eqn</span><span class="p">(</span><span class="n">X1</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Train the data and return the weights w.</span>
+
+<span class="sd">    Args:</span>
+
+<span class="sd">      X1 (array): Design matrix of size (m+1, n). I.e. There are</span>
+<span class="sd">        m features and one bias column in the matrix X1.</span>
+
+<span class="sd">      t (column): target column vector</span>
+
+<span class="sd">    Return:</span>
+<span class="sd">      w(row vector): Weight or feature vector.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">X1</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X1</span><span class="p">))</span> <span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X1</span><span class="o">.</span><span class="n">T</span><span class="p">)</span> <span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+    <span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">w</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">w</span><span class="p">))</span> <span class="c1"># make 1d row array</span>
+
+    <span class="k">return</span> <span class="n">w</span></div>
+
+
+<span class="c1"># Implement gradient descent algorithm to compute w = [w0, w1].</span>
+<div class="viewcode-block" id="train_BGD"><a class="viewcode-back" href="../univariate.html#univariate.train_BGD">[docs]</a><span class="k">def</span> <span class="nf">train_BGD</span><span class="p">(</span><span class="n">X1</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">learning_rate</span><span class="p">,</span> <span class="n">iters</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Calculate the feature vector w.</span>
+
+<span class="sd">    Args:</span>
+
+<span class="sd">      X1(matrix): Design matrix with bias column.</span>
+
+<span class="sd">      t(column vector): Target vector of shape N * 1.</span>
+
+<span class="sd">      learning_rate(float): Learning Rate</span>
+
+<span class="sd">      iters(int): Maximum number of iterations to perform.</span>
+
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">X1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">X1</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:]</span> <span class="c1"># remove bias vector from X1 matrix</span>
+    <span class="n">h</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+
+
+    <span class="c1"># print(&quot;Univariate Method&quot;)</span>
+    <span class="n">iters</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">iters</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">iters</span><span class="p">):</span>
+        <span class="n">h</span> <span class="o">=</span> <span class="n">X1</span> <span class="o">@</span> <span class="n">w</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">h</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">h</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># for univariate update w0 and w1 separately</span>
+        <span class="n">w</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-=</span> <span class="n">learning_rate</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">h</span> <span class="o">-</span> <span class="n">t</span><span class="p">)</span>
+        <span class="n">w</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-=</span> <span class="n">learning_rate</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span> <span class="p">(</span><span class="n">h</span><span class="o">-</span><span class="n">t</span><span class="p">)</span> <span class="o">*</span> <span class="n">X</span> <span class="p">)</span>
+
+
+    <span class="c1"># Compare with multivariate method</span>
+    <span class="c1"># multivariate method</span>
+    <span class="n">multivariate</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="n">multivariate</span><span class="p">:</span>
+        <span class="c1"># print(&quot;Univariate Method is overridden.&quot;)</span>
+        <span class="c1"># print(&quot;Multivariate Method&quot;)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">iters</span><span class="p">):</span>
+            <span class="n">h</span> <span class="o">=</span> <span class="n">X1</span> <span class="o">@</span> <span class="n">w</span><span class="o">.</span><span class="n">T</span>
+            <span class="n">h</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">h</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="mi">1</span><span class="p">)</span>
+
+            <span class="c1"># update w using batch gradient descent method</span>
+            <span class="n">w</span> <span class="o">=</span> <span class="n">w</span> <span class="o">-</span> <span class="n">learning_rate</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="o">*</span>  <span class="p">((</span><span class="n">h</span><span class="o">-</span><span class="n">t</span><span class="p">)</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">X1</span><span class="p">)</span>
+
+
+    <span class="c1"># XXX WARNING:</span>
+    <span class="c1"># if we don&#39;t make w as row vector, we will get different cost value</span>
+    <span class="c1"># from univariate and multivariate method.</span>
+    <span class="c1">#</span>
+    <span class="c1"># make w row vector</span>
+    <span class="c1"># w = np.array(w)</span>
+    <span class="c1"># w = w.reshape(1, X1.shape[1])</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">w</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">X1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="train_SGD"><a class="viewcode-back" href="../univariate.html#univariate.train_SGD">[docs]</a><span class="k">def</span> <span class="nf">train_SGD</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">learning_rate</span><span class="p">,</span> <span class="n">iters</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Calculate weight vector Stochastic Grad Desc.</span>
+
+<span class="sd">    .. note::</span>
+
+<span class="sd">       Note that X should be normalized before running batch grad descent.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      X(matrix): Normalized Design matrix with bias term.</span>
+
+<span class="sd">      t(column vector): Normalized Target column vector (shape = 1, samples)</span>
+
+<span class="sd">      learning_rate(float): Learning rate for gradient descent algorithm.</span>
+
+<span class="sd">      iters(int): Number of iterations.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">X</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+    <span class="n">t</span> <span class="o">=</span><span class="n">t</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="p">),</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+    <span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">w</span> <span class="o">=</span> <span class="n">w</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">w</span><span class="p">))</span>
+
+    <span class="c1"># debug</span>
+    <span class="c1"># print(&quot;\n\n&quot;)</span>
+    <span class="c1"># print(&quot;Inside ridge_BGD&quot;)</span>
+    <span class="c1"># print(&quot;X.shape = {}&quot;.format(X.shape))</span>
+    <span class="c1"># print(&quot;t.shape = {}&quot;.format(t.shape))</span>
+    <span class="c1"># print(&quot;w.shape = {}&quot;.format(w.shape))</span>
+    <span class="c1"># print(&quot;shrinkage = {}&quot;.format(shrinkage))</span>
+    <span class="c1"># print(&quot;iters = {}&quot;.format(iters))</span>
+    <span class="c1"># print(&quot;learning_rate = {}&quot;.format(learning_rate))</span>
+    <span class="c1"># Initiliaze variables</span>
+    <span class="n">Xj</span><span class="p">,</span> <span class="n">tj</span><span class="p">,</span> <span class="n">hj</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+    <span class="n">iters</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">iters</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">iters</span><span class="p">):</span>
+        <span class="c1"># shuffle the data</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+        <span class="n">perm_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">permutation</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">perm_idx</span><span class="p">]</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="n">perm_idx</span><span class="p">]</span>
+
+        <span class="c1"># update w line by line</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+
+            <span class="n">Xj</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">j</span><span class="p">,:]</span>
+            <span class="n">hj</span> <span class="o">=</span> <span class="n">Xj</span> <span class="o">@</span> <span class="n">w</span><span class="o">.</span><span class="n">T</span>
+            <span class="n">tj</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+
+            <span class="c1"># reshape</span>
+            <span class="n">Xj</span> <span class="o">=</span> <span class="n">Xj</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">tj</span> <span class="o">=</span> <span class="n">tj</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">hj</span> <span class="o">=</span> <span class="n">hj</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+
+            <span class="n">grad_ols</span> <span class="o">=</span>  <span class="p">(</span><span class="n">hj</span><span class="o">-</span><span class="n">tj</span><span class="p">)</span> <span class="o">@</span> <span class="n">Xj</span><span class="o">.</span><span class="n">T</span> <span class="o">/</span> <span class="n">N</span>
+            <span class="n">w</span> <span class="o">=</span> <span class="n">w</span> <span class="o">-</span> <span class="n">learning_rate</span> <span class="o">*</span> <span class="n">grad_ols</span>
+
+    <span class="c1"># debug</span>
+    <span class="c1"># print(&quot;Xj.shape = {}&quot;.format(Xj.shape)) # 2,1  x has one bias term.</span>
+    <span class="c1"># print(&quot;w.shape = {}&quot;.format(w.shape))   # 1,2  w = [w0, w1]</span>
+    <span class="c1"># print(&quot;hj.shape = {}&quot;.format(hj.shape)) # 1,1  h and t are single values</span>
+    <span class="c1"># print(&quot;tj.shape = {}&quot;.format(tj.shape)) # 1,1</span>
+    <span class="c1"># print(&quot;Xj = {}&quot;.format(Xj))</span>
+    <span class="c1"># print(&quot;tj = {}&quot;.format(tj))</span>
+
+    <span class="c1"># make w row vector</span>
+    <span class="n">w</span> <span class="o">=</span> <span class="n">w</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="c1"># shape = 1, feature + 1</span>
+    <span class="k">return</span> <span class="n">w</span></div>
+
+
+
+
+<span class="c1"># Compute RMSE on dataset (X, t).</span>
+<div class="viewcode-block" id="compute_rmse"><a class="viewcode-back" href="../univariate.html#univariate.compute_rmse">[docs]</a><span class="k">def</span> <span class="nf">compute_rmse</span><span class="p">(</span><span class="n">X1</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">w</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Compute RMSE.</span>
+
+<span class="sd">    Args:</span>
+
+<span class="sd">      X1(matrix): Design matrix with bias vector. Shape is N, M+1 e.g. 50, 2</span>
+
+<span class="sd">      t(column vector): Target vector. Shape is N, 1 e.g. 50, 1</span>
+
+<span class="sd">      w(row vector): Feature vector. Has dimension 1, M+1 e.g. 1,2</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">w</span> <span class="o">=</span> <span class="n">w</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">X1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">h</span> <span class="o">=</span> <span class="n">X1</span> <span class="o">@</span> <span class="n">w</span><span class="o">.</span><span class="n">T</span>
+    <span class="n">sse</span> <span class="o">=</span> <span class="p">(</span><span class="n">h</span> <span class="o">-</span> <span class="n">t</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="c1"># h and t should be both column vector.</span>
+    <span class="n">mse</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">sse</span><span class="p">)</span>
+    <span class="n">rmse</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mse</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">rmse</span></div>
+
+
+<span class="c1"># Compute objective function (cost) on dataset (X, t).</span>
+<div class="viewcode-block" id="compute_cost"><a class="viewcode-back" href="../univariate.html#univariate.compute_cost">[docs]</a><span class="k">def</span> <span class="nf">compute_cost</span><span class="p">(</span><span class="n">X1</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">w</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Compute the cost function.</span>
+
+<span class="sd">    .. math:: J = \\frac{1}{2n} \sum_{i=1}^{n}  \\frac{(h - t)^2}{n}</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Compute cost</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="p">))</span>
+    <span class="n">h</span> <span class="o">=</span> <span class="n">X1</span> <span class="o">@</span> <span class="n">w</span><span class="o">.</span><span class="n">T</span>
+    <span class="n">J</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">h</span> <span class="o">-</span> <span class="n">t</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span><span class="mi">2</span> <span class="o">/</span> <span class="n">N</span>
+
+    <span class="c1"># debug</span>
+    <span class="c1"># w is obtained from train function.</span>
+    <span class="c1"># print(&#39;from compute cost w = &#39;, w)</span>
+    <span class="c1"># print(&#39;from compute cost w.shape = &#39;, w.shape)</span>
+
+
+    <span class="k">return</span> <span class="n">J</span></div>
+
+
+<span class="c1"># Compute gradient of the objective function (cost) on dataset (X, t).</span>
+<div class="viewcode-block" id="compute_gradient"><a class="viewcode-back" href="../univariate.html#univariate.compute_gradient">[docs]</a><span class="k">def</span> <span class="nf">compute_gradient</span><span class="p">(</span><span class="n">X1</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">w</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Compute the gradient of cost function w.r.t. feature vector w.</span>
+
+<span class="sd">    Args:</span>
+
+<span class="sd">      X1(matrix): Design matrix with bias term (shape = N, M+1, e.g. 50, 2)</span>
+
+<span class="sd">      t(column vector): Target column vector (shape = N, 1 e.g. 50, 1)</span>
+
+<span class="sd">      w(row vector): Feature row vector (shape = 1, M+1 e.g. 1,2)</span>
+
+<span class="sd">    Return:</span>
+<span class="sd">      grad (row vector): Gradient row vector (shape = 1, M+1, same as shape of w)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">w</span> <span class="o">=</span> <span class="n">w</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">X1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">h</span> <span class="o">=</span> <span class="n">X1</span> <span class="o">@</span> <span class="n">w</span><span class="o">.</span><span class="n">T</span>
+    <span class="n">grad</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="o">*</span>  <span class="p">(</span> <span class="p">(</span><span class="n">h</span><span class="o">-</span><span class="n">t</span><span class="p">)</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">X1</span> <span class="p">)</span>
+
+    <span class="c1"># print(&quot;grad.shape = {}&quot;.format(grad.shape)) # (1,2) shape same as of w.</span>
+    <span class="k">return</span> <span class="n">grad</span></div>
+
+
+<div class="viewcode-block" id="plot_train_test"><a class="viewcode-back" href="../univariate.html#univariate.plot_train_test">[docs]</a><span class="k">def</span> <span class="nf">plot_train_test</span><span class="p">(</span><span class="n">X1train</span><span class="p">,</span><span class="n">ttrain</span><span class="p">,</span> <span class="n">X1test</span><span class="p">,</span><span class="n">ttest</span><span class="p">,</span><span class="n">w_bgd</span><span class="p">,</span> <span class="n">w_sgd</span><span class="p">):</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;ggplot&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">X1train</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">ttrain</span><span class="p">,</span><span class="s1">&#39;bo&#39;</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Univariate Train&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">X1test</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">ttest</span><span class="p">,</span><span class="s1">&#39;g^&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Univariate Test&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">X1train</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span> <span class="n">X1train</span> <span class="o">@</span> <span class="n">w_bgd</span><span class="o">.</span><span class="n">T</span><span class="p">,</span><span class="s1">&#39;b-&#39;</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Model fit GD&#39;</span><span class="p">,</span><span class="n">lw</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">X1train</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span> <span class="n">X1train</span> <span class="o">@</span> <span class="n">w_sgd</span><span class="o">.</span><span class="n">T</span><span class="p">,</span><span class="s1">&#39;r--&#39;</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Model fit SGD&#39;</span><span class="p">,</span><span class="n">lw</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Floor Size (Square Feet)&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;House Price (Dollar)&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Univariate Regression Batch Gradient Descent&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;../images/univ_BGD.png&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+
+
+
+<div class="viewcode-block" id="plot_cost_history"><a class="viewcode-back" href="../univariate.html#univariate.plot_cost_history">[docs]</a><span class="k">def</span> <span class="nf">plot_cost_history</span><span class="p">(</span><span class="n">X1</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">epochs</span><span class="p">,</span><span class="n">step</span><span class="p">,</span> <span class="n">learning_rate</span><span class="p">):</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;ggplot&#39;</span><span class="p">)</span>
+
+    <span class="c1"># given epochs</span>
+    <span class="n">epochs_lst</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">epochs</span><span class="o">+</span><span class="n">step</span><span class="p">,</span> <span class="n">step</span><span class="p">)</span>
+    <span class="n">costs_bgd</span> <span class="o">=</span> <span class="p">[</span><span class="n">compute_cost</span><span class="p">(</span><span class="n">X1</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="p">(</span><span class="n">train_BGD</span><span class="p">(</span><span class="n">X1</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">learning_rate</span><span class="p">,</span> <span class="n">epoch</span><span class="p">)))</span> <span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="n">epochs_lst</span><span class="p">]</span>
+    <span class="n">costs_sgd</span> <span class="o">=</span> <span class="p">[</span><span class="n">compute_cost</span><span class="p">(</span><span class="n">X1</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="p">(</span><span class="n">train_SGD</span><span class="p">(</span><span class="n">X1</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">learning_rate</span><span class="p">,</span> <span class="n">epoch</span><span class="p">)))</span> <span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="n">epochs_lst</span><span class="p">]</span>
+    <span class="c1">#</span>
+    <span class="c1"># print(&quot;costs_bgd = {}&quot;.format(costs_bgd))</span>
+    <span class="c1"># print(&quot;costs_sgd = {}&quot;.format(costs_sgd))</span>
+
+    <span class="c1"># minimum value</span>
+    <span class="c1"># min_idx_bgd = np.argmin(costs_bgd)</span>
+    <span class="c1"># min_idx_sgd = np.argmin(costs_sgd)</span>
+    <span class="c1"># print(&quot;np.min(costs_bgd) = {:.5e}&quot;.format(np.min(costs_bgd)))</span>
+    <span class="c1"># print(&quot;np.min(costs_sgd) = {:.5e}&quot;.format(np.min(costs_sgd)))</span>
+    <span class="c1"># print(&quot;epochs_lst_bgd[min_idx_bgd] = {}&quot;.format(epochs_lst[min_idx_bgd]))</span>
+    <span class="c1"># print(&quot;epochs_lst_bgd[min_idx_sgd] = {}&quot;.format(epochs_lst[min_idx_sgd]))</span>
+
+    <span class="c1"># plot</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">epochs_lst</span><span class="p">,</span> <span class="n">costs_bgd</span><span class="p">,</span><span class="s1">&#39;bo&#39;</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;cost history GD&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">epochs_lst</span><span class="p">,</span> <span class="n">costs_sgd</span><span class="p">,</span><span class="s1">&#39;r&gt;&#39;</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;cost history SGD&#39;</span><span class="p">,</span><span class="n">ms</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;epoch&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;cost&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Univariate Cost history&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;../images/univ_cost_history_BGD.png&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="print_train_outputs"><a class="viewcode-back" href="../univariate.html#univariate.print_train_outputs">[docs]</a><span class="k">def</span> <span class="nf">print_train_outputs</span><span class="p">(</span><span class="n">epochs</span><span class="p">,</span> <span class="n">learning_rate</span><span class="p">,</span> <span class="n">mean_train</span><span class="p">,</span><span class="n">std_train</span><span class="p">,</span><span class="n">w</span><span class="p">,</span><span class="n">rmse</span><span class="p">,</span><span class="n">cost</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Note: in vectorized method w[1] is replaced by w[0][1] and so on&quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;               Train Data&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;epochs  learning_rate  mean        std       w0          w1          rmse        cost&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">     </span><span class="si">{}</span><span class="s2">            </span><span class="si">{}</span><span class="s2">     </span><span class="si">{:,.2f}</span><span class="s2">    </span><span class="si">{:,.2f}</span><span class="s2">  </span><span class="si">{:,.2f}</span><span class="s2">   </span><span class="si">{:,.2f}</span><span class="s2">   </span><span class="si">{:,.2f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="n">epochs</span><span class="p">,</span> <span class="n">learning_rate</span><span class="p">,</span> <span class="n">mean_train</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">std_train</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">w</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">w</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">rmse</span><span class="p">,</span> <span class="n">cost</span><span class="p">))</span></div>
+
+
+
+<span class="c1">## ====================== Extra ==============================================</span>
+
+<div class="viewcode-block" id="plot_test_only"><a class="viewcode-back" href="../univariate.html#univariate.plot_test_only">[docs]</a><span class="k">def</span> <span class="nf">plot_test_only</span><span class="p">(</span><span class="n">X1train</span><span class="p">,</span> <span class="n">ttrain</span><span class="p">,</span> <span class="n">X1test</span><span class="p">,</span><span class="n">ttest</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">epochs</span><span class="p">,</span><span class="n">cost</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Create png files to fit test data.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;epochs = </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">epochs</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;ggplot&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">X1test</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">ttest</span><span class="p">,</span><span class="s1">&#39;g^&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Test </span><span class="se">\n</span><span class="s1">epochs = </span><span class="si">{:03d}</span><span class="s1"> </span><span class="se">\n</span><span class="s1">J = </span><span class="si">{:.2e}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">epochs</span><span class="p">,</span><span class="n">cost</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">X1train</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span> <span class="n">X1train</span><span class="nd">@w</span><span class="o">.</span><span class="n">T</span><span class="p">,</span><span class="s1">&#39;r-&#39;</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Best Fit&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Floor Size (Square Feet)&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;House Price (Dollar)&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Univariate Regression Batch Gradient Descent&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;../Extra/test_images/test_</span><span class="si">{:03d}</span><span class="s1">.png&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">epochs</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="create_gif"><a class="viewcode-back" href="../univariate.html#univariate.create_gif">[docs]</a><span class="k">def</span> <span class="nf">create_gif</span><span class="p">(</span><span class="n">X1train</span><span class="p">,</span> <span class="n">ttrain</span><span class="p">,</span> <span class="n">X1test</span><span class="p">,</span><span class="n">ttest</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">epochs</span><span class="p">,</span><span class="n">cost</span><span class="p">,</span><span class="n">learning_rate</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;We create 70 png files and use ImageMagick command to create gif.</span>
+
+<span class="sd">    ```convert -loop 0 -delay 100 test/test*.png cost_history.gif```</span>
+
+<span class="sd">    In this case Cost function J does not decreases after 70 epochs, so I</span>
+<span class="sd">    create only 70 png files.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">epochs</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">70</span><span class="p">):</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="n">train_BGD</span><span class="p">(</span><span class="n">X1train</span><span class="p">,</span> <span class="n">ttrain</span><span class="p">,</span> <span class="n">learning_rate</span><span class="p">,</span> <span class="n">epochs</span><span class="p">)</span>
+        <span class="n">cost</span> <span class="o">=</span> <span class="n">compute_cost</span><span class="p">(</span><span class="n">X1test</span><span class="p">,</span> <span class="n">ttest</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span>
+        <span class="n">plot_test_only</span><span class="p">(</span><span class="n">X1train</span><span class="p">,</span> <span class="n">ttrain</span><span class="p">,</span> <span class="n">X1test</span><span class="p">,</span><span class="n">ttest</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">epochs</span><span class="p">,</span><span class="n">cost</span><span class="p">)</span></div>
+<span class="c1">## ====================== Extra End ==========================================</span>
+
+
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../univariate.html#univariate.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Run main function.&quot;&quot;&quot;</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="s1">&#39;Univariate Exercise.&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-i&#39;</span><span class="p">,</span> <span class="s1">&#39;--input_data_dir&#39;</span><span class="p">,</span>
+                        <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+                        <span class="n">default</span><span class="o">=</span><span class="s1">&#39;../data/univariate&#39;</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Directory for the univariate houses dataset.&#39;</span><span class="p">)</span>
+    <span class="n">FLAGS</span><span class="p">,</span> <span class="n">unparsed</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_known_args</span><span class="p">()</span>
+
+    <span class="c1"># Read the training and test data.</span>
+    <span class="n">Xtrain</span><span class="p">,</span> <span class="n">ttrain</span> <span class="o">=</span> <span class="n">read_data</span><span class="p">(</span><span class="n">FLAGS</span><span class="o">.</span><span class="n">input_data_dir</span> <span class="o">+</span> <span class="s2">&quot;/train.txt&quot;</span><span class="p">)</span>
+    <span class="n">Xtest</span><span class="p">,</span> <span class="n">ttest</span> <span class="o">=</span> <span class="n">read_data</span><span class="p">(</span><span class="n">FLAGS</span><span class="o">.</span><span class="n">input_data_dir</span> <span class="o">+</span> <span class="s2">&quot;/test.txt&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Normalize and add bias term to Train data</span>
+    <span class="n">mean_train</span><span class="p">,</span> <span class="n">std_train</span> <span class="o">=</span> <span class="n">scaling</span><span class="o">.</span><span class="n">mean_std</span><span class="p">(</span><span class="n">Xtrain</span><span class="p">)</span>
+    <span class="n">Xtrain</span> <span class="o">=</span> <span class="n">scaling</span><span class="o">.</span><span class="n">standardize</span><span class="p">(</span><span class="n">Xtrain</span><span class="p">,</span><span class="n">mean_train</span><span class="p">,</span><span class="n">std_train</span><span class="p">)</span>
+    <span class="n">X1train</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">ttrain</span><span class="p">),</span> <span class="n">Xtrain</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># Normalize and add bias term to Test data</span>
+    <span class="n">Xtest</span> <span class="o">=</span> <span class="n">scaling</span><span class="o">.</span><span class="n">standardize</span><span class="p">(</span><span class="n">Xtest</span><span class="p">,</span><span class="n">mean_train</span><span class="p">,</span><span class="n">std_train</span><span class="p">)</span> <span class="c1"># XXX</span>
+    <span class="n">X1test</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">ttest</span><span class="p">),</span> <span class="n">Xtest</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+
+    <span class="c1"># Hyperparameters</span>
+    <span class="n">epochs</span><span class="p">,</span> <span class="n">step</span><span class="p">,</span> <span class="n">learning_rate</span> <span class="o">=</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mf">0.1</span>
+
+
+    <span class="c1"># Get w from Train and use it on Test</span>
+    <span class="n">w</span> <span class="o">=</span> <span class="n">train_BGD</span><span class="p">(</span><span class="n">X1train</span><span class="p">,</span> <span class="n">ttrain</span><span class="p">,</span> <span class="n">learning_rate</span><span class="p">,</span> <span class="n">epochs</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;epochs = </span><span class="si">{}</span><span class="s1"> w_BGD = </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">epochs</span><span class="p">,</span><span class="n">w</span><span class="p">))</span>
+
+    <span class="c1"># Parameters for Test</span>
+    <span class="n">rmse</span> <span class="o">=</span> <span class="n">compute_rmse</span><span class="p">(</span><span class="n">X1train</span><span class="p">,</span> <span class="n">ttrain</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span>
+    <span class="n">cost</span> <span class="o">=</span> <span class="n">compute_cost</span><span class="p">(</span><span class="n">X1train</span><span class="p">,</span> <span class="n">ttrain</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span>
+    <span class="n">grad</span> <span class="o">=</span> <span class="n">compute_gradient</span><span class="p">(</span><span class="n">X1train</span><span class="p">,</span> <span class="n">ttrain</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span>
+    <span class="n">print_train_outputs</span><span class="p">(</span><span class="n">epochs</span><span class="p">,</span> <span class="n">learning_rate</span><span class="p">,</span> <span class="n">mean_train</span><span class="p">,</span><span class="n">std_train</span><span class="p">,</span><span class="n">w</span><span class="p">,</span><span class="n">rmse</span><span class="p">,</span><span class="n">cost</span><span class="p">)</span>
+
+    <span class="c1"># Compare w from normal eqn and BGD</span>
+    <span class="n">w_norm_eqn</span> <span class="o">=</span> <span class="n">train_norm_eqn</span><span class="p">(</span><span class="n">X1train</span><span class="p">,</span> <span class="n">ttrain</span><span class="p">)</span>
+    <span class="n">w_bgd</span> <span class="o">=</span> <span class="n">train_BGD</span><span class="p">(</span><span class="n">X1train</span><span class="p">,</span> <span class="n">ttrain</span><span class="p">,</span> <span class="n">learning_rate</span><span class="p">,</span> <span class="n">epochs</span><span class="p">)</span>
+    <span class="n">w_sgd</span> <span class="o">=</span> <span class="n">train_SGD</span><span class="p">(</span><span class="n">X1train</span><span class="p">,</span> <span class="n">ttrain</span><span class="p">,</span> <span class="n">learning_rate</span><span class="p">,</span> <span class="mi">115</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;w_norm_eqn         = </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">w_norm_eqn</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;epochs = 200 w_bgd = </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">w_bgd</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;epochs = 115 w_sgd = </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">w_sgd</span><span class="p">))</span>
+
+
+    <span class="c1"># plots</span>
+    <span class="n">plot_cost_history</span><span class="p">(</span><span class="n">X1train</span><span class="p">,</span> <span class="n">ttrain</span><span class="p">,</span> <span class="n">epochs</span><span class="p">,</span><span class="n">step</span><span class="p">,</span> <span class="n">learning_rate</span><span class="p">)</span>
+    <span class="n">plot_train_test</span><span class="p">(</span><span class="n">X1train</span><span class="p">,</span><span class="n">ttrain</span><span class="p">,</span> <span class="n">X1test</span><span class="p">,</span><span class="n">ttest</span><span class="p">,</span><span class="n">w_bgd</span><span class="p">,</span> <span class="n">w_sgd</span><span class="p">)</span>
+
+    <span class="c1"># Compare w from BGD and SGD</span>
+    <span class="c1">#</span>
+    <span class="n">w_norm_eqn</span> <span class="o">=</span> <span class="n">train_norm_eqn</span><span class="p">(</span><span class="n">X1train</span><span class="p">,</span> <span class="n">ttrain</span><span class="p">)</span>
+    <span class="n">iters</span> <span class="o">=</span> <span class="mi">200</span>
+    <span class="n">a_mins</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">iters</span><span class="p">):</span>
+        <span class="n">w_sgd</span> <span class="o">=</span> <span class="n">train_SGD</span><span class="p">(</span><span class="n">X1train</span><span class="p">,</span> <span class="n">ttrain</span><span class="p">,</span> <span class="n">learning_rate</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;i = </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;w_norm_eqn        = </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">w_norm_eqn</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;iters = </span><span class="si">{}</span><span class="s1"> w_BGD = </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">iters</span><span class="p">,</span><span class="n">w</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;iters = </span><span class="si">{}</span><span class="s2"> w_SGD = </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">w_sgd</span><span class="p">))</span>
+        <span class="n">abs_diff_min</span> <span class="o">=</span> <span class="p">[</span> <span class="nb">abs</span><span class="p">(</span><span class="n">w_sgd</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="n">w_norm_eqn</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="nb">abs</span><span class="p">(</span><span class="n">w_sgd</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">w_norm_eqn</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span> <span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">a_mins</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">abs_diff_min</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;abs_diff_min = </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">abs_diff_min</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;np.argmin(abs_diff_min) = &#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">a_mins</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;len(a_mins) = </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">a_mins</span><span class="p">)))</span></div>
+
+
+    <span class="c1"># Extra</span>
+    <span class="c1"># create gifs</span>
+    <span class="c1"># create_gif(X1train, ttrain, X1test,ttest, w, epochs,cost,learning_rate)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Bhishan&#39;s 1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Bhishan Poudel.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
+    </div>
+  </body>
+</html>

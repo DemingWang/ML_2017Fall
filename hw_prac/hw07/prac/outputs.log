@@ -1,0 +1,11 @@
+sigma 0.1: accuracy = 10.70
+sigma 0.5: accuracy = 9.40
+sigma 2: accuracy = 10.20
+sigma 5: accuracy = 10.70
+sigma 10: accuracy = 65.00
+tuned sigma = 10
+
+Begin time:  Wed Nov 22 19:49:38 2017
+End   time:  Wed Nov 22 20:43:22 2017 
+
+Time taken:  0 days,  0 hours,        53 minutes,  43.095463 seconds.

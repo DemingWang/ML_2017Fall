@@ -1,0 +1,163 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>qn3b_mcp &#8212; Bhishan&#39;s 1 documentation</title>
+    <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/sidebar.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="qn3c_svm_digits" href="qn3c_svm_digits.html" />
+    <link rel="prev" title="qn3a_dat_proc" href="qn3a_dat_proc.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="qn3c_svm_digits.html" title="qn3c_svm_digits"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="qn3a_dat_proc.html" title="qn3a_dat_proc"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Bhishan&#39;s 1 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-qn3b_mcp">
+<span id="qn3b-mcp"></span><h1>qn3b_mcp<a class="headerlink" href="#module-qn3b_mcp" title="Permalink to this headline">¶</a></h1>
+<p>Multiclass perceptron</p>
+<p>&#64;author: Bhishan Poudel</p>
+<p>&#64;date: Nov 18, 2017</p>
+<dl class="function">
+<dt id="qn3b_mcp.main">
+<code class="descclassname">qn3b_mcp.</code><code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/qn3b_mcp.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qn3b_mcp.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run main function.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="qn3b_mcp.multiclass_kperceptron">
+<code class="descclassname">qn3b_mcp.</code><code class="descname">multiclass_kperceptron</code><span class="sig-paren">(</span><em>data_pth_train</em>, <em>epochs</em>, <em>data_pth_devel_test</em>, <em>kernel</em>, <em>kparam</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qn3b_mcp.html#multiclass_kperceptron"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qn3b_mcp.multiclass_kperceptron" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="qn3b_mcp.multiclass_perceptron">
+<code class="descclassname">qn3b_mcp.</code><code class="descname">multiclass_perceptron</code><span class="sig-paren">(</span><em>data_pth_train</em>, <em>epoch</em>, <em>data_pth_devel_test</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qn3b_mcp.html#multiclass_perceptron"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qn3b_mcp.multiclass_perceptron" title="Permalink to this definition">¶</a></dt>
+<dd><p>Training data ==&gt;  data_pth_train+ str(i) + ‘.txt’</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="qn3b_mcp.test_mkperceptron_gau">
+<code class="descclassname">qn3b_mcp.</code><code class="descname">test_mkperceptron_gau</code><span class="sig-paren">(</span><em>dtrain</em>, <em>dtest</em>, <em>tuned_epoch</em>, <em>tuned_sigma</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qn3b_mcp.html#test_mkperceptron_gau"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qn3b_mcp.test_mkperceptron_gau" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="qn3b_mcp.test_mkperceptron_linear">
+<code class="descclassname">qn3b_mcp.</code><code class="descname">test_mkperceptron_linear</code><span class="sig-paren">(</span><em>dtrain</em>, <em>dtest</em>, <em>tuned_epoch</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qn3b_mcp.html#test_mkperceptron_linear"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qn3b_mcp.test_mkperceptron_linear" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="qn3b_mcp.test_mkperceptron_poly">
+<code class="descclassname">qn3b_mcp.</code><code class="descname">test_mkperceptron_poly</code><span class="sig-paren">(</span><em>dtrain</em>, <em>dtest</em>, <em>tuned_epoch</em>, <em>tuned_d</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qn3b_mcp.html#test_mkperceptron_poly"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qn3b_mcp.test_mkperceptron_poly" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="qn3b_mcp.test_mperceptron">
+<code class="descclassname">qn3b_mcp.</code><code class="descname">test_mperceptron</code><span class="sig-paren">(</span><em>dtrain</em>, <em>dtest</em>, <em>tuned_epoch</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qn3b_mcp.html#test_mperceptron"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qn3b_mcp.test_mperceptron" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="qn3b_mcp.tune_T">
+<code class="descclassname">qn3b_mcp.</code><code class="descname">tune_T</code><span class="sig-paren">(</span><em>data_pth</em>, <em>tune_epochs</em>, <em>data_pth_devel_test</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qn3b_mcp.html#tune_T"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qn3b_mcp.tune_T" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="qn3b_mcp.tune_d">
+<code class="descclassname">qn3b_mcp.</code><code class="descname">tune_d</code><span class="sig-paren">(</span><em>data_pth</em>, <em>epochs</em>, <em>data_pth_devel_test</em>, <em>tune_kparams</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qn3b_mcp.html#tune_d"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qn3b_mcp.tune_d" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="qn3b_mcp.tune_sigma">
+<code class="descclassname">qn3b_mcp.</code><code class="descname">tune_sigma</code><span class="sig-paren">(</span><em>data_pth</em>, <em>epochs</em>, <em>data_pth_devel_test</em>, <em>tune_kparams</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qn3b_mcp.html#tune_sigma"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qn3b_mcp.tune_sigma" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="qn3a_dat_proc.html"
+                        title="previous chapter">qn3a_dat_proc</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="qn3c_svm_digits.html"
+                        title="next chapter">qn3c_svm_digits</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="qn3c_svm_digits.html" title="qn3c_svm_digits"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="qn3a_dat_proc.html" title="qn3a_dat_proc"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Bhishan&#39;s 1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Bhishan Poudel.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.5.
+    </div>
+  </body>
+</html>

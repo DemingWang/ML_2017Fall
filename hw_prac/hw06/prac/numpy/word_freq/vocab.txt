@@ -1,0 +1,5 @@
+1 a 3
+2 apple 2
+3 cow 3
+4 egg 2
+5 farm 2

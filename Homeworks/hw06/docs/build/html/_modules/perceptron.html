@@ -1,0 +1,351 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>perceptron &#8212; Bhishan&#39;s 1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Bhishan&#39;s 1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for perceptron</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!python</span>
+<span class="c1"># -*- coding: utf-8 -*-#</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Perceptron Algorithm</span>
+
+<span class="sd">@author: Bhishan Poudel</span>
+
+<span class="sd">@date: Nov 15, 2017</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="c1"># Imports</span>
+<span class="kn">import</span> <span class="nn">collections</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">itertools</span>
+
+<span class="c1">##===================Vanilla Perceptron================================</span>
+<div class="viewcode-block" id="perceptron_train"><a class="viewcode-back" href="../perceptron.html#perceptron.perceptron_train">[docs]</a><span class="k">def</span> <span class="nf">perceptron_train</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">epochs</span><span class="p">,</span><span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">data</span>
+    <span class="n">Y</span> <span class="o">=</span> <span class="n">labels</span>
+    <span class="c1"># print(Y[0:10])</span>
+    
+    <span class="c1"># change labels 0 to -1</span>
+    <span class="n">Y</span><span class="p">[</span><span class="n">Y</span><span class="o">==</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    
+    <span class="c1"># add bias to X&#39;s first column</span>
+    <span class="n">ones</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ones</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    
+    <span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">final_iter</span> <span class="o">=</span> <span class="n">epochs</span>
+    <span class="n">mistakes</span> <span class="o">=</span> <span class="mi">0</span>
+    
+    <span class="c1"># debug</span>
+    <span class="c1"># print(&quot;X.shape = {}&quot;.format(X.shape)) # examples, features+1</span>
+    <span class="c1"># print(&quot;w.shape = {}&quot;.format(w.shape)) # features+1,</span>
+    <span class="c1"># print(&quot;Y.shape = {}&quot;.format(Y.shape)) # examples,</span>
+
+    
+    <span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">epochs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;epoch: </span><span class="si">{}</span><span class="s2"> </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">epoch</span><span class="p">,</span> <span class="s1">&#39;-&#39;</span><span class="o">*</span><span class="mi">40</span><span class="p">))</span>
+        
+        
+        <span class="n">misclassified</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">X</span><span class="p">):</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">Y</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">h</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span><span class="o">*</span><span class="n">y</span>
+
+            <span class="k">if</span> <span class="n">h</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">w</span> <span class="o">=</span> <span class="n">w</span> <span class="o">+</span> <span class="n">x</span><span class="o">*</span><span class="n">y</span>
+                <span class="n">misclassified</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">mistakes</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">-</span><span class="si">{}</span><span class="s1">: misclassified? y  w: </span><span class="si">{}</span><span class="s1"> &#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">epoch</span><span class="p">,</span><span class="n">i</span><span class="p">,</span> <span class="n">w</span><span class="p">))</span>
+                
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">-</span><span class="si">{}</span><span class="s1">: misclassified? n  w: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">epoch</span><span class="p">,</span><span class="n">i</span><span class="p">,</span> <span class="n">w</span><span class="p">))</span>
+
+        <span class="c1"># outside of the examples, inside of epochs loop</span>
+        <span class="k">if</span> <span class="n">misclassified</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">final_iter</span> <span class="o">=</span> <span class="n">epoch</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Perceptron converged after: </span><span class="si">{}</span><span class="s2"> iterations&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">final_iter</span><span class="p">))</span>
+            <span class="k">break</span>
+    
+    <span class="c1"># outside of epochs loop</span>
+    <span class="k">if</span> <span class="n">misclassified</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Perceptron DID NOT converge until: </span><span class="si">{}</span><span class="s2"> iterations&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">final_iter</span><span class="p">))</span>
+                
+    <span class="k">return</span> <span class="n">w</span><span class="p">,</span> <span class="n">final_iter</span><span class="p">,</span> <span class="n">mistakes</span></div>
+
+<div class="viewcode-block" id="perceptron_test"><a class="viewcode-back" href="../perceptron.html#perceptron.perceptron_test">[docs]</a><span class="k">def</span> <span class="nf">perceptron_test</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    label y should be 0 or 1.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># add bias to X&#39;s first column</span>
+    <span class="n">ones</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ones</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    
+    <span class="n">y_pred</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">w</span><span class="p">))</span>
+       
+    <span class="k">return</span> <span class="n">y_pred</span></div>
+
+<div class="viewcode-block" id="aperceptron_train"><a class="viewcode-back" href="../perceptron.html#perceptron.aperceptron_train">[docs]</a><span class="k">def</span> <span class="nf">aperceptron_train</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">epochs</span><span class="p">,</span><span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;data: without bias column</span>
+<span class="sd">    labels: 1d array</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># data and labels</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">data</span>
+    <span class="n">Y</span> <span class="o">=</span> <span class="n">labels</span>
+    
+    <span class="c1"># change labels 0 to -1 to make h&lt;=0 classification</span>
+    <span class="n">Y</span><span class="p">[</span><span class="n">Y</span><span class="o">==</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    
+    <span class="c1"># initialize weights</span>
+    <span class="n">w</span> <span class="o">=</span> <span class="n">u</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="p">)</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">beta</span> <span class="o">=</span> <span class="mi">0</span>
+    
+    <span class="c1"># counters    </span>
+    <span class="n">final_iter</span> <span class="o">=</span> <span class="n">epochs</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">mistakes</span> <span class="o">=</span> <span class="mi">0</span>
+    
+    <span class="c1"># main average perceptron algorithm</span>
+    <span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">epochs</span><span class="p">):</span>
+        <span class="c1"># initialize misclassified</span>
+        <span class="n">misclassified</span> <span class="o">=</span> <span class="mi">0</span>
+        
+        <span class="c1"># go through all training examples</span>
+        <span class="k">for</span>  <span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">):</span>
+            <span class="n">h</span> <span class="o">=</span> <span class="n">y</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span> <span class="o">+</span> <span class="n">b</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">h</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">w</span> <span class="o">=</span> <span class="n">w</span> <span class="o">+</span> <span class="n">y</span><span class="o">*</span><span class="n">x</span>
+                <span class="n">b</span> <span class="o">=</span> <span class="n">b</span> <span class="o">+</span> <span class="n">y</span>
+                
+                <span class="n">u</span> <span class="o">=</span> <span class="n">u</span><span class="o">+</span> <span class="n">y</span><span class="o">*</span><span class="n">c</span><span class="o">*</span><span class="n">x</span>
+                <span class="n">beta</span> <span class="o">=</span> <span class="n">beta</span> <span class="o">+</span> <span class="n">y</span><span class="o">*</span><span class="n">c</span>
+                <span class="n">misclassified</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">mistakes</span> <span class="o">+=</span> <span class="mi">1</span>
+                
+        <span class="c1"># update counter regardless of good or bad classification        </span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">c</span> <span class="o">+</span> <span class="mi">1</span>
+        
+        <span class="c1"># break loop if w converges</span>
+        <span class="k">if</span> <span class="n">misclassified</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">final_iter</span> <span class="o">=</span> <span class="n">epoch</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Averaged Perceptron converged after: </span><span class="si">{}</span><span class="s2"> iterations&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">final_iter</span><span class="p">))</span>
+            <span class="k">break</span>
+        
+        
+    <span class="k">if</span> <span class="n">misclassified</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Averaged Perceptron DID NOT converge until: </span><span class="si">{}</span><span class="s2"> iterations&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">final_iter</span><span class="p">))</span>
+        
+    <span class="c1"># prints</span>
+    <span class="c1"># print(&quot;final_iter = {}&quot;.format(final_iter))</span>
+    <span class="c1"># print(&quot;b, beta, c , (b-beta/c)= {} {} {} {}&quot;.format(b, beta, c, (b-beta/c)))</span>
+    <span class="c1"># print(&quot;w, u, (w-u/c) {} {} {}&quot;.format(w, u, (w-u/c)) )</span>
+
+                
+    <span class="c1"># return w and final_iter</span>
+    <span class="n">w</span> <span class="o">=</span> <span class="n">w</span> <span class="o">-</span> <span class="n">u</span><span class="o">/</span><span class="n">c</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">b</span><span class="o">-</span> <span class="n">beta</span><span class="o">/</span><span class="n">c</span><span class="p">])</span>
+    <span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">w</span><span class="p">,</span> <span class="n">final_iter</span><span class="p">,</span> <span class="n">mistakes</span></div>
+
+<span class="c1">##============== Kernel (Dual) Perceptron============================</span>
+<div class="viewcode-block" id="quadratic_kernel"><a class="viewcode-back" href="../perceptron.html#perceptron.quadratic_kernel">[docs]</a><span class="k">def</span> <span class="nf">quadratic_kernel</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    :Input: two examples x and y.</span>
+<span class="sd">    </span>
+<span class="sd">    :Output: the quadratic kernel value computed as (1+xTy)^2. </span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">Kxy</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span>
+    <span class="k">return</span> <span class="n">Kxy</span></div>
+
+<div class="viewcode-block" id="kperceptron_train"><a class="viewcode-back" href="../perceptron.html#perceptron.kperceptron_train">[docs]</a><span class="k">def</span> <span class="nf">kperceptron_train</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">labels</span><span class="p">,</span><span class="n">epochs</span><span class="p">,</span><span class="n">kernel</span><span class="p">,</span><span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    Returns: alpha,sv,sv_y,final_iter</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">data</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">labels</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+    <span class="n">y</span><span class="p">[</span><span class="n">y</span><span class="o">==</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="n">mistakes</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">final_iter</span> <span class="o">=</span> <span class="n">epochs</span>
+    
+    <span class="n">n_samples</span><span class="p">,</span> <span class="n">n_features</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span>
+    <span class="n">alpha</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_samples</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+
+    <span class="c1"># Gram matrix</span>
+    <span class="c1"># NOTE: kernel Kxy = (1 + np.dot(x,y))**2</span>
+    <span class="n">K</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_samples</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_samples</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_samples</span><span class="p">):</span>
+            <span class="n">K</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">kernel</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">X</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
+
+    <span class="c1"># kernel perceptron algorithm</span>
+    <span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">epochs</span><span class="p">):</span>
+        <span class="n">misclassified</span> <span class="o">=</span> <span class="mi">0</span>
+        
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;epoch = </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">epoch</span><span class="p">))</span>
+            
+            
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_samples</span><span class="p">):</span>
+            <span class="n">h</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">alpha</span> <span class="o">*</span> <span class="n">y</span> <span class="o">*</span> <span class="n">K</span><span class="p">[:,</span><span class="n">i</span><span class="p">]</span> <span class="p">))</span>
+            <span class="k">if</span> <span class="n">h</span> <span class="o">!=</span> <span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                <span class="n">alpha</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="mf">1.0</span>
+                <span class="n">misclassified</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">mistakes</span> <span class="o">+=</span> <span class="mi">1</span>
+        
+        <span class="c1"># inside epochs, outside examples</span>
+        <span class="k">if</span> <span class="n">misclassified</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">final_iter</span> <span class="o">=</span> <span class="n">epoch</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Kernel Perceptron converged after: </span><span class="si">{}</span><span class="s2"> iterations&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">final_iter</span><span class="p">))</span>
+            <span class="k">break</span>
+    
+    <span class="c1"># outside of epochs loop</span>
+    <span class="k">if</span> <span class="n">misclassified</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Kernel Perceptron DID NOT converge until: </span><span class="si">{}</span><span class="s2"> iterations&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">final_iter</span><span class="p">))</span>
+    
+    
+    <span class="n">idx</span> <span class="o">=</span> <span class="n">alpha</span> <span class="o">&gt;</span> <span class="mf">1e-5</span>
+    <span class="n">alpha</span> <span class="o">=</span> <span class="n">alpha</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+    <span class="n">sv</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+    <span class="n">sv_y</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+    
+    <span class="k">return</span> <span class="n">alpha</span><span class="p">,</span><span class="n">sv</span><span class="p">,</span><span class="n">sv_y</span><span class="p">,</span><span class="n">final_iter</span><span class="p">,</span><span class="n">mistakes</span></div>
+
+<div class="viewcode-block" id="kperceptron_project"><a class="viewcode-back" href="../perceptron.html#perceptron.kperceptron_project">[docs]</a><span class="k">def</span> <span class="nf">kperceptron_project</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">kernel</span><span class="p">,</span><span class="n">alpha</span><span class="p">,</span><span class="n">sv</span><span class="p">,</span><span class="n">sv_y</span><span class="p">):</span>
+    
+    <span class="n">y_predict</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">)):</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">svy</span><span class="p">,</span> <span class="n">sv_</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span> <span class="n">sv_y</span><span class="p">,</span> <span class="n">sv</span><span class="p">):</span>
+            <span class="n">s</span> <span class="o">+=</span> <span class="n">a</span> <span class="o">*</span> <span class="n">svy</span> <span class="o">*</span> <span class="mi">1</span>
+            <span class="n">s</span> <span class="o">+=</span> <span class="n">a</span> <span class="o">*</span> <span class="n">svy</span> <span class="o">*</span> <span class="n">kernel</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">sv_</span><span class="p">)</span>
+        <span class="n">y_predict</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">s</span>
+    <span class="k">return</span> <span class="n">y_predict</span></div>
+
+<div class="viewcode-block" id="kperceptron_test"><a class="viewcode-back" href="../perceptron.html#perceptron.kperceptron_test">[docs]</a><span class="k">def</span> <span class="nf">kperceptron_test</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">kernel</span><span class="p">,</span><span class="n">alpha</span><span class="p">,</span><span class="n">sv</span><span class="p">,</span> <span class="n">sv_y</span><span class="p">):</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+    <span class="n">n_samples</span><span class="p">,</span> <span class="n">n_features</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span>
+    
+    <span class="n">y_pred</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">kperceptron_project</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">kernel</span><span class="p">,</span><span class="n">alpha</span><span class="p">,</span><span class="n">sv</span><span class="p">,</span> <span class="n">sv_y</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">y_pred</span></div>
+
+<span class="c1">##========================Read example=================================</span>
+<div class="viewcode-block" id="read_examples"><a class="viewcode-back" href="../perceptron.html#perceptron.read_examples">[docs]</a><span class="k">def</span> <span class="nf">read_examples</span><span class="p">(</span><span class="n">fdense</span><span class="p">):</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">fdense</span><span class="p">)</span>
+    <span class="n">Y</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">X</span>  <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:]</span>
+    
+    <span class="k">return</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span></div>
+
+<div class="viewcode-block" id="confusion_matrix"><a class="viewcode-back" href="../perceptron.html#perceptron.confusion_matrix">[docs]</a><span class="k">def</span> <span class="nf">confusion_matrix</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="n">y_pred</span><span class="p">):</span>
+    <span class="c1"># get classes</span>
+    <span class="n">classes</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">classes</span><span class="p">)</span> 
+    
+    <span class="c1"># permutation of [0,1] [0,1] then count the tuples</span>
+    <span class="n">cm</span> <span class="o">=</span> <span class="p">[</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="n">y_pred</span><span class="p">))</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> 
+                    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="n">classes</span><span class="p">,</span><span class="n">repeat</span><span class="o">=</span><span class="mi">2</span><span class="p">)]</span>
+    <span class="c1"># 00 01 10 11</span>
+    <span class="c1"># TN, FN, FP, TP = cm</span>
+    
+    <span class="c1"># Diagonals are True</span>
+    <span class="c1">#    0    1</span>
+    <span class="c1"># 0  TN   FN</span>
+    <span class="c1"># 1  FP   TN</span>
+    
+    <span class="n">cm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">cm</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">n</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">cm</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Bhishan&#39;s 1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Bhishan Poudel.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
+    </div>
+  </body>
+</html>

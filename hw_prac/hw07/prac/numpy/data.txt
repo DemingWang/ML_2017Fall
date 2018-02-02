@@ -1,0 +1,7 @@
+[12 20 13 44 42]
+[  7.071  10.1     7.416  27.677  27.459]
+from scipy import stats
+
+fdata = 'data/data.txt'
+*X,t = np.genfromtxt(fdata,unpack=True,dtype=None)
+X,t,t = np.array(X).T, np.array(t), t.reshape(len(t),1)

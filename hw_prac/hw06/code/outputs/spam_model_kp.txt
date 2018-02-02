@@ -1,0 +1,17 @@
+Kernel Perceptron Statistics
+=============================
+Final iteration = 6
+Total mistakes = 309
+
+
+Accuracy    = 98.00 % (980 out of 1000 correct)
+
+
+F1-score = 0.97
+Accuracy = 0.98
+Confusion matrix is given below
+Diagonals are True values.
+       True_0 True_1
+       --------------
+Pred_0| 680      13
+Pred_1| 7      300

@@ -1,0 +1,164 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Qn 3: Softmax Regression with Minibatch Gradient Descent &#8212; Bhishan&#39;s 1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/sidebar.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="checkNumericalGradient" href="checkNumericalGradient.html" />
+    <link rel="prev" title="Qn 2: Scipy Implementation of Softmax Regression" href="qn2.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="checkNumericalGradient.html" title="checkNumericalGradient"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="qn2.html" title="Qn 2: Scipy Implementation of Softmax Regression"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Bhishan&#39;s 1 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="qn-3-softmax-regression-with-minibatch-gradient-descent">
+<h1>Qn 3: Softmax Regression with Minibatch Gradient Descent<a class="headerlink" href="#qn-3-softmax-regression-with-minibatch-gradient-descent" title="Permalink to this headline">¶</a></h1>
+<p>In this question we use the softmax regression model with minibatch gradient
+descent method to predict the labels of 55,000 MNIST digits samples.</p>
+<p>I used the scipy library to implement the minibatch gradient descent model.</p>
+<p>To use the gradient descent model, we should first shuffle the data and
+then take only some subsamples (batches) to train the model and find the best
+fit parameters theta.</p>
+<p>The code snippet to shuffle and split the data is like this:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># shuffle data</span>
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+<span class="n">perm_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">permutation</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">X2</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">perm_idx</span><span class="p">]</span>
+<span class="n">y2</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="n">perm_idx</span><span class="p">]</span>
+
+<span class="c1"># After shuffling split the data</span>
+<span class="n">data2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">X2</span><span class="p">,</span><span class="n">y2</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">batches</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array_split</span><span class="p">(</span><span class="n">data2</span><span class="p">,</span> <span class="n">num_splits</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Here, I took the batch of size 100 examples at a time and I ran the model
+2000 epoches to estimate the best fit parameters theta.</p>
+<p>To use the gradient descent, we need to tune the hyperparameter <cite>eta</cite> using
+the validation set.</p>
+<p>In this question there is 55k training data, 10k test data, and there should be
+5k validation data drawn randomly from the original 60k train data from the
+original MINST data.</p>
+<p>However, for this pariticular problem we are not provided the validation data.
+So I just chose a reasonable number for eta. I opted eta to be <cite>0.1</cite> and trained
+the model. After 9 minutes I got result with about 92.6 % accuracy.</p>
+<p>Note that we can tune the parameter eta like in the homework 2, where we chose
+the eta that gives the smooth looking decreasing curve for a different values
+of eta like eta = [0.001, 0.01, 0.1, 1.0, 10.0] and plot the cost history.</p>
+<p>The final results is shown below:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">eta</span> <span class="o">=</span> <span class="mi">10</span>   <span class="n">Accuracy</span> <span class="o">~</span> <span class="mf">92.6</span><span class="o">%</span>    <span class="n">Time</span> <span class="o">~</span> <span class="mi">9</span> <span class="n">mins</span>
+<span class="n">eta</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="n">Accuracy</span> <span class="o">~</span> <span class="mf">92.6</span><span class="o">%</span>    <span class="n">Time</span> <span class="o">~</span> <span class="mi">9</span> <span class="n">mins</span>
+<span class="n">eta</span> <span class="o">=</span> <span class="mf">0.1</span>  <span class="n">Accuracy</span> <span class="o">~</span> <span class="mf">92.220</span><span class="o">%</span>  <span class="n">Time</span> <span class="o">~</span> <span class="mi">9</span> <span class="n">minutes</span>
+</pre></div>
+</div>
+<p>The code snippet to perform minibatch gradient descent is given below:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">max_iters</span><span class="p">,</span> <span class="n">batchsize</span> <span class="o">=</span> <span class="mi">2000</span><span class="p">,</span> <span class="mi">100</span>
+<span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_iters</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">batch</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">batches</span><span class="p">):</span>
+        <span class="n">img</span><span class="p">,</span> <span class="n">lbl</span> <span class="o">=</span> <span class="n">batches</span><span class="p">[</span><span class="n">i</span><span class="p">][:,:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">batches</span><span class="p">[</span><span class="n">i</span><span class="p">][:,</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">gradient</span> <span class="o">=</span> <span class="n">softmaxGrad</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">numClasses</span><span class="p">,</span> <span class="n">inputSize</span><span class="p">,</span> <span class="n">decay</span><span class="p">,</span> <span class="n">img</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">lbl</span><span class="p">)</span>
+        <span class="n">theta</span> <span class="o">=</span> <span class="n">theta</span> <span class="o">-</span> <span class="n">eta</span><span class="o">/</span><span class="n">batchsize</span> <span class="o">*</span> <span class="n">gradient</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="qn2.html"
+                        title="previous chapter">Qn 2: Scipy Implementation of Softmax Regression</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="checkNumericalGradient.html"
+                        title="next chapter">checkNumericalGradient</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/qn3.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="checkNumericalGradient.html" title="checkNumericalGradient"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="qn2.html" title="Qn 2: Scipy Implementation of Softmax Regression"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Bhishan&#39;s 1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Bhishan Poudel.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
+    </div>
+  </body>
+</html>

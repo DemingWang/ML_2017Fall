@@ -1,0 +1,18 @@
+Averaged Perceptron Statistics
+=============================
+Final iteration = 18
+Total mistakes = 476
+
+
+Parameter w = [ 9.6  -0.85  2.85 ..., -5.2  -3.45  2.8 ]
+Accuracy    = 98.10 % (981 out of 1000 correct)
+
+
+F1-score = 0.97
+Accuracy = 0.98
+Confusion matrix is given below
+Diagonals are True values.
+       True_0 True_1
+       --------------
+Pred_0| 685      8
+Pred_1| 11      296

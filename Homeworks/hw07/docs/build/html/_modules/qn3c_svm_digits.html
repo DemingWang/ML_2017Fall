@@ -1,0 +1,180 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>qn3c_svm_digits &#8212; Bhishan&#39;s 1 documentation</title>
+    <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Bhishan&#39;s 1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for qn3c_svm_digits</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">sklearn.svm</span> <span class="k">import</span> <span class="n">SVC</span>
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="k">import</span> <span class="n">GridSearchCV</span>
+<span class="kn">from</span> <span class="nn">sklearn</span> <span class="k">import</span> <span class="n">preprocessing</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="k">import</span> <span class="n">confusion_matrix</span><span class="p">,</span> <span class="n">classification_report</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="n">np</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;ggplot&#39;</span><span class="p">)</span>
+
+<span class="c1"># Save all the Print Statements in a Log file.</span>
+<span class="c1"># import sys</span>
+<span class="c1"># old_stdout = sys.stdout</span>
+<span class="c1"># log_file = open(&quot;summary.log&quot;,&quot;w&quot;)</span>
+<span class="c1"># sys.stdout = log_file</span>
+
+
+<div class="viewcode-block" id="min_max_scale"><a class="viewcode-back" href="../qn3c_svm_digits.html#qn3c_svm_digits.min_max_scale">[docs]</a><span class="k">def</span> <span class="nf">min_max_scale</span><span class="p">(</span><span class="n">fdata</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    X_norm = X - X_min / (X_max - X_min)</span>
+<span class="sd">    </span>
+<span class="sd">    Min is calculated for a column by default.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="o">*</span><span class="n">X</span><span class="p">,</span><span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="n">fdata</span><span class="p">,</span><span class="n">unpack</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;f&#39;</span><span class="p">,</span><span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+    
+    <span class="c1">## minmax scalar</span>
+    <span class="c1"># scaler = preprocessing.StandardScaler()</span>
+    <span class="n">scaler</span> <span class="o">=</span> <span class="n">preprocessing</span><span class="o">.</span><span class="n">MinMaxScaler</span><span class="p">()</span>
+    <span class="n">X_norm</span> <span class="o">=</span> <span class="n">scaler</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>   <span class="c1"># each rows</span>
+    
+    <span class="k">return</span> <span class="n">X_norm</span><span class="p">,</span> <span class="n">y</span></div>
+
+<div class="viewcode-block" id="grid_search"><a class="viewcode-back" href="../qn3c_svm_digits.html#qn3c_svm_digits.grid_search">[docs]</a><span class="k">def</span> <span class="nf">grid_search</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span><span class="n">y_train</span><span class="p">,</span><span class="n">X_devel</span><span class="p">,</span><span class="n">y_devel</span><span class="p">):</span>  
+    <span class="c1"># model = SVC(kernel=&#39;linear&#39;, random_state=0, C=1.0)</span>
+    <span class="c1"># params = np.arange(1,21)</span>
+    <span class="c1"># grid = GridSearchCV(model, dict(max_iter=params))</span>
+    <span class="c1"># grid.fit(X,y)</span>
+    <span class="c1"># best_max_iter = grid.best_estimator_.max_iter</span>
+    <span class="c1"># print(&quot;best_max_iter = {}&quot;.format(best_max_iter))</span>
+
+    <span class="c1"># model = SVC(kernel=&#39;poly&#39;, random_state=0, C=1.0)</span>
+    <span class="c1"># params = { &quot;degree&quot;: [2,3,4,5,6]}</span>
+    <span class="c1"># grid = GridSearchCV(model, params)</span>
+    <span class="c1"># grid.fit(X,y)</span>
+    <span class="c1"># best_degree = grid.best_estimator_.degree</span>
+    <span class="c1"># print(&quot;best_degree = {}&quot;.format(best_degree))</span>
+    <span class="c1"># # print(&quot;grid.best_estimator_.max_iter = {}&quot;.format(grid.best_estimator_.max_iter)) # -1</span>
+    
+    <span class="n">model</span> <span class="o">=</span> <span class="n">SVC</span><span class="p">(</span><span class="n">kernel</span><span class="o">=</span><span class="s1">&#39;rbf&#39;</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">C</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">0.125</span><span class="p">)</span>
+    <span class="c1"># model = SVC(kernel=&#39;rbf&#39;, random_state=0, C=1.0,max_iter=11, gamma=0.125)</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span><span class="n">y_train</span><span class="p">)</span>
+       
+    <span class="n">y_pred</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_devel</span><span class="p">)</span>
+    <span class="n">correct</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">y_devel</span> <span class="o">==</span> <span class="n">y_pred</span><span class="p">)</span>
+    <span class="n">accuracy</span> <span class="o">=</span> <span class="n">correct</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">y_devel</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;y_dpred[0:4] = </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">y_pred</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">4</span><span class="p">]))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;accuracy = </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">accuracy</span><span class="p">))</span>
+    <span class="n">cm</span> <span class="o">=</span> <span class="n">confusion_matrix</span><span class="p">(</span><span class="n">y_devel</span><span class="p">,</span><span class="n">y_pred</span><span class="p">)</span>
+    <span class="n">cr</span> <span class="o">=</span> <span class="n">classification_report</span><span class="p">(</span><span class="n">y_devel</span><span class="p">,</span><span class="n">y_pred</span><span class="p">)</span>
+    <span class="c1"># print(cm)</span>
+    <span class="c1"># print(cr)</span>
+    
+    <span class="k">return</span> <span class="n">y_pred</span></div>
+
+<div class="viewcode-block" id="plot_digits"><a class="viewcode-back" href="../qn3c_svm_digits.html#qn3c_svm_digits.plot_digits">[docs]</a><span class="k">def</span> <span class="nf">plot_digits</span><span class="p">(</span><span class="n">test_img</span><span class="p">,</span><span class="n">test_labels</span><span class="p">,</span><span class="n">test_labels_pred</span><span class="p">):</span>
+    <span class="c1"># Show the Test Images with Original and Predicted Labels</span>
+    <span class="c1"># In image processing we use 255 = white 0 = black </span>
+    <span class="c1"># in 256-color grayscale colormap</span>
+    <span class="c1">#</span>
+    <span class="c1"># plot some random 10 images</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">400</span><span class="p">,</span><span class="mi">10</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">a</span><span class="p">:</span>
+    	<span class="n">two_d</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">test_img</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span> <span class="o">*</span> <span class="mi">255</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+    	<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Original Label: </span><span class="si">{0}</span><span class="s1">  Predicted Label: </span><span class="si">{1}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">test_labels</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">test_labels_pred</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+    	<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">two_d</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="s1">&#39;nearest&#39;</span><span class="p">,</span><span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;autumn&#39;</span><span class="p">)</span>
+    	<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../qn3c_svm_digits.html#qn3c_svm_digits.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Run main function.&quot;&quot;&quot;</span>
+    <span class="n">fdata_train</span> <span class="o">=</span> <span class="s1">&#39;../data/optdigits/train/train.txt&#39;</span>
+    <span class="n">fdata_devel</span> <span class="o">=</span> <span class="s1">&#39;../data/optdigits/devel/devel.txt&#39;</span>
+    <span class="n">X_train</span><span class="p">,</span><span class="n">y_train</span> <span class="o">=</span> <span class="n">min_max_scale</span><span class="p">(</span><span class="n">fdata_train</span><span class="p">)</span>
+    <span class="n">X_devel</span><span class="p">,</span><span class="n">y_devel</span> <span class="o">=</span> <span class="n">min_max_scale</span><span class="p">(</span><span class="n">fdata_devel</span><span class="p">)</span>
+    
+    <span class="n">y_pred</span> <span class="o">=</span> <span class="n">grid_search</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span><span class="n">y_train</span><span class="p">,</span><span class="n">X_devel</span><span class="p">,</span><span class="n">y_devel</span><span class="p">)</span>
+    
+    <span class="n">plot_digits</span><span class="p">(</span><span class="n">X_devel</span><span class="p">,</span><span class="n">y_devel</span><span class="p">,</span><span class="n">y_pred</span><span class="p">)</span></div>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Bhishan&#39;s 1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Bhishan Poudel.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.5.
+    </div>
+  </body>
+</html>

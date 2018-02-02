@@ -1,0 +1,183 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Qn 3: Digit Recognition &#8212; Bhishan&#39;s 1 documentation</title>
+    <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/sidebar.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Qn 3.2 Linear, Polynomial and Gaussian Kernel Perceptron" href="hw07_qn3b.html" />
+    <link rel="prev" title="Qn2: Text Classification" href="hw07_qn2.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="hw07_qn3b.html" title="Qn 3.2 Linear, Polynomial and Gaussian Kernel Perceptron"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="hw07_qn2.html" title="Qn2: Text Classification"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Bhishan&#39;s 1 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="qn-3-digit-recognition">
+<h1>Qn 3: Digit Recognition<a class="headerlink" href="#qn-3-digit-recognition" title="Permalink to this headline">¶</a></h1>
+<p>In this problem learn to classify the optical digits using Perceptron and SVM:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Perceptron<ul>
+<li>Vanilla Perceptron</li>
+<li>Linear Kernel Perceptron</li>
+<li>Polynomial Kernel Perceptron (degree= 2,3,4,5,6)</li>
+<li>Gaussian Kernel Perceptron (sigma = 0.1, 0.5, 2, 5, 10)</li>
+</ul>
+</li>
+<li>Support Vector Machines (SVM)<ul>
+<li>Linear SVM</li>
+<li>Polynomial Kernel SVM</li>
+<li>Gaussian Kernel SVM</li>
+</ul>
+</li>
+</ul>
+</div></blockquote>
+<div class="section" id="qn-3a-data-processing-one-vs-rest-break-data-into-c-classes-and-normalize">
+<h2>Qn 3a: Data Processing (One-vs-Rest break data into c classes and normalize)<a class="headerlink" href="#qn-3a-data-processing-one-vs-rest-break-data-into-c-classes-and-normalize" title="Permalink to this headline">¶</a></h2>
+<p>Perceptron is a binary classifier, by default it can not classify multi-class
+dataset. To use perceptron for multi-class classification we need to create
+binary datasets from the original dataset. Here, we use one-vs-rest method
+to create the binary dataset.</p>
+<p>We want to use the optical digits data from the UCI website:
+<a class="reference external" href="http://archive.ics.uci.edu/ml/datasets/Optical+Recognition+of+Handwritten+Digits">http://archive.ics.uci.edu/ml/datasets/Optical+Recognition+of+Handwritten+Digits</a></p>
+<p>The database has two data files, training data, and test data:</p>
+<blockquote>
+<div><ul class="simple">
+<li>optdigits.tra # 3833 training examples</li>
+<li>optdigits.tes # 1797 test examples</li>
+</ul>
+</div></blockquote>
+<p>We take all the test examples as test examples. But, from the training examples
+we reserve some examples for the validation set. We choose first 1000 examples as
+the development data and rest 2833 examples as the training data.</p>
+<p>Now the dataset looks like this:</p>
+<blockquote>
+<div><ul class="simple">
+<li>train.txt # 2833 examples</li>
+<li>devel.txt # 1000 examples</li>
+<li>test.txt # 1797 examples</li>
+</ul>
+</div></blockquote>
+<p>Description of data:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Each</span> <span class="n">example</span> <span class="ow">is</span> <span class="n">a</span> <span class="mi">8</span><span class="o">*</span><span class="mi">8</span> <span class="n">grayscale</span> <span class="n">image</span> <span class="n">of</span> <span class="n">a</span> <span class="n">digit</span> <span class="p">(</span><span class="mi">0</span><span class="o">-</span><span class="mi">9</span><span class="p">)</span><span class="o">.</span>
+<span class="n">The</span> <span class="n">pixel</span> <span class="n">value</span> <span class="n">ranges</span> <span class="kn">from</span> <span class="mi">0</span> <span class="n">to</span> <span class="mi">16</span><span class="p">,</span> <span class="ow">and</span> <span class="n">are</span> <span class="n">separated</span> <span class="n">by</span> <span class="n">comma</span><span class="o">.</span>
+
+<span class="n">An</span> <span class="n">example</span> <span class="n">has</span> <span class="mi">8</span> <span class="o">*</span> <span class="mi">8</span> <span class="o">=</span> <span class="mi">64</span> <span class="n">features</span> <span class="ow">and</span> <span class="n">one</span> <span class="n">label</span><span class="o">.</span>
+<span class="n">First</span> <span class="mi">64</span> <span class="n">values</span> <span class="n">are</span> <span class="n">features</span> <span class="ow">and</span> <span class="n">last</span> <span class="n">value</span> <span class="ow">is</span> <span class="n">label</span><span class="o">.</span>
+
+<span class="n">For</span> <span class="n">instance</span><span class="p">,</span> <span class="n">an</span> <span class="n">example</span> <span class="n">may</span> <span class="n">look</span> <span class="n">like</span> <span class="n">this</span><span class="p">:</span>
+
+<span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">16</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="mi">4</span>
+
+<span class="n">First</span> <span class="mi">64</span> <span class="n">values</span> <span class="n">are</span> <span class="n">features</span> <span class="ow">and</span> <span class="n">last</span> <span class="n">value</span> <span class="ow">is</span> <span class="n">the</span> <span class="n">label</span><span class="o">.</span>
+</pre></div>
+</div>
+<div class="section" id="feature-scaling-min-max-scaling">
+<h3>Feature Scaling (min-max scaling)<a class="headerlink" href="#feature-scaling-min-max-scaling" title="Permalink to this headline">¶</a></h3>
+<p>In Perceptron algorithm (or any algorithms in general) we get better accuracy
+if we rescaled our training examles. Here we adopt min-max scaling to scale each
+examples. We scale all the examples, that means training data, devel data and
+test data.</p>
+</div>
+<div class="section" id="use-one-vs-rest-method-create-binary-data-from-multiclass-data">
+<h3>Use one-vs-rest method create binary data from multiclass data<a class="headerlink" href="#use-one-vs-rest-method-create-binary-data-from-multiclass-data" title="Permalink to this headline">¶</a></h3>
+<p>Each example has 64 features and last value a number between 0-9.
+We first rescale first 64 features using min-max scaling so that each values
+are in between 0 to 1.</p>
+<p>Then we need to make the last value either 1 or -1. We use the one-vs-rest
+method and create 10 dataset from the single dataset. Here we have 10 classes,
+so there are 10 datafiles for each of the dataset: traning, devel, and test.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="hw07_qn2.html"
+                        title="previous chapter">Qn2: Text Classification</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="hw07_qn3b.html"
+                        title="next chapter">Qn 3.2 Linear, Polynomial and Gaussian Kernel Perceptron</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="hw07_qn3b.html" title="Qn 3.2 Linear, Polynomial and Gaussian Kernel Perceptron"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="hw07_qn2.html" title="Qn2: Text Classification"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Bhishan&#39;s 1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Bhishan Poudel.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.5.
+    </div>
+  </body>
+</html>

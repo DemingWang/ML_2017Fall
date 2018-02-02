@@ -1,0 +1,411 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>spam_exercise &#8212; Bhishan&#39;s 1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Bhishan&#39;s 1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for spam_exercise</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!python</span>
+<span class="c1"># -*- coding: utf-8 -*-#</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Spam Exercise (Qn 2)</span>
+
+<span class="sd">@author: Bhishan Poudel</span>
+
+<span class="sd">@date: Nov 14, 2017</span>
+
+<span class="sd">@email: bhishanpdl@gmail.com</span>
+
+<span class="sd">count lines: wc -l file.txt</span>
+<span class="sd">Get first char of lines of file: cut -c 1 file.txt | head</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="c1"># Imports</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">collections</span>
+
+<span class="kn">from</span> <span class="nn">perceptron</span> <span class="k">import</span> <span class="n">perceptron_train</span>
+<span class="kn">from</span> <span class="nn">perceptron</span> <span class="k">import</span> <span class="n">aperceptron_train</span>
+<span class="kn">from</span> <span class="nn">perceptron</span> <span class="k">import</span> <span class="n">perceptron_test</span>
+<span class="kn">from</span> <span class="nn">perceptron</span> <span class="k">import</span> <span class="n">read_examples</span>
+<span class="kn">from</span> <span class="nn">perceptron</span> <span class="k">import</span> <span class="n">confusion_matrix</span>
+
+<span class="kn">from</span> <span class="nn">perceptron</span> <span class="k">import</span> <span class="n">kperceptron_train</span>
+<span class="kn">from</span> <span class="nn">perceptron</span> <span class="k">import</span> <span class="n">quadratic_kernel</span>
+<span class="kn">from</span> <span class="nn">perceptron</span> <span class="k">import</span> <span class="n">kperceptron_test</span>
+
+
+<div class="viewcode-block" id="create_vocab"><a class="viewcode-back" href="../spam_exercise.html#spam_exercise.create_vocab">[docs]</a><span class="k">def</span> <span class="nf">create_vocab</span><span class="p">(</span><span class="n">fdata</span><span class="p">,</span><span class="n">min_freq</span><span class="p">,</span><span class="n">fvocab</span><span class="p">):</span>
+
+    <span class="c1"># count the words and frequencies</span>
+    <span class="n">wordcount</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">Counter</span><span class="p">()</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fdata</span><span class="p">)</span> <span class="k">as</span> <span class="n">fi</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">fi</span><span class="p">:</span>
+            <span class="n">wordcount</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span><span class="o">.</span><span class="n">split</span><span class="p">()))</span>
+
+    <span class="n">pairs</span> <span class="o">=</span> <span class="p">[(</span><span class="n">w</span><span class="p">,</span><span class="n">f</span><span class="p">)</span> <span class="k">for</span> <span class="n">w</span><span class="p">,</span><span class="n">f</span> <span class="ow">in</span> <span class="n">wordcount</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">f</span><span class="o">&gt;=</span><span class="n">min_freq</span> <span class="p">]</span>
+
+    <span class="c1"># do not include stopwords</span>
+    <span class="c1"># fstopwords = &#39;stopwords.txt&#39;</span>
+    <span class="c1"># stopwords = np.loadtxt(fstopwords,dtype=&#39;str&#39;)</span>
+    <span class="c1"># pairs = [(w,f) for w,f in wordcount.items() if f&gt;=min_freq if w not in stopwords]</span>
+
+    <span class="c1"># sort alphabetically</span>
+    <span class="n">pairs</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">pairs</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">word</span><span class="p">:</span> <span class="n">word</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="c1"># sort by number of occurrence</span>
+    <span class="c1"># pairs = sorted(pairs, key=lambda word: word[1], reverse=1)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;len(vocab) = </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pairs</span><span class="p">)))</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fvocab</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fo</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pairs</span><span class="p">)):</span>
+            <span class="n">fo</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> </span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">pairs</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]))</span></div>
+
+            <span class="c1"># write index token freq</span>
+            <span class="c1"># fo.write(&quot;{} {} {}\n&quot;.format(i+1,pairs[i][0], pairs[i][1]))</span>
+
+<div class="viewcode-block" id="create_sparse"><a class="viewcode-back" href="../spam_exercise.html#spam_exercise.create_sparse">[docs]</a><span class="k">def</span> <span class="nf">create_sparse</span><span class="p">(</span><span class="n">fdata</span><span class="p">,</span><span class="n">fvocab</span><span class="p">,</span><span class="n">fsparse</span><span class="p">):</span>
+    <span class="c1"># read index token freq</span>
+    <span class="c1"># idx,token,freq = np.genfromtxt(fvocab, dtype=str, unpack=True)</span>
+
+    <span class="c1"># read index and token</span>
+    <span class="n">idx</span><span class="p">,</span><span class="n">token</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="n">fvocab</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">unpack</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">token</span><span class="p">,</span><span class="n">idx</span><span class="p">))</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fdata</span><span class="p">)</span> <span class="k">as</span> <span class="n">fi</span><span class="p">,</span> \
+         <span class="nb">open</span><span class="p">(</span><span class="n">fsparse</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fo</span><span class="p">:</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">fi</span><span class="p">):</span>
+            <span class="n">nums</span> <span class="o">=</span> <span class="p">[</span> <span class="nb">int</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">w</span><span class="p">])</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">line</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">split</span><span class="p">()</span> <span class="k">if</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">token</span> <span class="p">]</span>
+            <span class="n">nums</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">nums</span><span class="p">)))</span>
+            <span class="n">nums</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">n</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;:1&quot;</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">nums</span> <span class="p">]</span>
+
+            <span class="n">sparse_line</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">nums</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Writing sparse matrix line: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+            <span class="n">fo</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">sparse_line</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="create_dense"><a class="viewcode-back" href="../spam_exercise.html#spam_exercise.create_dense">[docs]</a><span class="k">def</span> <span class="nf">create_dense</span><span class="p">(</span><span class="n">fsparse</span><span class="p">,</span> <span class="n">fvocab</span><span class="p">,</span> <span class="n">fdense</span><span class="p">):</span>
+    <span class="c1"># number of lines in vocab</span>
+    <span class="n">lvocab</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">open</span><span class="p">(</span><span class="n">fvocab</span><span class="p">))</span>
+
+    <span class="c1"># create dense file</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fsparse</span><span class="p">)</span> <span class="k">as</span> <span class="n">fi</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="n">fdense</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fo</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">fi</span><span class="p">):</span>
+            <span class="n">words</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)</span>
+            <span class="n">words</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">words</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+
+            <span class="n">label</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">words</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">indices</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">w</span><span class="p">)</span> <span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">w</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">words</span><span class="p">)</span> <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">%</span><span class="mi">2</span><span class="p">]</span>
+
+            <span class="n">row</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span> <span class="p">(</span><span class="n">lvocab</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">label</span>
+
+            <span class="c1"># fill row elements</span>
+            <span class="n">row</span> <span class="o">=</span> <span class="p">[</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">indices</span> <span class="k">else</span> <span class="n">row</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">row</span><span class="p">))]</span>
+
+            <span class="n">l</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span><span class="n">row</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">fo</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">l</span><span class="p">)</span>
+
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Writing dense matrix line: &#39;</span><span class="p">,</span> <span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span></div>
+            <span class="c1"># print(&quot;\nwords = {}&quot;.format(words))</span>
+            <span class="c1"># print(&quot;label = {}&quot;.format(label))</span>
+            <span class="c1"># print(&quot;idx   = {}&quot;.format(idx))</span>
+            <span class="c1"># print(&quot;row = {}&quot;.format(row))</span>
+
+<div class="viewcode-block" id="run_create_dense"><a class="viewcode-back" href="../spam_exercise.html#spam_exercise.run_create_dense">[docs]</a><span class="k">def</span> <span class="nf">run_create_dense</span><span class="p">(</span><span class="n">fdata_tr</span><span class="p">,</span><span class="n">fsparse_tr</span><span class="p">,</span><span class="n">fdense_tr</span><span class="p">,</span>
+                     <span class="n">fdata_ts</span><span class="p">,</span><span class="n">fsparse_ts</span><span class="p">,</span><span class="n">fdense_ts</span><span class="p">,</span><span class="n">fvocab</span><span class="p">,</span><span class="n">min_freq</span><span class="p">):</span>
+    <span class="c1"># create vocab from train</span>
+    <span class="n">create_vocab</span><span class="p">(</span><span class="n">fdata_tr</span><span class="p">,</span><span class="n">min_freq</span><span class="p">,</span> <span class="n">fvocab</span><span class="p">)</span>
+
+    <span class="c1"># train</span>
+    <span class="n">create_sparse</span><span class="p">(</span><span class="n">fdata_tr</span><span class="p">,</span> <span class="n">fvocab</span><span class="p">,</span><span class="n">fsparse_tr</span><span class="p">)</span>
+    <span class="n">create_dense</span><span class="p">(</span><span class="n">fsparse_tr</span><span class="p">,</span><span class="n">fvocab</span><span class="p">,</span> <span class="n">fdense_tr</span><span class="p">)</span>
+
+    <span class="c1"># test</span>
+    <span class="n">create_sparse</span><span class="p">(</span><span class="n">fdata_ts</span><span class="p">,</span><span class="n">fvocab</span><span class="p">,</span><span class="n">fsparse_ts</span><span class="p">)</span>
+    <span class="n">create_dense</span><span class="p">(</span><span class="n">fsparse_ts</span><span class="p">,</span> <span class="n">fvocab</span><span class="p">,</span> <span class="n">fdense_ts</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="run_perceptron"><a class="viewcode-back" href="../spam_exercise.html#spam_exercise.run_perceptron">[docs]</a><span class="k">def</span> <span class="nf">run_perceptron</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">Y_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">Y_test</span><span class="p">,</span> <span class="n">epochs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return: outputs/spam_model_p.txt</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="c1"># get params from x,y train</span>
+    <span class="n">w</span><span class="p">,</span> <span class="n">final_iter</span><span class="p">,</span> <span class="n">mistakes</span> <span class="o">=</span> <span class="n">perceptron_train</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">Y_train</span><span class="p">,</span> <span class="n">epochs</span><span class="p">,</span><span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    
+    <span class="c1"># predict for test</span>
+    <span class="n">y_pred</span> <span class="o">=</span> <span class="n">perceptron_test</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">X_test</span><span class="p">)</span>
+
+    <span class="c1"># get accuracy</span>
+    <span class="n">correct</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">y_pred</span> <span class="o">==</span> <span class="n">Y_test</span><span class="p">)</span>
+    <span class="n">acc</span>      <span class="o">=</span> <span class="n">correct</span><span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">y_pred</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span>
+    
+    <span class="c1"># get confusion matrix</span>
+    <span class="n">cm</span> <span class="o">=</span> <span class="n">confusion_matrix</span><span class="p">(</span><span class="n">Y_test</span><span class="p">,</span><span class="n">y_pred</span><span class="p">)</span>
+    <span class="n">TN</span><span class="p">,</span> <span class="n">FN</span><span class="p">,</span> <span class="n">FP</span><span class="p">,</span> <span class="n">TP</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+    
+    <span class="n">P</span> <span class="o">=</span> <span class="n">TP</span> <span class="o">+</span> <span class="n">FN</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="n">TN</span> <span class="o">+</span> <span class="n">FP</span>
+    
+    <span class="n">precision</span> <span class="o">=</span> <span class="n">TP</span> <span class="o">/</span> <span class="p">(</span><span class="n">TP</span> <span class="o">+</span> <span class="n">FP</span><span class="p">)</span>
+    <span class="n">recall</span>    <span class="o">=</span> <span class="n">TP</span> <span class="o">/</span> <span class="p">(</span><span class="n">TP</span> <span class="o">+</span> <span class="n">FN</span><span class="p">)</span>
+    
+    <span class="n">F1</span>        <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">precision</span> <span class="o">*</span> <span class="n">recall</span> <span class="o">/</span> <span class="p">(</span><span class="n">precision</span> <span class="o">+</span> <span class="n">recall</span><span class="p">)</span>
+    
+    <span class="n">accuracy</span>  <span class="o">=</span> <span class="p">(</span><span class="n">TP</span> <span class="o">+</span> <span class="n">TN</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="n">N</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;outputs/spam_model_p.txt&#39;</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fo</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Vanilla Perceptron Statistics&quot;</span><span class="p">,</span><span class="n">file</span><span class="o">=</span><span class="n">fo</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=============================&quot;</span><span class="p">,</span><span class="n">file</span><span class="o">=</span><span class="n">fo</span><span class="p">)</span>
+        
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Final iteration = </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">final_iter</span><span class="p">),</span> <span class="n">file</span><span class="o">=</span><span class="n">fo</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Total mistakes = </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mistakes</span><span class="p">),</span> <span class="n">file</span><span class="o">=</span><span class="n">fo</span><span class="p">)</span>
+        
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span><span class="n">file</span><span class="o">=</span><span class="n">fo</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Parameter w = </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">w</span><span class="p">),</span> <span class="n">file</span><span class="o">=</span><span class="n">fo</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Accuracy    = </span><span class="si">{:.2f}</span><span class="s2"> % (</span><span class="si">{}</span><span class="s2"> out of </span><span class="si">{}</span><span class="s2"> correct)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+              <span class="n">acc</span><span class="p">,</span> <span class="n">correct</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">y_pred</span><span class="p">)),</span> <span class="n">file</span><span class="o">=</span><span class="n">fo</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span><span class="n">file</span><span class="o">=</span><span class="n">fo</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;F1-score = </span><span class="si">{:.2f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">F1</span><span class="p">),</span><span class="n">file</span><span class="o">=</span><span class="n">fo</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Accuracy = </span><span class="si">{:.2f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">accuracy</span><span class="p">),</span><span class="n">file</span><span class="o">=</span><span class="n">fo</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Confusion matrix is given below&quot;</span><span class="p">,</span><span class="n">file</span><span class="o">=</span><span class="n">fo</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Diagonals are True values.&quot;</span><span class="p">,</span><span class="n">file</span><span class="o">=</span><span class="n">fo</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;       True_0 True_1&quot;</span><span class="p">,</span><span class="n">file</span><span class="o">=</span><span class="n">fo</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;       --------------&quot;</span><span class="p">,</span><span class="n">file</span><span class="o">=</span><span class="n">fo</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Pred_0| </span><span class="si">{}</span><span class="s2">      </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">TN</span><span class="p">,</span><span class="n">FN</span><span class="p">),</span><span class="n">file</span><span class="o">=</span><span class="n">fo</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Pred_1| </span><span class="si">{}</span><span class="s2">      </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">FP</span><span class="p">,</span><span class="n">TP</span><span class="p">),</span><span class="n">file</span><span class="o">=</span><span class="n">fo</span><span class="p">)</span></div>
+        
+<div class="viewcode-block" id="run_aperceptron"><a class="viewcode-back" href="../spam_exercise.html#spam_exercise.run_aperceptron">[docs]</a><span class="k">def</span> <span class="nf">run_aperceptron</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">Y_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">Y_test</span><span class="p">,</span> <span class="n">epochs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return: outputs/spam_model_ap.txt</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">w</span><span class="p">,</span> <span class="n">final_iter</span><span class="p">,</span><span class="n">mistakes</span> <span class="o">=</span> <span class="n">aperceptron_train</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">Y_train</span><span class="p">,</span> <span class="n">epochs</span><span class="p">)</span>
+
+    <span class="n">y_pred</span> <span class="o">=</span> <span class="n">perceptron_test</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">X_test</span><span class="p">)</span>
+    <span class="n">correct</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">y_pred</span> <span class="o">==</span> <span class="n">Y_test</span><span class="p">)</span>
+    <span class="n">acc</span>     <span class="o">=</span> <span class="n">correct</span><span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">y_pred</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span>
+
+    <span class="c1"># get confusion matrix</span>
+    <span class="n">cm</span> <span class="o">=</span> <span class="n">confusion_matrix</span><span class="p">(</span><span class="n">Y_test</span><span class="p">,</span><span class="n">y_pred</span><span class="p">)</span>
+    <span class="n">TN</span><span class="p">,</span> <span class="n">FN</span><span class="p">,</span> <span class="n">FP</span><span class="p">,</span> <span class="n">TP</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+    
+    <span class="n">P</span> <span class="o">=</span> <span class="n">TP</span> <span class="o">+</span> <span class="n">FN</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="n">TN</span> <span class="o">+</span> <span class="n">FP</span>
+    
+    <span class="n">precision</span> <span class="o">=</span> <span class="n">TP</span> <span class="o">/</span> <span class="p">(</span><span class="n">TP</span> <span class="o">+</span> <span class="n">FP</span><span class="p">)</span>
+    <span class="n">recall</span>    <span class="o">=</span> <span class="n">TP</span> <span class="o">/</span> <span class="p">(</span><span class="n">TP</span> <span class="o">+</span> <span class="n">FN</span><span class="p">)</span>
+    
+    <span class="n">F1</span>        <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">precision</span> <span class="o">*</span> <span class="n">recall</span> <span class="o">/</span> <span class="p">(</span><span class="n">precision</span> <span class="o">+</span> <span class="n">recall</span><span class="p">)</span>
+    
+    <span class="n">accuracy</span>  <span class="o">=</span> <span class="p">(</span><span class="n">TP</span> <span class="o">+</span> <span class="n">TN</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="n">N</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;outputs/spam_model_ap.txt&#39;</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fo</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Averaged Perceptron Statistics&quot;</span><span class="p">,</span><span class="n">file</span><span class="o">=</span><span class="n">fo</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=============================&quot;</span><span class="p">,</span><span class="n">file</span><span class="o">=</span><span class="n">fo</span><span class="p">)</span>
+        
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Final iteration = </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">final_iter</span><span class="p">),</span> <span class="n">file</span><span class="o">=</span><span class="n">fo</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Total mistakes = </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mistakes</span><span class="p">),</span> <span class="n">file</span><span class="o">=</span><span class="n">fo</span><span class="p">)</span>
+        
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span><span class="n">file</span><span class="o">=</span><span class="n">fo</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Parameter w = </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">w</span><span class="p">),</span> <span class="n">file</span><span class="o">=</span><span class="n">fo</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Accuracy    = </span><span class="si">{:.2f}</span><span class="s2"> % (</span><span class="si">{}</span><span class="s2"> out of </span><span class="si">{}</span><span class="s2"> correct)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+              <span class="n">acc</span><span class="p">,</span> <span class="n">correct</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">y_pred</span><span class="p">)),</span> <span class="n">file</span><span class="o">=</span><span class="n">fo</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span><span class="n">file</span><span class="o">=</span><span class="n">fo</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;F1-score = </span><span class="si">{:.2f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">F1</span><span class="p">),</span><span class="n">file</span><span class="o">=</span><span class="n">fo</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Accuracy = </span><span class="si">{:.2f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">accuracy</span><span class="p">),</span><span class="n">file</span><span class="o">=</span><span class="n">fo</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Confusion matrix is given below&quot;</span><span class="p">,</span><span class="n">file</span><span class="o">=</span><span class="n">fo</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Diagonals are True values.&quot;</span><span class="p">,</span><span class="n">file</span><span class="o">=</span><span class="n">fo</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;       True_0 True_1&quot;</span><span class="p">,</span><span class="n">file</span><span class="o">=</span><span class="n">fo</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;       --------------&quot;</span><span class="p">,</span><span class="n">file</span><span class="o">=</span><span class="n">fo</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Pred_0| </span><span class="si">{}</span><span class="s2">      </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">TN</span><span class="p">,</span><span class="n">FN</span><span class="p">),</span><span class="n">file</span><span class="o">=</span><span class="n">fo</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Pred_1| </span><span class="si">{}</span><span class="s2">      </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">FP</span><span class="p">,</span><span class="n">TP</span><span class="p">),</span><span class="n">file</span><span class="o">=</span><span class="n">fo</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="run_kperceptron"><a class="viewcode-back" href="../spam_exercise.html#spam_exercise.run_kperceptron">[docs]</a><span class="k">def</span> <span class="nf">run_kperceptron</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">Y_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">Y_test</span><span class="p">,</span> <span class="n">epochs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return: outputs/spam_model_kp.txt</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">kernel</span> <span class="o">=</span> <span class="n">quadratic_kernel</span>
+    <span class="n">alpha</span><span class="p">,</span> <span class="n">sv</span><span class="p">,</span> <span class="n">sv_y</span><span class="p">,</span><span class="n">final_iter</span><span class="p">,</span><span class="n">mistakes</span> <span class="o">=</span> <span class="n">kperceptron_train</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span><span class="n">Y_train</span><span class="p">,</span><span class="n">epochs</span><span class="p">,</span><span class="n">kernel</span><span class="p">,</span><span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">y_pred</span> <span class="o">=</span> <span class="n">kperceptron_test</span><span class="p">(</span><span class="n">X_test</span><span class="p">,</span><span class="n">kernel</span><span class="p">,</span><span class="n">alpha</span><span class="p">,</span><span class="n">sv</span><span class="p">,</span><span class="n">sv_y</span><span class="p">)</span>
+
+    <span class="n">correct</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">y_pred</span> <span class="o">==</span> <span class="n">Y_test</span><span class="p">)</span>
+    <span class="n">acc</span>     <span class="o">=</span> <span class="n">correct</span><span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">y_pred</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span>
+
+    <span class="c1"># get confusion matrix</span>
+    <span class="n">cm</span> <span class="o">=</span> <span class="n">confusion_matrix</span><span class="p">(</span><span class="n">Y_test</span><span class="p">,</span><span class="n">y_pred</span><span class="p">)</span>
+    <span class="n">TN</span><span class="p">,</span> <span class="n">FN</span><span class="p">,</span> <span class="n">FP</span><span class="p">,</span> <span class="n">TP</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+    
+    <span class="n">P</span> <span class="o">=</span> <span class="n">TP</span> <span class="o">+</span> <span class="n">FN</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="n">TN</span> <span class="o">+</span> <span class="n">FP</span>
+    
+    <span class="n">precision</span> <span class="o">=</span> <span class="n">TP</span> <span class="o">/</span> <span class="p">(</span><span class="n">TP</span> <span class="o">+</span> <span class="n">FP</span><span class="p">)</span>
+    <span class="n">recall</span>    <span class="o">=</span> <span class="n">TP</span> <span class="o">/</span> <span class="p">(</span><span class="n">TP</span> <span class="o">+</span> <span class="n">FN</span><span class="p">)</span>
+    
+    <span class="n">F1</span>        <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">precision</span> <span class="o">*</span> <span class="n">recall</span> <span class="o">/</span> <span class="p">(</span><span class="n">precision</span> <span class="o">+</span> <span class="n">recall</span><span class="p">)</span>
+    
+    <span class="n">accuracy</span>  <span class="o">=</span> <span class="p">(</span><span class="n">TP</span> <span class="o">+</span> <span class="n">TN</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="n">N</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;outputs/spam_model_kp.txt&#39;</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fo</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Kernel Perceptron Statistics&quot;</span><span class="p">,</span><span class="n">file</span><span class="o">=</span><span class="n">fo</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=============================&quot;</span><span class="p">,</span><span class="n">file</span><span class="o">=</span><span class="n">fo</span><span class="p">)</span>
+        
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Final iteration = </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">final_iter</span><span class="p">),</span> <span class="n">file</span><span class="o">=</span><span class="n">fo</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Total mistakes = </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mistakes</span><span class="p">),</span> <span class="n">file</span><span class="o">=</span><span class="n">fo</span><span class="p">)</span>
+        
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span><span class="n">file</span><span class="o">=</span><span class="n">fo</span><span class="p">)</span>
+        <span class="c1"># print(&quot;Parameter w = {}&quot;.format(w), file=fo) # there are alphas</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Accuracy    = </span><span class="si">{:.2f}</span><span class="s2"> % (</span><span class="si">{}</span><span class="s2"> out of </span><span class="si">{}</span><span class="s2"> correct)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+              <span class="n">acc</span><span class="p">,</span> <span class="n">correct</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">y_pred</span><span class="p">)),</span> <span class="n">file</span><span class="o">=</span><span class="n">fo</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span><span class="n">file</span><span class="o">=</span><span class="n">fo</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;F1-score = </span><span class="si">{:.2f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">F1</span><span class="p">),</span><span class="n">file</span><span class="o">=</span><span class="n">fo</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Accuracy = </span><span class="si">{:.2f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">accuracy</span><span class="p">),</span><span class="n">file</span><span class="o">=</span><span class="n">fo</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Confusion matrix is given below&quot;</span><span class="p">,</span><span class="n">file</span><span class="o">=</span><span class="n">fo</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Diagonals are True values.&quot;</span><span class="p">,</span><span class="n">file</span><span class="o">=</span><span class="n">fo</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;       True_0 True_1&quot;</span><span class="p">,</span><span class="n">file</span><span class="o">=</span><span class="n">fo</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;       --------------&quot;</span><span class="p">,</span><span class="n">file</span><span class="o">=</span><span class="n">fo</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Pred_0| </span><span class="si">{}</span><span class="s2">      </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">TN</span><span class="p">,</span><span class="n">FN</span><span class="p">),</span><span class="n">file</span><span class="o">=</span><span class="n">fo</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Pred_1| </span><span class="si">{}</span><span class="s2">      </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">FP</span><span class="p">,</span><span class="n">TP</span><span class="p">),</span><span class="n">file</span><span class="o">=</span><span class="n">fo</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../spam_exercise.html#spam_exercise.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="c1"># original data</span>
+    <span class="n">idir</span>       <span class="o">=</span> <span class="s1">&#39;../data/spam/&#39;</span>
+    <span class="n">odir</span>       <span class="o">=</span> <span class="s1">&#39;outputs/&#39;</span>
+    <span class="n">fdata_tr</span>   <span class="o">=</span> <span class="n">idir</span> <span class="o">+</span> <span class="s1">&#39;spam_train.txt&#39;</span>
+    <span class="n">fdata_ts</span>   <span class="o">=</span> <span class="n">idir</span> <span class="o">+</span> <span class="s1">&#39;spam_test.txt&#39;</span>
+
+    <span class="c1"># sparse data</span>
+    <span class="n">fsparse_tr</span> <span class="o">=</span> <span class="n">odir</span> <span class="o">+</span> <span class="s1">&#39;spam_train_svm.txt&#39;</span>
+    <span class="n">fsparse_ts</span> <span class="o">=</span> <span class="n">odir</span> <span class="o">+</span> <span class="s1">&#39;spam_test_svm.txt&#39;</span>
+
+    <span class="c1"># feature matrix (vocab) ONLY FROM TRAIN!!!</span>
+    <span class="n">fvocab</span>     <span class="o">=</span> <span class="n">odir</span> <span class="o">+</span> <span class="s2">&quot;spam_vocab.txt&quot;</span>
+
+    <span class="c1"># dense data (input for perceptron)</span>
+    <span class="n">fdense_tr</span>  <span class="o">=</span> <span class="n">odir</span> <span class="o">+</span> <span class="s1">&#39;spam_train_dense.txt&#39;</span>
+    <span class="n">fdense_ts</span>  <span class="o">=</span> <span class="n">odir</span> <span class="o">+</span> <span class="s1">&#39;spam_test_dense.txt&#39;</span>
+
+    <span class="c1"># min freq to create vocab</span>
+    <span class="n">min_freq</span>   <span class="o">=</span> <span class="mi">30</span>
+
+    <span class="c1"># variables for perceptron</span>
+    <span class="n">epochs</span> <span class="o">=</span> <span class="mi">200</span>
+
+    <span class="c1"># data processing</span>
+    <span class="n">run_create_dense</span><span class="p">(</span><span class="n">fdata_tr</span><span class="p">,</span><span class="n">fsparse_tr</span><span class="p">,</span><span class="n">fdense_tr</span><span class="p">,</span><span class="n">fdata_ts</span><span class="p">,</span><span class="n">fsparse_ts</span><span class="p">,</span><span class="n">fdense_ts</span><span class="p">,</span><span class="n">fvocab</span><span class="p">,</span><span class="n">min_freq</span><span class="p">)</span>
+
+    <span class="c1"># read data</span>
+    <span class="n">X_train</span><span class="p">,</span> <span class="n">Y_train</span> <span class="o">=</span> <span class="n">read_examples</span><span class="p">(</span><span class="n">fdense_tr</span><span class="p">)</span>
+    <span class="n">X_test</span><span class="p">,</span>  <span class="n">Y_test</span> <span class="o">=</span> <span class="n">read_examples</span><span class="p">(</span><span class="n">fdense_ts</span><span class="p">)</span>
+    
+    <span class="c1"># run perceptron</span>
+    <span class="n">run_perceptron</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">Y_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">Y_test</span><span class="p">,</span> <span class="n">epochs</span><span class="p">)</span>
+    <span class="n">run_aperceptron</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">Y_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">Y_test</span><span class="p">,</span> <span class="n">epochs</span><span class="p">)</span>
+    <span class="n">run_kperceptron</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">Y_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">Y_test</span><span class="p">,</span> <span class="n">epochs</span><span class="p">)</span></div>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">time</span>
+
+    <span class="c1"># Beginning time</span>
+    <span class="n">program_begin_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">begin_ctime</span>        <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">ctime</span><span class="p">()</span>
+
+    <span class="c1"># Run the main program</span>
+    <span class="n">main</span><span class="p">()</span>
+
+    <span class="c1"># Print the time taken</span>
+    <span class="n">program_end_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">end_ctime</span>        <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">ctime</span><span class="p">()</span>
+    <span class="n">seconds</span>          <span class="o">=</span> <span class="n">program_end_time</span> <span class="o">-</span> <span class="n">program_begin_time</span>
+    <span class="n">m</span><span class="p">,</span> <span class="n">s</span>             <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">seconds</span><span class="p">,</span> <span class="mi">60</span><span class="p">)</span>
+    <span class="n">h</span><span class="p">,</span> <span class="n">m</span>             <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="mi">60</span><span class="p">)</span>
+    <span class="n">d</span><span class="p">,</span> <span class="n">h</span>             <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="mi">24</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Begin time: &quot;</span><span class="p">,</span> <span class="n">begin_ctime</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;End   time: &quot;</span><span class="p">,</span> <span class="n">end_ctime</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Time taken: </span><span class="si">{0: .0f}</span><span class="s2"> days, </span><span class="si">{1: .0f}</span><span class="s2"> hours, </span><span class="se">\</span>
+<span class="s2">      </span><span class="si">{2: .0f}</span><span class="s2"> minutes, </span><span class="si">{3: f}</span><span class="s2"> seconds.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">s</span><span class="p">))</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Bhishan&#39;s 1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Bhishan Poudel.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
+    </div>
+  </body>
+</html>

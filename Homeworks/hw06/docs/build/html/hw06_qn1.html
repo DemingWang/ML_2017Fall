@@ -1,0 +1,195 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Qn1 :Various Perceptron Algorithms (Vanilla, Averaged, and Kernel) &#8212; Bhishan&#39;s 1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/sidebar.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Qn 2: Spam vs. Non-Spam" href="hw06_qn2.html" />
+    <link rel="prev" title="Homework 6" href="hw.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="hw06_qn2.html" title="Qn 2: Spam vs. Non-Spam"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="hw.html" title="Homework 6"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Bhishan&#39;s 1 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="qn1-various-perceptron-algorithms-vanilla-averaged-and-kernel">
+<h1>Qn1 :Various Perceptron Algorithms (Vanilla, Averaged, and Kernel)<a class="headerlink" href="#qn1-various-perceptron-algorithms-vanilla-averaged-and-kernel" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="part-1-previous-homework-5-question-5a">
+<h2>Part 1: Previous homework 5 question 5a<a class="headerlink" href="#part-1-previous-homework-5-question-5a" title="Permalink to this headline">¶</a></h2>
+<p>For 5(a), we showed that the perceptron algorithm
+hits the same weight vector at different epochs during training and thus it will run
+forever.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>epoch: <span class="m">2</span> ----------------------------------------
+<span class="m">2</span>-0: misclassified? y  w: <span class="o">[</span> <span class="m">1</span>.  -1.5  <span class="m">1</span>.   <span class="m">1</span>.5<span class="o">]</span>
+<span class="m">2</span>-1: misclassified? n  w: <span class="o">[</span> <span class="m">1</span>.  -1.5  <span class="m">1</span>.   <span class="m">1</span>.5<span class="o">]</span>
+<span class="m">2</span>-2: misclassified? y  w: <span class="o">[</span> <span class="m">2</span>.  <span class="m">0</span>.  <span class="m">1</span>.  <span class="m">0</span>.<span class="o">]</span>
+<span class="m">2</span>-3: misclassified? n  w: <span class="o">[</span> <span class="m">2</span>.  <span class="m">0</span>.  <span class="m">1</span>.  <span class="m">0</span>.<span class="o">]</span>
+<span class="m">2</span>-4: misclassified? y  w: <span class="o">[</span> <span class="m">1</span>.  -1.5  <span class="m">1</span>.   <span class="m">0</span>. <span class="o">]</span>
+<span class="m">2</span>-5: misclassified? n  w: <span class="o">[</span> <span class="m">1</span>.  -1.5  <span class="m">1</span>.   <span class="m">0</span>. <span class="o">]</span>
+<span class="m">2</span>-6: misclassified? y  w: <span class="o">[</span> <span class="m">0</span>.  -1.5  <span class="m">1</span>.   <span class="m">1</span>.5<span class="o">]</span>
+<span class="m">2</span>-7: misclassified? n  w: <span class="o">[</span> <span class="m">0</span>.  -1.5  <span class="m">1</span>.   <span class="m">1</span>.5<span class="o">]</span>
+
+
+epoch: <span class="m">3</span> ----------------------------------------
+<span class="m">3</span>-0: misclassified? y  w: <span class="o">[</span> <span class="m">1</span>.  -1.5  <span class="m">1</span>.   <span class="m">1</span>.5<span class="o">]</span>
+<span class="m">3</span>-1: misclassified? n  w: <span class="o">[</span> <span class="m">1</span>.  -1.5  <span class="m">1</span>.   <span class="m">1</span>.5<span class="o">]</span>
+<span class="m">3</span>-2: misclassified? y  w: <span class="o">[</span> <span class="m">2</span>.  <span class="m">0</span>.  <span class="m">1</span>.  <span class="m">0</span>.<span class="o">]</span>
+<span class="m">3</span>-3: misclassified? n  w: <span class="o">[</span> <span class="m">2</span>.  <span class="m">0</span>.  <span class="m">1</span>.  <span class="m">0</span>.<span class="o">]</span>
+<span class="m">3</span>-4: misclassified? y  w: <span class="o">[</span> <span class="m">1</span>.  -1.5  <span class="m">1</span>.   <span class="m">0</span>. <span class="o">]</span>
+<span class="m">3</span>-5: misclassified? n  w: <span class="o">[</span> <span class="m">1</span>.  -1.5  <span class="m">1</span>.   <span class="m">0</span>. <span class="o">]</span>
+<span class="m">3</span>-6: misclassified? y  w: <span class="o">[</span> <span class="m">0</span>.  -1.5  <span class="m">1</span>.   <span class="m">1</span>.5<span class="o">]</span>
+<span class="m">3</span>-7: misclassified? n  w: <span class="o">[</span> <span class="m">0</span>.  -1.5  <span class="m">1</span>.   <span class="m">1</span>.5<span class="o">]</span>
+</pre></div>
+</div>
+<p>Here, after epoch 2, all the epochs have the same weight vectors and the
+perceptron will never converge on this dataset.</p>
+</div>
+<div class="section" id="part-2-previous-homework-5-question-5b">
+<h2>Part 2: Previous homework 5 question 5b<a class="headerlink" href="#part-2-previous-homework-5-question-5b" title="Permalink to this headline">¶</a></h2>
+<p>Here, for the dataset in homework 5 <cite>../data/ex5/ex5.txt</cite>
+we used kernel perceptron to classifity that non-linearly separable data.</p>
+<p>After running kernel perceptorn with quadratic kernel, we found that
+the total number of epoches need to be run before convergece is.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>Kernel Perceptron converged after: <span class="m">4</span> iterations
+<span class="nv">alpha</span> <span class="o">=</span> <span class="o">[</span> <span class="m">4</span>.  <span class="m">1</span>.  <span class="m">2</span>.  <span class="m">3</span>.  <span class="m">3</span>.<span class="o">]</span>
+Kernel Perceptron <span class="nv">Accuracy</span> <span class="o">=</span> <span class="m">100</span>.00 % <span class="o">(</span><span class="m">8</span> out of <span class="m">8</span> correct<span class="o">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="part-3-vanilla-averaged-and-kernel-perceptrons">
+<h2>Part 3: Vanilla, Averaged, and Kernel Perceptrons<a class="headerlink" href="#part-3-vanilla-averaged-and-kernel-perceptrons" title="Permalink to this headline">¶</a></h2>
+<p>In the file <cite>exercise5.py</cite> I completed following functions:</p>
+<blockquote>
+<div><p>(a) perceptron train(data, labels, epochs) trains the vanilla perceptron algorithm
+and returns the weight vector.</p>
+<p>(b) aperceptron train(data, labels, epochs) trains the average perceptron algorithm
+and returns the average weight vector.</p>
+<p>(c) perceptron test(w, data) test a perceptron with weights w and returns a vector
+with the labels on the test examples in data.</p>
+<p>(d) kperceptron train(data, labels, epochs, kernel) trains the kernel perceptron
+algorithm and returns the vector α of parameters.</p>
+<p>(e) kperceptron test(alpha, data, kernel) tests the kernel perceptron algorithm
+with parameters alpha and returns a vector with the labels on the test examples
+in data.</p>
+</div></blockquote>
+<p>The vanilla perceptron algorithm used is as follows:</p>
+<img alt="_images/perceptron_alg.png" src="_images/perceptron_alg.png" />
+<p>For the averaged perceptron, I used the algorithm from Daume book,</p>
+<img alt="_images/aperceptron_alg.png" src="_images/aperceptron_alg.png" />
+<p>For kernel perceptron, I first created the Gram matrix and then implemented
+the algorithm.</p>
+<img alt="_images/kperceptron_alg.png" src="_images/kperceptron_alg.png" />
+<img alt="_images/kperceptron_bp.png" src="_images/kperceptron_bp.png" />
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Qn1 :Various Perceptron Algorithms (Vanilla, Averaged, and Kernel)</a><ul>
+<li><a class="reference internal" href="#part-1-previous-homework-5-question-5a">Part 1: Previous homework 5 question 5a</a></li>
+<li><a class="reference internal" href="#part-2-previous-homework-5-question-5b">Part 2: Previous homework 5 question 5b</a></li>
+<li><a class="reference internal" href="#part-3-vanilla-averaged-and-kernel-perceptrons">Part 3: Vanilla, Averaged, and Kernel Perceptrons</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="hw.html"
+                        title="previous chapter">Homework 6</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="hw06_qn2.html"
+                        title="next chapter">Qn 2: Spam vs. Non-Spam</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/hw06_qn1.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="hw06_qn2.html" title="Qn 2: Spam vs. Non-Spam"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="hw.html" title="Homework 6"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Bhishan&#39;s 1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Bhishan Poudel.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
+    </div>
+  </body>
+</html>

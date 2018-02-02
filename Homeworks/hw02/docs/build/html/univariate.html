@@ -1,0 +1,297 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>univariate &#8212; Bhishan&#39;s 1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/sidebar.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="multivariate" href="multivariate.html" />
+    <link rel="prev" title="scaling" href="scaling.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="multivariate.html" title="multivariate"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="scaling.html" title="scaling"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Bhishan&#39;s 1 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-univariate">
+<span id="univariate"></span><h1>univariate<a class="headerlink" href="#module-univariate" title="Permalink to this headline">¶</a></h1>
+<p>Univariate Linear Regression using Batch Gradient Descent</p>
+<p>&#64;author: Bhishan Poudel</p>
+<p>&#64;date: Oct 3, 2017</p>
+<p>&#64;email: <a class="reference external" href="mailto:bhishanpdl&#37;&#52;&#48;gmail&#46;com">bhishanpdl<span>&#64;</span>gmail<span>&#46;</span>com</a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Outputs:</th><td class="field-body"><ul class="first last simple">
+<li>../images/univ_BGD.png</li>
+<li>../images/univ_cost_history_BGD.png</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="function">
+<dt id="univariate.compute_cost">
+<code class="descclassname">univariate.</code><code class="descname">compute_cost</code><span class="sig-paren">(</span><em>X1</em>, <em>t</em>, <em>w</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/univariate.html#compute_cost"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#univariate.compute_cost" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the cost function.</p>
+<div class="math">
+<p><img src="_images/math/c166e39f32e3f38d2695dc8931d676678f0acd2c.png" alt="J = \frac{1}{2n} \sum_{i=1}^{n}  \frac{(h - t)^2}{n}"/></p>
+</div></dd></dl>
+
+<dl class="function">
+<dt id="univariate.compute_gradient">
+<code class="descclassname">univariate.</code><code class="descname">compute_gradient</code><span class="sig-paren">(</span><em>X1</em>, <em>t</em>, <em>w</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/univariate.html#compute_gradient"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#univariate.compute_gradient" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the gradient of cost function w.r.t. feature vector w.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>X1</strong> (<em>matrix</em>) &#8211; Design matrix with bias term (shape = N, M+1, e.g. 50, 2)</li>
+<li><strong>t</strong> (<em>column vector</em>) &#8211; Target column vector (shape = N, 1 e.g. 50, 1)</li>
+<li><strong>w</strong> (<em>row vector</em>) &#8211; Feature row vector (shape = 1, M+1 e.g. 1,2)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Gradient row vector (shape = 1, M+1, same as shape of w)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">grad (row vector)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="univariate.compute_rmse">
+<code class="descclassname">univariate.</code><code class="descname">compute_rmse</code><span class="sig-paren">(</span><em>X1</em>, <em>t</em>, <em>w</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/univariate.html#compute_rmse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#univariate.compute_rmse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute RMSE.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>X1</strong> (<em>matrix</em>) &#8211; Design matrix with bias vector. Shape is N, M+1 e.g. 50, 2</li>
+<li><strong>t</strong> (<em>column vector</em>) &#8211; Target vector. Shape is N, 1 e.g. 50, 1</li>
+<li><strong>w</strong> (<em>row vector</em>) &#8211; Feature vector. Has dimension 1, M+1 e.g. 1,2</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="univariate.create_gif">
+<code class="descclassname">univariate.</code><code class="descname">create_gif</code><span class="sig-paren">(</span><em>X1train</em>, <em>ttrain</em>, <em>X1test</em>, <em>ttest</em>, <em>w</em>, <em>epochs</em>, <em>cost</em>, <em>learning_rate</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/univariate.html#create_gif"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#univariate.create_gif" title="Permalink to this definition">¶</a></dt>
+<dd><p>We create 70 png files and use ImageMagick command to create gif.</p>
+<p><code class="docutils literal"><span class="pre">`convert</span> <span class="pre">-loop</span> <span class="pre">0</span> <span class="pre">-delay</span> <span class="pre">100</span> <span class="pre">test/test*.png</span> <span class="pre">cost_history.gif`</span></code></p>
+<p>In this case Cost function J does not decreases after 70 epochs, so I
+create only 70 png files.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="univariate.main">
+<code class="descclassname">univariate.</code><code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/univariate.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#univariate.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run main function.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="univariate.plot_cost_history">
+<code class="descclassname">univariate.</code><code class="descname">plot_cost_history</code><span class="sig-paren">(</span><em>X1</em>, <em>t</em>, <em>epochs</em>, <em>step</em>, <em>learning_rate</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/univariate.html#plot_cost_history"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#univariate.plot_cost_history" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="univariate.plot_test_only">
+<code class="descclassname">univariate.</code><code class="descname">plot_test_only</code><span class="sig-paren">(</span><em>X1train</em>, <em>ttrain</em>, <em>X1test</em>, <em>ttest</em>, <em>w</em>, <em>epochs</em>, <em>cost</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/univariate.html#plot_test_only"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#univariate.plot_test_only" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create png files to fit test data.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="univariate.plot_train_test">
+<code class="descclassname">univariate.</code><code class="descname">plot_train_test</code><span class="sig-paren">(</span><em>X1train</em>, <em>ttrain</em>, <em>X1test</em>, <em>ttest</em>, <em>w_bgd</em>, <em>w_sgd</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/univariate.html#plot_train_test"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#univariate.plot_train_test" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="univariate.print_train_outputs">
+<code class="descclassname">univariate.</code><code class="descname">print_train_outputs</code><span class="sig-paren">(</span><em>epochs</em>, <em>learning_rate</em>, <em>mean_train</em>, <em>std_train</em>, <em>w</em>, <em>rmse</em>, <em>cost</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/univariate.html#print_train_outputs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#univariate.print_train_outputs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Note: in vectorized method w[1] is replaced by w[0][1] and so on</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="univariate.read_data">
+<code class="descclassname">univariate.</code><code class="descname">read_data</code><span class="sig-paren">(</span><em>file_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/univariate.html#read_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#univariate.read_data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="univariate.train_BGD">
+<code class="descclassname">univariate.</code><code class="descname">train_BGD</code><span class="sig-paren">(</span><em>X1</em>, <em>t</em>, <em>learning_rate</em>, <em>iters</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/univariate.html#train_BGD"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#univariate.train_BGD" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the feature vector w.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>X1</strong> (<em>matrix</em>) &#8211; Design matrix with bias column.</li>
+<li><strong>t</strong> (<em>column vector</em>) &#8211; Target vector of shape N * 1.</li>
+<li><strong>learning_rate</strong> (<em>float</em>) &#8211; Learning Rate</li>
+<li><strong>iters</strong> (<em>int</em>) &#8211; Maximum number of iterations to perform.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="univariate.train_SGD">
+<code class="descclassname">univariate.</code><code class="descname">train_SGD</code><span class="sig-paren">(</span><em>X</em>, <em>t</em>, <em>learning_rate</em>, <em>iters</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/univariate.html#train_SGD"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#univariate.train_SGD" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate weight vector Stochastic Grad Desc.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Note that X should be normalized before running batch grad descent.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>X</strong> (<em>matrix</em>) &#8211; Normalized Design matrix with bias term.</li>
+<li><strong>t</strong> (<em>column vector</em>) &#8211; Normalized Target column vector (shape = 1, samples)</li>
+<li><strong>learning_rate</strong> (<em>float</em>) &#8211; Learning rate for gradient descent algorithm.</li>
+<li><strong>iters</strong> (<em>int</em>) &#8211; Number of iterations.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="univariate.train_norm_eqn">
+<code class="descclassname">univariate.</code><code class="descname">train_norm_eqn</code><span class="sig-paren">(</span><em>X1</em>, <em>t</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/univariate.html#train_norm_eqn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#univariate.train_norm_eqn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Train the data and return the weights w.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>X1</strong> (<em>array</em>) &#8211; Design matrix of size (m+1, n). I.e. There are
+m features and one bias column in the matrix X1.</li>
+<li><strong>t</strong> (<em>column</em>) &#8211; target column vector</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Weight or feature vector.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">w(row vector)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="scaling.html"
+                        title="previous chapter">scaling</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="multivariate.html"
+                        title="next chapter">multivariate</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/univariate.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="multivariate.html" title="multivariate"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="scaling.html" title="scaling"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Bhishan&#39;s 1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Bhishan Poudel.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
+    </div>
+  </body>
+</html>

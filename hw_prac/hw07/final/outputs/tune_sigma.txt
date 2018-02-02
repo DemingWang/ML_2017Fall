@@ -1,0 +1,7 @@
+Tuning Kernel parameter sigma
+sigma 0.1: accuracy = 10.70
+sigma 0.5: accuracy = 9.40
+sigma 2: accuracy = 10.20
+sigma 5: accuracy = 10.70
+sigma 10: accuracy = 22.20
+tuned sigma = 10

@@ -1,0 +1,296 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>minibatch_softmax &#8212; Bhishan&#39;s 1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Bhishan&#39;s 1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for minibatch_softmax</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!python</span>
+<span class="c1"># -*- coding: utf-8 -*-#</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Softmax Regression Using Scipy.</span>
+
+<span class="sd">@author: Bhishan Poudel</span>
+
+<span class="sd">@date:  Oct 16, 2017</span>
+
+<span class="sd">@email: bhishanpdl@gmail.com</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="c1"># Imports</span>
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">numpy.random</span> <span class="k">import</span> <span class="n">randn</span><span class="p">,</span> <span class="n">randint</span>
+<span class="kn">from</span> <span class="nn">numpy.linalg</span> <span class="k">import</span> <span class="n">norm</span>
+<span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="k">import</span> <span class="n">fmin_l_bfgs_b</span>
+<span class="kn">import</span> <span class="nn">scipy</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="k">import</span> <span class="n">tqdm</span>
+
+<span class="kn">from</span> <span class="nn">softmax</span> <span class="k">import</span> <span class="n">softmaxCost</span><span class="p">,</span> <span class="n">softmaxPredict</span><span class="p">,</span> <span class="n">softmaxGrad</span>
+<span class="kn">from</span> <span class="nn">computeNumericalGradient</span> <span class="k">import</span> <span class="n">computeNumericalGradient</span>
+<span class="kn">from</span> <span class="nn">checkNumericalGradient</span> <span class="k">import</span> <span class="n">checkNumericalGradient</span>
+
+<div class="viewcode-block" id="parse_args"><a class="viewcode-back" href="../minibatch_softmax.html#minibatch_softmax.parse_args">[docs]</a><span class="k">def</span> <span class="nf">parse_args</span><span class="p">():</span>
+    <span class="c1"># Argument parser</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="s1">&#39;Softmax Exercise.&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Add a argument</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-i&#39;</span><span class="p">,</span> <span class="s1">&#39;--input_data_dir&#39;</span><span class="p">,</span>
+                        <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+                        <span class="n">default</span><span class="o">=</span><span class="s1">&#39;../../data/mnist/&#39;</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Directory to put the input MNIST data.&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Add another argument</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-d&#39;</span><span class="p">,</span> <span class="s1">&#39;--debug&#39;</span><span class="p">,</span>
+                        <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Used for gradient checking.&#39;</span><span class="p">)</span>
+
+    <span class="n">FLAGS</span><span class="p">,</span> <span class="n">unparsed</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_known_args</span><span class="p">()</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;FLAGS.input_data_dir = </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">FLAGS</span><span class="o">.</span><span class="n">input_data_dir</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;FLAGS.debug = </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">FLAGS</span><span class="o">.</span><span class="n">debug</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">FLAGS</span></div>
+
+<div class="viewcode-block" id="shuffle_and_split"><a class="viewcode-back" href="../minibatch_softmax.html#minibatch_softmax.shuffle_and_split">[docs]</a><span class="k">def</span> <span class="nf">shuffle_and_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">chunk_size</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Shuffle and split the given data and labels.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    -------------</span>
+<span class="sd">    </span>
+<span class="sd">    X: input matrix of shape N * M (with N samples and M features)</span>
+<span class="sd">    </span>
+<span class="sd">    y: Target (1d array)</span>
+<span class="sd">    </span>
+<span class="sd">    chunk_size: size of each chunks in the splits </span>
+<span class="sd">         </span>
+<span class="sd">     &quot;&quot;&quot;</span>
+    
+    
+    <span class="c1"># X is design matrix (rows are examples), t is 1d array</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">),</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">num_splits</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="n">chunk_size</span><span class="p">)</span>
+    
+    <span class="c1"># debug</span>
+    <span class="c1"># print(&quot;\n\nInside shuffle&quot;)</span>
+    <span class="c1"># print(&quot;batchsize = {}&quot;.format(batchsize))</span>
+    <span class="c1"># print(&quot;num_splits = {}&quot;.format(num_splits))</span>
+    <span class="c1"># print(&quot;images.shape = {}&quot;.format(images.shape)) # (784, 55000)</span>
+    <span class="c1"># print(&quot;labels.shape = {}&quot;.format(labels.shape)) # (55000,)</span>
+    
+    
+    <span class="c1"># shuffle data</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+    <span class="n">perm_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">permutation</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">X2</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">perm_idx</span><span class="p">]</span>
+    <span class="n">y2</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="n">perm_idx</span><span class="p">]</span>
+    
+    <span class="c1"># After shuffling split the data</span>
+    <span class="n">data2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">X2</span><span class="p">,</span><span class="n">y2</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>    
+    <span class="n">batches</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array_split</span><span class="p">(</span><span class="n">data2</span><span class="p">,</span> <span class="n">num_splits</span><span class="p">)</span>
+    
+    <span class="c1"># debug</span>
+    <span class="c1"># print(&quot;len(batches) = {}&quot;.format(len(batches)))</span>
+    <span class="c1"># print(&quot;data2.shape = {}&quot;.format(data2.shape))</span>
+    
+    <span class="c1"># Again split into X, and y</span>
+    <span class="c1"># X = chunks[0][:,:-1]  # 2d array with each row is an example</span>
+    <span class="c1"># y = chunks[0][:,-1]   # 1d array (not column vector [:,-1:])</span>
+    <span class="c1"># print(&quot;X = {}&quot;.format(X))</span>
+    <span class="c1"># print(&quot;y = {}&quot;.format(y))</span>
+    
+    <span class="k">return</span> <span class="n">batches</span></div>
+    
+<div class="viewcode-block" id="softmax_scipy"><a class="viewcode-back" href="../minibatch_softmax.html#minibatch_softmax.softmax_scipy">[docs]</a><span class="k">def</span> <span class="nf">softmax_scipy</span><span class="p">():</span>
+
+    <span class="n">FLAGS</span> <span class="o">=</span> <span class="n">parse_args</span><span class="p">()</span>
+
+    <span class="c1"># Initiliaze values</span>
+    <span class="n">inputSize</span> <span class="o">=</span> <span class="mi">28</span> <span class="o">*</span> <span class="mi">28</span> <span class="c1"># Size of input vector (MNIST images are 28x28)</span>
+    <span class="n">numClasses</span> <span class="o">=</span> <span class="mi">10</span>     <span class="c1"># Number of classes (MNIST images fall into 10 classes)</span>
+    <span class="n">decay</span> <span class="o">=</span> <span class="mf">1e-4</span>        <span class="c1"># Weight decay parameter</span>
+
+    <span class="c1"># Load training data</span>
+    <span class="n">images</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">FLAGS</span><span class="o">.</span><span class="n">input_data_dir</span> <span class="o">+</span> <span class="s1">&#39;train-images.npy&#39;</span><span class="p">)</span>
+    <span class="n">labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">FLAGS</span><span class="o">.</span><span class="n">input_data_dir</span> <span class="o">+</span> <span class="s1">&#39;train-labels.npy&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2"> For MNIST train data&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;images.shape = </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">images</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span> <span class="c1"># (784, 55000)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;labels.shape = </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">labels</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span> <span class="c1"># (55000,)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># -------------------------------------------------------</span>
+    <span class="c1"># Create data for debugging</span>
+    <span class="k">if</span> <span class="n">FLAGS</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
+        <span class="n">inputSize</span> <span class="o">=</span> <span class="mi">8</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+        <span class="n">images</span> <span class="o">=</span> <span class="n">randn</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+
+    <span class="c1"># Randomly initialise theta (theta is 1d array)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+    <span class="n">theta</span> <span class="o">=</span> <span class="mf">0.005</span> <span class="o">*</span> <span class="n">randn</span><span class="p">(</span><span class="n">numClasses</span> <span class="o">*</span> <span class="n">inputSize</span><span class="p">)</span>
+
+    <span class="c1"># Get cost and grad</span>
+    <span class="n">cost</span><span class="p">,</span> <span class="n">grad</span> <span class="o">=</span> <span class="n">softmaxCost</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">numClasses</span><span class="p">,</span> <span class="n">inputSize</span><span class="p">,</span> <span class="n">decay</span><span class="p">,</span> <span class="n">images</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span>
+
+
+    <span class="c1"># ---------------- debug: Gradient Checking Start ------------------------</span>
+    <span class="k">if</span> <span class="n">FLAGS</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
+        <span class="n">checkNumericalGradient</span><span class="p">()</span>
+
+        <span class="n">numGrad</span> <span class="o">=</span> <span class="n">computeNumericalGradient</span><span class="p">(</span>
+                    <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">softmaxCost</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">numClasses</span><span class="p">,</span> <span class="n">inputSize</span><span class="p">,</span> <span class="n">decay</span><span class="p">,</span> <span class="n">images</span><span class="p">,</span> <span class="n">labels</span><span class="p">),</span>
+                    <span class="n">theta</span>
+                    <span class="p">)</span>
+
+        <span class="c1"># Use this to visually compare the gradients side by side.</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">((</span><span class="n">numGrad</span><span class="p">,</span> <span class="n">grad</span><span class="p">))</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+
+
+        <span class="c1"># Compare numerically computed gradients with those computed analytically.</span>
+        <span class="n">diff</span> <span class="o">=</span> <span class="n">norm</span><span class="p">(</span><span class="n">numGrad</span> <span class="o">-</span> <span class="n">grad</span><span class="p">)</span> <span class="o">/</span> <span class="n">norm</span><span class="p">(</span><span class="n">numGrad</span> <span class="o">+</span> <span class="n">grad</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">diff</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="c1"># ---------------- debug: Gradient Checking End ------------------------</span>
+    <span class="n">max_iters</span> <span class="o">=</span> <span class="mi">2000</span>
+    <span class="n">eta</span>       <span class="o">=</span> <span class="mf">0.1</span>
+    <span class="n">batchsize</span> <span class="o">=</span> <span class="mi">100</span>
+    <span class="n">batches</span>   <span class="o">=</span> <span class="n">shuffle_and_split</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">batchsize</span><span class="p">)</span>
+    <span class="c1"># print(&quot;batches[0].shape = {}&quot;.format(batches[0].shape)) # (100, 785)</span>
+    
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Fitting the params using minibatch gradient descent model with eta = </span><span class="si">{}</span><span class="s2"> ...</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">eta</span><span class="p">))</span>   
+    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">max_iters</span><span class="p">)):</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">batch</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">batches</span><span class="p">):</span>
+            <span class="n">img</span><span class="p">,</span> <span class="n">lbl</span> <span class="o">=</span> <span class="n">batches</span><span class="p">[</span><span class="n">i</span><span class="p">][:,:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">batches</span><span class="p">[</span><span class="n">i</span><span class="p">][:,</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="c1"># print(&quot;img.shape = {}&quot;.format(img.shape)) # (100, 784)</span>
+            <span class="c1"># print(&quot;lbl.shape = {}&quot;.format(lbl.shape)) # (100, )</span>
+            <span class="n">gradient</span> <span class="o">=</span> <span class="n">softmaxGrad</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">numClasses</span><span class="p">,</span> <span class="n">inputSize</span><span class="p">,</span> <span class="n">decay</span><span class="p">,</span> <span class="n">img</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">lbl</span><span class="p">)</span>   
+            <span class="n">theta</span> <span class="o">=</span> <span class="n">theta</span> <span class="o">-</span> <span class="n">eta</span><span class="o">/</span><span class="n">batchsize</span> <span class="o">*</span> <span class="n">gradient</span>
+    
+    <span class="c1"># Test the data</span>
+    <span class="n">images</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">FLAGS</span><span class="o">.</span><span class="n">input_data_dir</span> <span class="o">+</span> <span class="s1">&#39;test-images.npy&#39;</span><span class="p">)</span>
+    <span class="n">labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">FLAGS</span><span class="o">.</span><span class="n">input_data_dir</span> <span class="o">+</span> <span class="s1">&#39;test-labels.npy&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2"> For MNIST test data&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;images.shape = </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">images</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span> <span class="c1"># (784, 10000)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;labels.shape = </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">labels</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span> <span class="c1"># (10000,)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Get prediction for test data</span>
+    <span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="p">(</span><span class="n">numClasses</span><span class="p">,</span> <span class="n">inputSize</span><span class="p">))</span>
+    <span class="n">pred</span> <span class="o">=</span> <span class="n">softmaxPredict</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">images</span><span class="p">)</span>
+    <span class="n">acc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">labels</span> <span class="o">==</span> <span class="n">pred</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Accuracy: </span><span class="si">%0.3f%%</span><span class="s1">.&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">acc</span> <span class="o">*</span> <span class="mi">100</span><span class="p">))</span> <span class="c1"># 92.630%. (for eta = 10)</span></div>
+
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../minibatch_softmax.html#minibatch_softmax.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Run main function.&quot;&quot;&quot;</span>
+    <span class="n">softmax_scipy</span><span class="p">()</span></div>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">time</span>
+
+    <span class="c1"># Beginning time</span>
+    <span class="n">program_begin_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">begin_ctime</span>        <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">ctime</span><span class="p">()</span>
+
+    <span class="c1">#  Run the main program</span>
+    <span class="n">main</span><span class="p">()</span>
+
+    <span class="c1"># Print the time taken</span>
+    <span class="n">program_end_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">end_ctime</span>        <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">ctime</span><span class="p">()</span>
+    <span class="n">seconds</span>          <span class="o">=</span> <span class="n">program_end_time</span> <span class="o">-</span> <span class="n">program_begin_time</span>
+    <span class="n">m</span><span class="p">,</span> <span class="n">s</span>             <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">seconds</span><span class="p">,</span> <span class="mi">60</span><span class="p">)</span>
+    <span class="n">h</span><span class="p">,</span> <span class="n">m</span>             <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="mi">60</span><span class="p">)</span>
+    <span class="n">d</span><span class="p">,</span> <span class="n">h</span>             <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="mi">24</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Begin time: &quot;</span><span class="p">,</span> <span class="n">begin_ctime</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;End   time: &quot;</span><span class="p">,</span> <span class="n">end_ctime</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Time taken: </span><span class="si">{0: .0f}</span><span class="s2"> days, </span><span class="si">{1: .0f}</span><span class="s2"> hours, </span><span class="se">\</span>
+<span class="s2">      </span><span class="si">{2: .0f}</span><span class="s2"> minutes, </span><span class="si">{3: f}</span><span class="s2"> seconds.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">s</span><span class="p">))</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Bhishan&#39;s 1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Bhishan Poudel.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
+    </div>
+  </body>
+</html>

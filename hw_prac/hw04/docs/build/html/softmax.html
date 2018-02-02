@@ -1,0 +1,240 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>softmax &#8212; Bhishan&#39;s 1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/sidebar.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="minibatch_softmax" href="minibatch_softmax.html" />
+    <link rel="prev" title="computeNumericalGradient" href="computeNumericalGradient.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="minibatch_softmax.html" title="minibatch_softmax"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="computeNumericalGradient.html" title="computeNumericalGradient"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Bhishan&#39;s 1 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-softmax">
+<span id="softmax"></span><h1>softmax<a class="headerlink" href="#module-softmax" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="softmax.softmaxCost">
+<code class="descclassname">softmax.</code><code class="descname">softmaxCost</code><span class="sig-paren">(</span><em>theta</em>, <em>numClasses</em>, <em>inputSize</em>, <em>decay</em>, <em>data</em>, <em>labels</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/softmax.html#softmaxCost"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#softmax.softmaxCost" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes and returns the (cost, gradient)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>theta</strong> &#8211; <p>1d array of parameter.
+example of theta</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">numClasses</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">inputSize</span>  <span class="o">=</span> <span class="mi">28</span> <span class="o">*</span> <span class="mi">28</span>
+<span class="n">theta</span> <span class="o">=</span> <span class="mf">0.005</span> <span class="o">*</span> <span class="n">randn</span><span class="p">(</span><span class="n">numClasses</span> <span class="o">*</span> <span class="n">inputSize</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><strong>numClasses</strong> &#8211; the number of classes (e.g. 10)</li>
+<li><strong>inputSize</strong> &#8211; the size N of the input vector (e.g. 28 * 28 = 784)</li>
+<li><strong>decay</strong> &#8211; weight decay parameter (e.g. lamda = 1e-4)</li>
+<li><strong>data</strong> &#8211; the N x M input matrix
+where each row data[i, :] corresponds to a single sample
+e.g. 55000, 784</li>
+<li><strong>labels</strong> &#8211; an M x 1 matrix containing the labels corresponding for the input data
+e.g. shape is  (55000,)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><p>Cost of the model</p>
+<p>thetagrad : 1d array of gradient values</p>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">cost</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="math">
+<p><img src="_images/math/95bdd3196d72c58df72e820eadd6cef41f4db839.png" alt="E(w) = - \frac{1}{N} \sum_{n=1}^N \sum_{k=1}^K \delta_k(t_n) ln \frac{exp(w_k x_n)}{Z(x_n)} + \
+\frac{\lambda}{2} \sum_{k=1}^K w_k^2"/></p>
+</div><p>Also the gradient is given by:</p>
+<div class="math">
+<p><img src="_images/math/9a8928a4c8db8c481856d620c608a2e982ec1eca.png" alt="\nabla_{w_k} E(w) = - \frac{1}{N} \sum_{n=1}^N ( \delta_k(t_n) - p(C_k | x_n)) x_n + \lambda w_k"/></p>
+</div></dd></dl>
+
+<dl class="function">
+<dt id="softmax.softmaxGrad">
+<code class="descclassname">softmax.</code><code class="descname">softmaxGrad</code><span class="sig-paren">(</span><em>theta</em>, <em>numClasses</em>, <em>inputSize</em>, <em>decay</em>, <em>data</em>, <em>labels</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/softmax.html#softmaxGrad"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#softmax.softmaxGrad" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes and returns the (cost, gradient)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>theta</strong> &#8211; <p>1d array of parameter.
+example of theta</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">numClasses</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">inputSize</span>  <span class="o">=</span> <span class="mi">28</span> <span class="o">*</span> <span class="mi">28</span>
+<span class="n">theta</span> <span class="o">=</span> <span class="mf">0.005</span> <span class="o">*</span> <span class="n">randn</span><span class="p">(</span><span class="n">numClasses</span> <span class="o">*</span> <span class="n">inputSize</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><strong>numClasses</strong> &#8211; the number of classes (e.g. 10)</li>
+<li><strong>inputSize</strong> &#8211; the size N of the input vector (e.g. 28 * 28 = 784)</li>
+<li><strong>decay</strong> &#8211; weight decay parameter (e.g. lamda = 1e-4)</li>
+<li><strong>data</strong> &#8211; the N x M input matrix
+where each row data[i, :] corresponds to a single sample
+e.g. 55000, 784</li>
+<li><strong>labels</strong> &#8211; an M x 1 matrix containing the labels corresponding for the input data
+e.g. shape is  (55000,)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><p>Cost of the model</p>
+<p>thetagrad : 1d array of gradient values</p>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">cost</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="math">
+<p><img src="_images/math/95bdd3196d72c58df72e820eadd6cef41f4db839.png" alt="E(w) = - \frac{1}{N} \sum_{n=1}^N \sum_{k=1}^K \delta_k(t_n) ln \frac{exp(w_k x_n)}{Z(x_n)} + \
+\frac{\lambda}{2} \sum_{k=1}^K w_k^2"/></p>
+</div><p>Also the gradient is given by:</p>
+<div class="math">
+<p><img src="_images/math/9a8928a4c8db8c481856d620c608a2e982ec1eca.png" alt="\nabla_{w_k} E(w) = - \frac{1}{N} \sum_{n=1}^N ( \delta_k(t_n) - p(C_k | x_n)) x_n + \lambda w_k"/></p>
+</div></dd></dl>
+
+<dl class="function">
+<dt id="softmax.softmaxPredict">
+<code class="descclassname">softmax.</code><code class="descname">softmaxPredict</code><span class="sig-paren">(</span><em>theta</em>, <em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/softmax.html#softmaxPredict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#softmax.softmaxPredict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes and returns the softmax predictions in the input data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>theta</strong> &#8211; model parameters matrix of shape  (numClasses x inputSize)
+e.g. 10, 784  (Here theta is taken after fitting the model.)</li>
+<li><strong>data</strong> &#8211; the M x N input matrix (transpose of data has N examples.)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><dl class="docutils">
+<dt>1d array of predictions where the output values z = theta_X has maximum label value.</dt>
+<dd><p class="first last">pred.shape = (test_size,) e.g. (10k,) which is same as test_labels shape.</p>
+</dd>
+</dl>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">pred</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="computeNumericalGradient.html"
+                        title="previous chapter">computeNumericalGradient</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="minibatch_softmax.html"
+                        title="next chapter">minibatch_softmax</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/softmax.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="minibatch_softmax.html" title="minibatch_softmax"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="computeNumericalGradient.html" title="computeNumericalGradient"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Bhishan&#39;s 1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Bhishan Poudel.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
+    </div>
+  </body>
+</html>

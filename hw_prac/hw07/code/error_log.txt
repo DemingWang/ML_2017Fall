@@ -1,0 +1,8 @@
+Nov 22, 2017
+
+using square kernel:
+
+multiclass_perc.py:186: RuntimeWarning: overflow encountered in exp
+  K = np.exp(K/(kparam**2))
+/Users/poudel/OneDrive/ML/hw_prac/hw07/code/kperceptron.py:47: RuntimeWarning: invalid value encountered in multiply
+  if np.sign(np.sum(K[:,i] * alpha * y)) != y[i]:

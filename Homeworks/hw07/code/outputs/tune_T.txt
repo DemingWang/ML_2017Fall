@@ -1,0 +1,26 @@
+epoch 1: accuracy = 93.40
+epoch 2: accuracy = 93.30
+epoch 3: accuracy = 93.00
+epoch 4: accuracy = 92.50
+epoch 5: accuracy = 94.10
+epoch 6: accuracy = 93.70
+epoch 7: accuracy = 94.10
+epoch 8: accuracy = 93.20
+epoch 9: accuracy = 93.50
+epoch 10: accuracy = 94.70
+epoch 11: accuracy = 93.90
+epoch 12: accuracy = 93.90
+epoch 13: accuracy = 95.10
+epoch 14: accuracy = 94.30
+epoch 15: accuracy = 94.30
+epoch 16: accuracy = 94.90
+epoch 17: accuracy = 94.40
+epoch 18: accuracy = 94.00
+epoch 19: accuracy = 94.90
+epoch 20: accuracy = 94.30
+tuned epoch = 13
+
+Begin time:  Fri Dec  1 20:28:07 2017
+End   time:  Fri Dec  1 20:28:30 2017 
+
+Time taken:  0 days,  0 hours,        0 minutes,  23.111550 seconds.

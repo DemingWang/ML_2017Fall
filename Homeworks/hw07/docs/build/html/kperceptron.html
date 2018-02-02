@@ -1,0 +1,142 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>kperceptron &#8212; Bhishan&#39;s 1 documentation</title>
+    <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/sidebar.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="qn3a_dat_proc" href="qn3a_dat_proc.html" />
+    <link rel="prev" title="perceptron" href="perceptron.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="qn3a_dat_proc.html" title="qn3a_dat_proc"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="perceptron.html" title="perceptron"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Bhishan&#39;s 1 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-kperceptron">
+<span id="kperceptron"></span><h1>kperceptron<a class="headerlink" href="#module-kperceptron" title="Permalink to this headline">¶</a></h1>
+<p>Perceptron Algorithm</p>
+<p>&#64;author: Bhishan Poudel</p>
+<p>&#64;date: Nov 17, 2017</p>
+<p>&#64;email: <a class="reference external" href="mailto:bhishanpdl&#37;&#52;&#48;gmail&#46;com">bhishanpdl<span>&#64;</span>gmail<span>&#46;</span>com</a></p>
+<dl class="function">
+<dt id="kperceptron.gaussian_kernel">
+<code class="descclassname">kperceptron.</code><code class="descname">gaussian_kernel</code><span class="sig-paren">(</span><em>x</em>, <em>z</em>, <em>sigma</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kperceptron.html#gaussian_kernel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kperceptron.gaussian_kernel" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="kperceptron.kperceptron_test">
+<code class="descclassname">kperceptron.</code><code class="descname">kperceptron_test</code><span class="sig-paren">(</span><em>X</em>, <em>kernel</em>, <em>kparam</em>, <em>alpha</em>, <em>sv</em>, <em>sv_y</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kperceptron.html#kperceptron_test"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kperceptron.kperceptron_test" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="kperceptron.kperceptron_train">
+<code class="descclassname">kperceptron.</code><code class="descname">kperceptron_train</code><span class="sig-paren">(</span><em>X</em>, <em>y</em>, <em>epochs</em>, <em>kernel</em>, <em>kparam</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kperceptron.html#kperceptron_train"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kperceptron.kperceptron_train" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="kperceptron.linear_kernel">
+<code class="descclassname">kperceptron.</code><code class="descname">linear_kernel</code><span class="sig-paren">(</span><em>x</em>, <em>z</em>, <em>kparam=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kperceptron.html#linear_kernel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kperceptron.linear_kernel" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="kperceptron.polynomial_kernel">
+<code class="descclassname">kperceptron.</code><code class="descname">polynomial_kernel</code><span class="sig-paren">(</span><em>x</em>, <em>z</em>, <em>d</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kperceptron.html#polynomial_kernel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kperceptron.polynomial_kernel" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="kperceptron.read_data">
+<code class="descclassname">kperceptron.</code><code class="descname">read_data</code><span class="sig-paren">(</span><em>infile</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kperceptron.html#read_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kperceptron.read_data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="perceptron.html"
+                        title="previous chapter">perceptron</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="qn3a_dat_proc.html"
+                        title="next chapter">qn3a_dat_proc</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="qn3a_dat_proc.html" title="qn3a_dat_proc"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="perceptron.html" title="perceptron"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Bhishan&#39;s 1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Bhishan Poudel.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.5.
+    </div>
+  </body>
+</html>

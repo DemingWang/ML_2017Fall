@@ -1,0 +1,11 @@
+Ref: https://www.tensorflow.org/get_started/mnist/beginners
+
+
+2. array of 1 example   colah's blog
+
+Ref: https://colah.github.io/posts/2014-10-Visualizing-MNIST/
+Since each image has 28 by 28 pixels, we get a 28x28 array. We can flatten 
+each array into a 28∗28=78428∗28=784 dimensional vector. 
+Each component of the vector is a value between zero and one describing the 
+intensity of the pixel. 
+Thus, we generally think of MNIST as being a collection of 784-dimensional vectors.

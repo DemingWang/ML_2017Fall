@@ -1,0 +1,277 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Qn1 : Scipy Implementation of Softmax Regression &#8212; Bhishan&#39;s 1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/sidebar.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Qn 2: Scipy Implementation of Softmax Regression" href="qn2.html" />
+    <link rel="prev" title="Homework 4" href="hw.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="qn2.html" title="Qn 2: Scipy Implementation of Softmax Regression"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="hw.html" title="Homework 4"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Bhishan&#39;s 1 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="qn1-scipy-implementation-of-softmax-regression">
+<h1>Qn1 : Scipy Implementation of Softmax Regression<a class="headerlink" href="#qn1-scipy-implementation-of-softmax-regression" title="Permalink to this headline">¶</a></h1>
+<p>In this question we implement the softmax regression with scipy library.
+We evaluate the digit recognition task from the mnist data.</p>
+<div class="section" id="cost-gradient">
+<h2>1 Cost &amp; Gradient<a class="headerlink" href="#cost-gradient" title="Permalink to this headline">¶</a></h2>
+<p>In this question I completed two functions <cite>softmaxCost</cite> and <cite>softmaxPredict</cite>
+in the script <cite>softmax.py</cite>.</p>
+<p>For multiclass logistic regression, with L2 regularization the cost is given by</p>
+<div class="math">
+<p><img src="_images/math/0c4371c868293ccbd6ac7129d8e95f0fb790f5ab.png" alt="E(w) = - \frac{1}{N} \sum_{n=1}^N \sum_{k=1}^K \delta_k(t_n) \ ln \ \frac{exp(w_k x_n)}{Z(x_n)} + \
+\frac{\lambda}{2} \sum_{k=1}^K w_k^2"/></p>
+</div><p>Also the gradient is given by:</p>
+<div class="math">
+<p><img src="_images/math/9a8928a4c8db8c481856d620c608a2e982ec1eca.png" alt="\nabla_{w_k} E(w) = - \frac{1}{N} \sum_{n=1}^N ( \delta_k(t_n) - p(C_k | x_n)) x_n + \lambda w_k"/></p>
+</div><p>The code snippet to calculate cost and gradient is given below:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">X</span> <span class="o">=</span> <span class="n">data</span>
+<span class="n">z</span> <span class="o">=</span> <span class="n">theta</span> <span class="o">@</span> <span class="n">X</span>
+<span class="n">N</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">delta</span> <span class="o">=</span> <span class="n">groundTruth</span>
+
+<span class="n">hyp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">z</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">amax</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span> <span class="c1"># to prevent overflow</span>
+<span class="n">prob</span> <span class="o">=</span> <span class="n">hyp</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">hyp</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">cost</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">delta</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">prob</span><span class="p">))</span>
+<span class="n">cost</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="o">/</span><span class="n">N</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">cost</span><span class="p">)</span>
+
+<span class="n">weight_decay</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="mi">2</span> <span class="o">*</span> <span class="n">decay</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">theta</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">cost</span> <span class="o">=</span> <span class="n">cost</span> <span class="o">+</span> <span class="n">weight_decay</span>
+
+<span class="c1"># now find gradient of cost function</span>
+<span class="n">thetagrad</span> <span class="o">=</span> <span class="o">-</span> <span class="p">(</span><span class="n">delta</span> <span class="o">-</span> <span class="n">prob</span><span class="p">)</span> <span class="o">@</span> <span class="n">X</span><span class="o">.</span><span class="n">T</span> <span class="o">/</span> <span class="n">N</span> <span class="o">+</span> <span class="n">decay</span> <span class="o">*</span> <span class="n">theta</span>
+
+<span class="c1"># Unroll the gradient matrices into a vector for the optimization function.</span>
+<span class="n">grad</span> <span class="o">=</span> <span class="n">thetagrad</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="vectorization">
+<h2>2 Vectorization<a class="headerlink" href="#vectorization" title="Permalink to this headline">¶</a></h2>
+<p>I have used all the vectorized code.</p>
+</div>
+<div class="section" id="ground-truth">
+<h2>3 Ground Truth<a class="headerlink" href="#ground-truth" title="Permalink to this headline">¶</a></h2>
+<p>The ground truth (or delta) is a matrix M such that M[c,n] = 1 if sample n
+has label c, and 0 otherwise.</p>
+<p>The code to calculate ground truth matrix is given below:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">scipy.sparse</span> <span class="k">import</span> <span class="n">coo_matrix</span>
+<span class="n">numCases</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="c1"># e.g. 28 * 28 = 784  (data has shape 55k, 784)</span>
+<span class="n">groundTruth</span> <span class="o">=</span> <span class="n">coo_matrix</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">numCases</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">),</span>
+                        <span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">numCases</span><span class="p">))))</span><span class="o">.</span><span class="n">toarray</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="overflow">
+<h2>4 Overflow<a class="headerlink" href="#overflow" title="Permalink to this headline">¶</a></h2>
+<p>To calculate the hypothesis term &#8221; <img class="math" src="_images/math/bbbcfed6d143cc6c1c077b0ed5a62611fcfcb64a.png" alt="hypothesis = e^{W^T X}"/> &#8221; when the
+exponent is very high the exponential will give numerical overflow. To prevent
+this I subtracted the maximum value of exponent for a given class as shown below:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">hyp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">z</span><span class="p">)</span> <span class="c1"># may have overflow</span>
+<span class="n">hyp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">z</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">amax</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span> <span class="c1"># to prevent overflow</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="numerical-gradient">
+<h2>5 Numerical Gradient<a class="headerlink" href="#numerical-gradient" title="Permalink to this headline">¶</a></h2>
+<p>From definition of derivative, the numerical derivative of cost function is</p>
+<div class="math">
+<p><img src="_images/math/89434c8530f829b489fb9a1c293b1baea01c9f75.png" alt="\frac{d}{d\theta} J(\theta) =  \frac{J(\theta + \epsilon) - J(\theta - \epsilon) }{2\epsilon}
+
+Where \ \epsilon = 0.0001"/></p>
+</div></div>
+<div class="section" id="gradient-checking">
+<h2>6 Gradient Checking<a class="headerlink" href="#gradient-checking" title="Permalink to this headline">¶</a></h2>
+<p>It is good practice that whenever we implement a learning algorithm, we should
+always check the implemented gradients with the numerical gradients.
+To calculate implemented gradient we use the function
+<cite>softmaxCost(theta, numClasses, inputSize, decay, data, labels)</cite>
+and to calculate the numerical gradient we use the function <cite>computeNumericalGradient(J, theta)</cite></p>
+<p>Then we calculate the relative error of these two quantites using the formula</p>
+<div class="math">
+<p><img src="_images/math/f0d881004a441e59570025e270d78144a9d3f9b8.png" alt="\frac{|| G_{num}(\theta) - G_{imp} (theta) ||}{|| G_{num}(\theta) - G_{imp} (theta) ||} \leq 10^{-6}"/></p>
+</div><dl class="docutils">
+<dt>In order to perform gradient checking we should use the command::</dt>
+<dd>python3 softmaxExercise -d</dd>
+</dl>
+<p>Then we will get error of order e-10.
+Also note that, to just test the numerical gradient while debugging the code
+we have reduced the size of the input data matrix in the code <cite>softmaxExercise.py</cite>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">FLAGS</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
+    <span class="n">inputSize</span> <span class="o">=</span> <span class="mi">8</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+    <span class="n">images</span> <span class="o">=</span> <span class="n">randn</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+    <span class="n">labels</span> <span class="o">=</span> <span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="training">
+<h2>7 Training<a class="headerlink" href="#training" title="Permalink to this headline">¶</a></h2>
+<p>We used the MNIST training data to train our model. In mnist there are 60k
+training examples with example having 28 * 28 = 784 number of pixel values.
+One example is 28 * 28 pixel size gray scale image.</p>
+<p>In this program we took 5k values for validation set and 55k values for training
+case.</p>
+<p>We also note that in the original data website <a class="reference external" href="http://yann.lecun.com/exdb/mnist/">http://yann.lecun.com/exdb/mnist/</a>
+the data are given in <cite>binary</cite> format, but in our homework the data is in <cite>npy</cite>
+format so that the numpy can read easily load these datasets.</p>
+<p>I used two of the <cite>scipy</cite> library modules to train our model.
+One model is <cite>scipy.optimize.fmin_l_bfgs_b</cite> and another model is <cite>scipy.optimize.minimize</cite>.</p>
+<p>The links are given here</p>
+<p><a class="reference external" href="https://docs.scipy.org/doc/scipy-0.14.0/reference/generated/scipy.optimize.fmin_l_bfgs_b.html">https://docs.scipy.org/doc/scipy-0.14.0/reference/generated/scipy.optimize.fmin_l_bfgs_b.html</a></p>
+<p><a class="reference external" href="https://docs.scipy.org/doc/scipy-0.14.0/reference/generated/scipy.optimize.minimize.html#scipy.optimize.minimize">https://docs.scipy.org/doc/scipy-0.14.0/reference/generated/scipy.optimize.minimize.html#scipy.optimize.minimize</a></p>
+<p>Particularly I used the parameters maximum number of iterations 100 and method
+L-BFGS-B to fit the model.</p>
+<p>The code snippet to fit the model is given below:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># Fit the model and get theta (theta is flat array)</span>
+<span class="n">theta</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">fmin_l_bfgs_b</span><span class="p">(</span><span class="n">softmaxCost</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span>
+                            <span class="n">args</span> <span class="o">=</span> <span class="p">(</span><span class="n">numClasses</span><span class="p">,</span> <span class="n">inputSize</span><span class="p">,</span> <span class="n">decay</span><span class="p">,</span> <span class="n">images</span><span class="p">,</span> <span class="n">labels</span><span class="p">),</span>
+                            <span class="n">maxiter</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> <span class="n">disp</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># Method 2 Using minimize function from scipy.optimize</span>
+<span class="n">theta</span>  <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">optimize</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="n">softmaxCost</span><span class="p">,</span>
+                                     <span class="n">theta</span><span class="p">,</span>
+                                     <span class="n">args</span> <span class="o">=</span> <span class="p">(</span><span class="n">numClasses</span><span class="p">,</span> <span class="n">inputSize</span><span class="p">,</span> <span class="n">decay</span><span class="p">,</span> <span class="n">images</span><span class="p">,</span> <span class="n">labels</span><span class="p">,),</span>
+                                     <span class="n">method</span> <span class="o">=</span> <span class="s1">&#39;L-BFGS-B&#39;</span><span class="p">,</span>
+                                     <span class="n">jac</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                                     <span class="n">options</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;maxiter&#39;</span><span class="p">:</span> <span class="mi">100</span><span class="p">})</span><span class="o">.</span><span class="n">x</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="testing">
+<h2>8 Testing<a class="headerlink" href="#testing" title="Permalink to this headline">¶</a></h2>
+<p>We test the model trained by trainig examples from mnist dataset, on the test
+examples from the mnist dataset.
+The test dataset has 10k examples with each example image having pixel size 28 * 28 = 784.</p>
+<p>I got 92.6 % accuracy on the test set.
+The code snippet is given below:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">softmaxPredict</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span> <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">theta</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># Get prediction for test data</span>
+<span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="p">(</span><span class="n">numClasses</span><span class="p">,</span> <span class="n">inputSize</span><span class="p">))</span>
+<span class="n">pred</span> <span class="o">=</span> <span class="n">softmaxPredict</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">images</span><span class="p">)</span>
+<span class="n">acc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">labels</span> <span class="o">==</span> <span class="n">pred</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Accuracy: </span><span class="si">%0.3f%%</span><span class="s1">.&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">acc</span> <span class="o">*</span> <span class="mi">100</span><span class="p">))</span> <span class="c1"># 92.560%.</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Qn1 : Scipy Implementation of Softmax Regression</a><ul>
+<li><a class="reference internal" href="#cost-gradient">1 Cost &amp; Gradient</a></li>
+<li><a class="reference internal" href="#vectorization">2 Vectorization</a></li>
+<li><a class="reference internal" href="#ground-truth">3 Ground Truth</a></li>
+<li><a class="reference internal" href="#overflow">4 Overflow</a></li>
+<li><a class="reference internal" href="#numerical-gradient">5 Numerical Gradient</a></li>
+<li><a class="reference internal" href="#gradient-checking">6 Gradient Checking</a></li>
+<li><a class="reference internal" href="#training">7 Training</a></li>
+<li><a class="reference internal" href="#testing">8 Testing</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="hw.html"
+                        title="previous chapter">Homework 4</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="qn2.html"
+                        title="next chapter">Qn 2: Scipy Implementation of Softmax Regression</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/qn1.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="qn2.html" title="Qn 2: Scipy Implementation of Softmax Regression"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="hw.html" title="Homework 4"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Bhishan&#39;s 1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Bhishan Poudel.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
+    </div>
+  </body>
+</html>

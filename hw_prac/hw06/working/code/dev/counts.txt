@@ -1,0 +1,6 @@
+apple 4
+apples 2
+banana 3
+cow 2
+egg 4
+eggs 2

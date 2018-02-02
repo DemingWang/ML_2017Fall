@@ -1,0 +1,14 @@
+Final iteration = 20
+Total mistakes = 80
+Perceptron Accuracy = 62.50 % (5 out of 8 correct)
+
+
+Final iteration = 20
+Total mistakes = 80
+Averaged Perceptron Accuracy = 62.50 % (5 out of 8 correct)
+
+
+Final iteration = 4
+Total mistakes = 13
+alpha = [ 4.  1.  2.  3.  3.]
+Kernel Perceptron Accuracy = 100.00 % (8 out of 8 correct)

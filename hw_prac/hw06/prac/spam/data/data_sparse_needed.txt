@@ -1,0 +1,30 @@
+data.txt
+All lowercase and no symbols
+===============================
+  0     1      2   3       4   5   6
+1 there is     an  apple   and  a   banana
+0 a     cow    in  a       farm a   pig    in a farm
+1 an    apple  in  the     tree
+	
+
+vocab.txt
+word at least two examples
+two columns (third is for checking)
+===================================
+1 a 2
+2 an 2
+3 apple 2
+4 in 2
+
+dense.txt (examples * vocab+1 matrix)
+======================================
+1  2  3    4
+a an apple in
+
+1 there is     an  apple   and  a   banana ==> data
+1 1:1 2:1 3:1                              ==> sparse
+1 1 1 1 0                                  ==> dense
+
+1 1 1 1 0
+0 1 0 0 1
+1 0 1 1 1

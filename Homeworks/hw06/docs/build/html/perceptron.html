@@ -1,0 +1,180 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>perceptron &#8212; Bhishan&#39;s 1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/sidebar.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="exercise5" href="exercise5.html" />
+    <link rel="prev" title="ExtraWork : Perceptron Contour Plot" href="extraWork.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="exercise5.html" title="exercise5"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="extraWork.html" title="ExtraWork : Perceptron Contour Plot"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Bhishan&#39;s 1 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-perceptron">
+<span id="perceptron"></span><h1>perceptron<a class="headerlink" href="#module-perceptron" title="Permalink to this headline">¶</a></h1>
+<p>Perceptron Algorithm</p>
+<p>&#64;author: Bhishan Poudel</p>
+<p>&#64;date: Nov 15, 2017</p>
+<dl class="function">
+<dt id="perceptron.aperceptron_train">
+<code class="descclassname">perceptron.</code><code class="descname">aperceptron_train</code><span class="sig-paren">(</span><em>data</em>, <em>labels</em>, <em>epochs</em>, <em>verbose=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/perceptron.html#aperceptron_train"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#perceptron.aperceptron_train" title="Permalink to this definition">¶</a></dt>
+<dd><p>data: without bias column
+labels: 1d array</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="perceptron.confusion_matrix">
+<code class="descclassname">perceptron.</code><code class="descname">confusion_matrix</code><span class="sig-paren">(</span><em>y</em>, <em>y_pred</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/perceptron.html#confusion_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#perceptron.confusion_matrix" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="perceptron.kperceptron_project">
+<code class="descclassname">perceptron.</code><code class="descname">kperceptron_project</code><span class="sig-paren">(</span><em>X</em>, <em>kernel</em>, <em>alpha</em>, <em>sv</em>, <em>sv_y</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/perceptron.html#kperceptron_project"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#perceptron.kperceptron_project" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="perceptron.kperceptron_test">
+<code class="descclassname">perceptron.</code><code class="descname">kperceptron_test</code><span class="sig-paren">(</span><em>X</em>, <em>kernel</em>, <em>alpha</em>, <em>sv</em>, <em>sv_y</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/perceptron.html#kperceptron_test"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#perceptron.kperceptron_test" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="perceptron.kperceptron_train">
+<code class="descclassname">perceptron.</code><code class="descname">kperceptron_train</code><span class="sig-paren">(</span><em>data</em>, <em>labels</em>, <em>epochs</em>, <em>kernel</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/perceptron.html#kperceptron_train"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#perceptron.kperceptron_train" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns: alpha,sv,sv_y,final_iter</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="perceptron.perceptron_test">
+<code class="descclassname">perceptron.</code><code class="descname">perceptron_test</code><span class="sig-paren">(</span><em>w</em>, <em>X</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/perceptron.html#perceptron_test"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#perceptron.perceptron_test" title="Permalink to this definition">¶</a></dt>
+<dd><p>label y should be 0 or 1.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="perceptron.perceptron_train">
+<code class="descclassname">perceptron.</code><code class="descname">perceptron_train</code><span class="sig-paren">(</span><em>data</em>, <em>labels</em>, <em>epochs</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/perceptron.html#perceptron_train"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#perceptron.perceptron_train" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="perceptron.quadratic_kernel">
+<code class="descclassname">perceptron.</code><code class="descname">quadratic_kernel</code><span class="sig-paren">(</span><em>x</em>, <em>y</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/perceptron.html#quadratic_kernel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#perceptron.quadratic_kernel" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Input:</th><td class="field-body">two examples x and y.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Output:</th><td class="field-body">the quadratic kernel value computed as (1+xTy)^2.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="perceptron.read_examples">
+<code class="descclassname">perceptron.</code><code class="descname">read_examples</code><span class="sig-paren">(</span><em>fdense</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/perceptron.html#read_examples"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#perceptron.read_examples" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="extraWork.html"
+                        title="previous chapter">ExtraWork : Perceptron Contour Plot</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="exercise5.html"
+                        title="next chapter">exercise5</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/perceptron.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="exercise5.html" title="exercise5"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="extraWork.html" title="ExtraWork : Perceptron Contour Plot"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Bhishan&#39;s 1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Bhishan Poudel.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
+    </div>
+  </body>
+</html>

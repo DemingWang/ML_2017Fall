@@ -1,0 +1,9 @@
+Averaged Perceptron converged after: 18 iterations
+Final iteration = 18
+Total mistakes = 476
+Final parameter vector w = [ 9.6  -0.85  2.85 ..., -5.2  -3.45  2.8 ]
+Averaged Perceptron Accuracy = 29.60 % (296 out of 1000 correct)
+Begin time:  Sat Nov 11 19:13:17 2017
+End   time:  Sat Nov 11 19:13:26 2017 
+
+Time taken:  0 days,  0 hours,        0 minutes,  8.470790 seconds.

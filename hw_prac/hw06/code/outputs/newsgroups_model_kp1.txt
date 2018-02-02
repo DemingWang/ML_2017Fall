@@ -1,0 +1,3 @@
+Final iteration = 10000
+Total mistakes = 300537
+Kernel Perceptron version 1 Accuracy = 61.40 % (350 out of 570 correct)

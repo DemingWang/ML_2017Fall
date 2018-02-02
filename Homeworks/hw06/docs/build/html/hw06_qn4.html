@@ -1,0 +1,181 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Qn 4: . spam-nonSpam vs atheism-religion &#8212; Bhishan&#39;s 1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/sidebar.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="ExtraWork : Perceptron Contour Plot" href="extraWork.html" />
+    <link rel="prev" title="Qn 3: Atheism vs. Religion" href="hw06_qn3.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="extraWork.html" title="ExtraWork : Perceptron Contour Plot"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="hw06_qn3.html" title="Qn 3: Atheism vs. Religion"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Bhishan&#39;s 1 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="qn-4-spam-nonspam-vs-atheism-religion">
+<h1>Qn 4: . spam-nonSpam vs atheism-religion<a class="headerlink" href="#qn-4-spam-nonspam-vs-atheism-religion" title="Permalink to this headline">¶</a></h1>
+<p>For the perceptron binary classification of spam vs non-spam we got following
+results:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">============</span>  <span class="o">==========</span>   <span class="o">==========</span>
+<span class="n">Perceptron</span>    <span class="n">Accuracy</span>     <span class="n">F1</span><span class="o">-</span><span class="n">score</span>
+<span class="o">============</span>  <span class="o">==========</span>   <span class="o">==========</span>
+<span class="n">Vanilla</span>       <span class="mf">0.98</span>         <span class="mf">0.97</span>
+<span class="n">Averaged</span>      <span class="mf">0.98</span>         <span class="mf">0.97</span>
+<span class="n">Kernel</span>        <span class="mf">0.98</span>         <span class="mf">0.97</span>
+<span class="o">===========</span>   <span class="o">==========</span>   <span class="o">==========</span>
+</pre></div>
+</div>
+<p>For the case of atheism vs religion, we got the following results:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">============</span>  <span class="o">======================</span>  <span class="o">======================</span>
+<span class="n">Perceptron</span>    <span class="n">Version</span> <span class="mi">1</span> <span class="n">Accuracy</span> <span class="o">%</span>    <span class="n">Version</span> <span class="mi">2</span> <span class="n">Accuracy</span> <span class="o">%</span>
+<span class="o">============</span>  <span class="o">======================</span>  <span class="o">======================</span>
+<span class="n">Vanilla</span>       <span class="mf">59.12</span>                   <span class="mf">58.42</span>
+<span class="n">Averaged</span>      <span class="mf">60.53</span>                   <span class="mf">61.58</span>
+<span class="n">Kernel</span>        <span class="mf">61.40</span>                   <span class="mf">58.77</span>
+<span class="o">===========</span>   <span class="o">======================</span>  <span class="o">======================</span>
+</pre></div>
+</div>
+<div class="section" id="analysis">
+<h2>Analysis<a class="headerlink" href="#analysis" title="Permalink to this headline">¶</a></h2>
+<p>In case of spam versus non-spam binay classification we got about 98% accuracy,
+however, for atheism vs religion we got around 60% accuracy.</p>
+<p>Some of the reasons may be following:</p>
+<blockquote>
+<div><ul>
+<li><p class="first">Spam classification has larger train-test examples.
+The spam-nonSpam problem has 4,000 training examples and 1,000 test examples,
+however, the 20newsgroups religion vs atheism problem has 857 training
+examples and 570 test examples. Larger the training dataset, better is the
+performance of the classifier.</p>
+</li>
+<li><p class="first">The spam and non-spam documents are separated more clearly. There are many words
+that we can think of (and machine will anaylyze) that only belong to
+either spam or non-spam. The document lenght may also vary significantly.
+This means there are more feature vectors we
+can think of that are vital in classifying whether a document is spam or
+not-spam.</p>
+<p>However, if we look at atheism and religion documents, they both look similar.
+The documents have similar size (total number of words), and many of the words
+may appear in both the documents. The articles about both atheism and religion
+may talk about the similar thing and only the implied meaning is different.
+In terms of machines, there may not be many DISTINCT FEATURES that can
+separate a document from athiesm to relgion if we train a binary classier to
+differentiate them.</p>
+<p>Hence, we can argue that spam vs non-spam is relatively easy problem
+compared to religion vs atheism classification and machines also reflects
+this idea and gives less accuracy for spam-nonSpam than religion-atheism
+classification.</p>
+</li>
+</ul>
+</div></blockquote>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Qn 4: . spam-nonSpam vs atheism-religion</a><ul>
+<li><a class="reference internal" href="#analysis">Analysis</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="hw06_qn3.html"
+                        title="previous chapter">Qn 3: Atheism vs. Religion</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="extraWork.html"
+                        title="next chapter">ExtraWork : Perceptron Contour Plot</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/hw06_qn4.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="extraWork.html" title="ExtraWork : Perceptron Contour Plot"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="hw06_qn3.html" title="Qn 3: Atheism vs. Religion"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Bhishan&#39;s 1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Bhishan Poudel.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,26 @@
+[H[2J[H[2Jepoch 1: accuracy = 88.70
+epoch 2: accuracy = 91.40
+epoch 3: accuracy = 89.00
+epoch 4: accuracy = 93.30
+epoch 5: accuracy = 89.00
+epoch 6: accuracy = 86.30
+epoch 7: accuracy = 85.90
+epoch 8: accuracy = 93.10
+epoch 9: accuracy = 87.80
+epoch 10: accuracy = 87.70
+epoch 11: accuracy = 87.60
+epoch 12: accuracy = 92.70
+epoch 13: accuracy = 89.00
+epoch 14: accuracy = 90.50
+epoch 15: accuracy = 87.40
+epoch 16: accuracy = 85.10
+epoch 17: accuracy = 83.30
+epoch 18: accuracy = 87.40
+epoch 19: accuracy = 87.20
+epoch 20: accuracy = 88.70
+tuned epoch = 4
+
+Begin time:  Sun Nov 19 10:53:37 2017
+End   time:  Sun Nov 19 10:54:07 2017 
+
+Time taken:  0 days,  0 hours,        0 minutes,  29.984244 seconds.

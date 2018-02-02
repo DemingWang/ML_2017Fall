@@ -1,0 +1,206 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Qn 3: Atheism vs. Religion &#8212; Bhishan&#39;s 1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/sidebar.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Qn 4: . spam-nonSpam vs atheism-religion" href="hw06_qn4.html" />
+    <link rel="prev" title="Qn 2: Spam vs. Non-Spam" href="hw06_qn2.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="hw06_qn4.html" title="Qn 4: . spam-nonSpam vs atheism-religion"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="hw06_qn2.html" title="Qn 2: Spam vs. Non-Spam"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Bhishan&#39;s 1 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="qn-3-atheism-vs-religion">
+<h1>Qn 3: Atheism vs. Religion<a class="headerlink" href="#qn-3-atheism-vs-religion" title="Permalink to this headline">¶</a></h1>
+<p>In this question we will train and evaluate the binary perceptron and
+avergae perceptron algorithms on a subset of the 20 newsgroups dataset.</p>
+<p>Information:</p>
+<blockquote>
+<div><ul class="simple">
+<li>857 positive examples on newsgroups dataset</li>
+<li>570 negative examples on newsgroups dataset</li>
+<li>label 1 for atheism and label 0 for religion</li>
+<li>data is preprocessed and presented as sparse matrix</li>
+</ul>
+</div></blockquote>
+<p>Detailed information is given in scikit learn website:</p>
+<p><a class="reference external" href="http://scikit-learn.org/stable/datasets/twenty_newsgroups.html">http://scikit-learn.org/stable/datasets/twenty_newsgroups.html</a></p>
+<div class="section" id="version-1">
+<h2>Version 1<a class="headerlink" href="#version-1" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li>it used the method TF-IDF formula to proceess the raw data</li>
+<li>sparse datafiles are <cite>newsgroups_train1.txt</cite> and <cite>newsgroups_test1.txt</cite></li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="version-2">
+<h2>Version 2<a class="headerlink" href="#version-2" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li>term frequency (TF) is set to 1 and IDF is irrelevant.</li>
+<li>sparse datafiles are <cite>newsgroups_train2.txt</cite> and <cite>newsgroups_test2.txt</cite></li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="vanilla-perceptron-method">
+<h2>Vanilla perceptron method<a class="headerlink" href="#vanilla-perceptron-method" title="Permalink to this headline">¶</a></h2>
+<p>Here, in the directory <strong>code/outputs/</strong> we will create following files:</p>
+<blockquote>
+<div><ul class="simple">
+<li>newsgroups_model_p1.txt for version 1</li>
+<li>newsgroups_model_p2.txt for version 2</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="averaged-perceptron-method">
+<h2>Averaged perceptron method<a class="headerlink" href="#averaged-perceptron-method" title="Permalink to this headline">¶</a></h2>
+<p>Here, in the directory <strong>code/outputs/</strong> we will create following files:</p>
+<blockquote>
+<div><ul class="simple">
+<li>newsgroups_model_ap1.txt for version 1</li>
+<li>newsgroups_model_ap2.txt for version 2</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="kernel-perceptron-method-extra-work">
+<h2>Kernel perceptron method (Extra Work)<a class="headerlink" href="#kernel-perceptron-method-extra-work" title="Permalink to this headline">¶</a></h2>
+<p>Here, in the directory <strong>code/outputs/</strong> we will create following files:</p>
+<blockquote>
+<div><ul class="simple">
+<li>newsgroups_model_kp1.txt for version 1</li>
+<li>newsgroups_model_kp2.txt for version 2</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="summary">
+<h2>Summary<a class="headerlink" href="#summary" title="Permalink to this headline">¶</a></h2>
+<p>20 newsgroups atheism vs religion classification:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">============</span>  <span class="o">======================</span>  <span class="o">======================</span>
+<span class="n">Perceptron</span>    <span class="n">Version</span> <span class="mi">1</span> <span class="n">Accuracy</span> <span class="o">%</span>    <span class="n">Version</span> <span class="mi">2</span> <span class="n">Accuracy</span> <span class="o">%</span>
+<span class="o">============</span>  <span class="o">======================</span>  <span class="o">======================</span>
+<span class="n">Vanilla</span>       <span class="mf">59.12</span>                   <span class="mf">58.42</span>
+<span class="n">Averaged</span>      <span class="mf">60.53</span>                   <span class="mf">61.58</span>
+<span class="n">Kernel</span>        <span class="mf">61.40</span>                   <span class="mf">58.77</span>
+<span class="o">===========</span>   <span class="o">======================</span>  <span class="o">======================</span>
+</pre></div>
+</div>
+<p>We find both version gives similar performances.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Qn 3: Atheism vs. Religion</a><ul>
+<li><a class="reference internal" href="#version-1">Version 1</a></li>
+<li><a class="reference internal" href="#version-2">Version 2</a></li>
+<li><a class="reference internal" href="#vanilla-perceptron-method">Vanilla perceptron method</a></li>
+<li><a class="reference internal" href="#averaged-perceptron-method">Averaged perceptron method</a></li>
+<li><a class="reference internal" href="#kernel-perceptron-method-extra-work">Kernel perceptron method (Extra Work)</a></li>
+<li><a class="reference internal" href="#summary">Summary</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="hw06_qn2.html"
+                        title="previous chapter">Qn 2: Spam vs. Non-Spam</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="hw06_qn4.html"
+                        title="next chapter">Qn 4: . spam-nonSpam vs atheism-religion</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/hw06_qn3.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="hw06_qn4.html" title="Qn 4: . spam-nonSpam vs atheism-religion"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="hw06_qn2.html" title="Qn 2: Spam vs. Non-Spam"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Bhishan&#39;s 1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Bhishan Poudel.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
+    </div>
+  </body>
+</html>

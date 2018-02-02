@@ -1,0 +1,161 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Univariate Linear Regression &#8212; Bhishan&#39;s 1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/sidebar.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Multivariate Linear Regression" href="qn3.html" />
+    <link rel="prev" title="Feature Scaling" href="qn1.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="qn3.html" title="Multivariate Linear Regression"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="qn1.html" title="Feature Scaling"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Bhishan&#39;s 1 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="univariate-linear-regression">
+<h1>Univariate Linear Regression<a class="headerlink" href="#univariate-linear-regression" title="Permalink to this headline">¶</a></h1>
+<p>In this question we fit batch gradient descent (BGD)  method to find the
+house prices of given univariate data.</p>
+<p>a) The plot of J(w) versus the number of epochs with step size 10 is shown
+below:</p>
+<img alt="_images/univ_cost_history_BGD.png" src="_images/univ_cost_history_BGD.png" />
+<p>b) After training I printed the parameters (w) for train data and compared
+with normal equations. I found that both are exact (for 200 epochs of BGD):</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Train</span> <span class="n">Data</span>
+<span class="n">epochs</span>  <span class="n">learning_rate</span>  <span class="n">mean</span>        <span class="n">std</span>       <span class="n">w0</span>          <span class="n">w1</span>          <span class="n">rmse</span>        <span class="n">cost</span>
+<span class="mi">200</span>     <span class="mf">0.1</span>            <span class="mf">2340.46</span>     <span class="mf">808.44</span>    <span class="mi">254</span><span class="p">,</span><span class="mf">450.00</span>  <span class="mi">93</span><span class="p">,</span><span class="mf">308.92</span>   <span class="mi">64</span><span class="p">,</span><span class="mf">083.51</span>   <span class="mi">2</span><span class="p">,</span><span class="mi">053</span><span class="p">,</span><span class="mi">348</span><span class="p">,</span><span class="mf">364.32</span>
+</pre></div>
+</div>
+<p>c) I plotted the training using the default blue circles and test using green
+triangles and also overplot the BGD fitted line.</p>
+<img alt="_images/univ_BGD.png" src="_images/univ_BGD.png" />
+<ol class="loweralpha simple" start="4">
+<li>Comparison of BGD and SGD.</li>
+</ol>
+<p>In stochastic grad desc, I shuffled the data while training. To get the
+reproducible results, I set the random seed to 100. The SGD training gives
+noisy results. The weight vector does not stabilize smoothly, it first decreases
+rapidly then fluctuates with some noise but after some iterations it will give
+similar results like BGD.</p>
+<p>For this example after 175 epochs I got similar weight vectors from bgd and sgd:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+<span class="n">w_norm_eqn</span>        <span class="o">=</span> <span class="p">[[</span><span class="mi">254</span><span class="p">,</span><span class="mf">450.0000</span>  <span class="mi">93</span><span class="p">,</span><span class="mf">308.9201</span> <span class="p">]]</span>
+<span class="n">iters</span> <span class="o">=</span> <span class="mi">200</span> <span class="n">w_BGD</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">254</span><span class="p">,</span><span class="mf">449.9998</span>  <span class="mi">93</span><span class="p">,</span><span class="mf">308.9200</span> <span class="p">]]</span>
+<span class="n">iters</span> <span class="o">=</span> <span class="mi">199</span> <span class="n">w_SGD</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">254</span><span class="p">,</span><span class="mf">494.4429</span>  <span class="mi">93</span><span class="p">,</span><span class="mf">244.2965</span> <span class="p">]]</span>
+<span class="n">abs_diff_min</span> <span class="o">=</span> <span class="mf">109.06649000954349</span>
+<span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">abs_diff_min</span><span class="p">)</span> <span class="o">=</span>  <span class="mi">175</span>
+</pre></div>
+</div>
+<ol class="loweralpha simple" start="5">
+<li>Extra credit</li>
+</ol>
+<p>I also created a gif file that shows beautifully how the best fit line changes
+with the number of iterations. The cost function for test data settles down
+around 70 itrations. I created 70 png files and combined them to make a gif file.</p>
+<p>The file is placed at Extra/cost_history.gif</p>
+<p>The imagemagick command to create gif is:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">convert</span> <span class="o">-</span><span class="n">loop</span> <span class="mi">0</span> <span class="o">-</span><span class="n">delay</span> <span class="mi">100</span> <span class="n">test_images</span><span class="o">/</span><span class="n">test</span><span class="o">*.</span><span class="n">png</span> <span class="n">cost_history</span><span class="o">.</span><span class="n">gif</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="qn1.html"
+                        title="previous chapter">Feature Scaling</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="qn3.html"
+                        title="next chapter">Multivariate Linear Regression</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/qn2.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="qn3.html" title="Multivariate Linear Regression"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="qn1.html" title="Feature Scaling"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Bhishan&#39;s 1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Bhishan Poudel.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
+    </div>
+  </body>
+</html>

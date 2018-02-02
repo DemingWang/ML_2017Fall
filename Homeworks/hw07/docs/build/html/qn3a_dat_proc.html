@@ -1,0 +1,134 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>qn3a_dat_proc &#8212; Bhishan&#39;s 1 documentation</title>
+    <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/sidebar.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="qn3b_mcp" href="qn3b_mcp.html" />
+    <link rel="prev" title="kperceptron" href="kperceptron.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="qn3b_mcp.html" title="qn3b_mcp"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="kperceptron.html" title="kperceptron"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Bhishan&#39;s 1 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-qn3a_dat_proc">
+<span id="qn3a-dat-proc"></span><h1>qn3a_dat_proc<a class="headerlink" href="#module-qn3a_dat_proc" title="Permalink to this headline">¶</a></h1>
+<p>Preprocess the optical digit data.</p>
+<p>&#64;author: Bhishan Poudel</p>
+<p>&#64;date: Nov 16, 2017</p>
+<p>To run this progam we need train and test data for optical digits from
+the website:</p>
+<blockquote>
+<div><a class="reference external" href="http://archive.ics.uci.edu/ml/datasets/Optical+Recognition+of+Handwritten+Digits">http://archive.ics.uci.edu/ml/datasets/Optical+Recognition+of+Handwritten+Digits</a></div></blockquote>
+<p>The two datafiles optdigits.tes and optdigits.tes should be in the
+path ../data/optdigits/</p>
+<dl class="function">
+<dt id="qn3a_dat_proc.main">
+<code class="descclassname">qn3a_dat_proc.</code><code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/qn3a_dat_proc.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qn3a_dat_proc.main" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="qn3a_dat_proc.split_devel_train">
+<code class="descclassname">qn3a_dat_proc.</code><code class="descname">split_devel_train</code><span class="sig-paren">(</span><em>fdata</em>, <em>fdevel</em>, <em>ftrain</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qn3a_dat_proc.html#split_devel_train"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qn3a_dat_proc.split_devel_train" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="qn3a_dat_proc.split_to10">
+<code class="descclassname">qn3a_dat_proc.</code><code class="descname">split_to10</code><span class="sig-paren">(</span><em>fdata</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qn3a_dat_proc.html#split_to10"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qn3a_dat_proc.split_to10" title="Permalink to this definition">¶</a></dt>
+<dd><p>X_norm = X - X_min / (X_max - X_min)</p>
+<p>Min is calculated for a column by default.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="kperceptron.html"
+                        title="previous chapter">kperceptron</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="qn3b_mcp.html"
+                        title="next chapter">qn3b_mcp</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="qn3b_mcp.html" title="qn3b_mcp"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="kperceptron.html" title="kperceptron"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Bhishan&#39;s 1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Bhishan Poudel.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.5.
+    </div>
+  </body>
+</html>

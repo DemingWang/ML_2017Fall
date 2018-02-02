@@ -1,0 +1,227 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Qn 3: Digit Recognition &#8212; Bhishan&#39;s 1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/sidebar.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="ExtraWork :" href="extraWork.html" />
+    <link rel="prev" title="Qn2: Text Classification" href="hw07_qn2.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="extraWork.html" title="ExtraWork :"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="hw07_qn2.html" title="Qn2: Text Classification"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Bhishan&#39;s 1 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="qn-3-digit-recognition">
+<h1>Qn 3: Digit Recognition<a class="headerlink" href="#qn-3-digit-recognition" title="Permalink to this headline">¶</a></h1>
+<p>In this problem we write following alogrithm to classify the optical digits:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Perceptron without kernel</li>
+<li>Perceptron with kernel</li>
+<li>SVM without Kernel</li>
+<li>SVM with  Kernel</li>
+</ul>
+</div></blockquote>
+<div class="section" id="qn-3-1">
+<h2>Qn 3.1<a class="headerlink" href="#qn-3-1" title="Permalink to this headline">¶</a></h2>
+<p>First we download the data from UCI website:
+<a class="reference external" href="http://archive.ics.uci.edu/ml/datasets/Optical+Recognition+of+Handwritten+Digits">http://archive.ics.uci.edu/ml/datasets/Optical+Recognition+of+Handwritten+Digits</a></p>
+<p>We download two files:</p>
+<blockquote>
+<div><ul class="simple">
+<li>optdigits.tra</li>
+<li>optdigits.tes</li>
+</ul>
+</div></blockquote>
+<p>We split the training data into development and training data.
+First 1000 examples are taken as development data and rest 2833 examples are taken as training data. All the 1797 test examples are taken as test data.</p>
+<p>All the examples contain 65 words separated by comma:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">awk</span> <span class="o">-</span><span class="n">F</span> <span class="s1">&#39;[, </span><span class="se">\t</span><span class="s1">]+&#39;</span> <span class="s1">&#39;{print NF}&#39;</span> <span class="n">train</span><span class="o">.</span><span class="n">txt</span>
+<span class="c1"># gives 65 8*8 = 64 is the feature size and last digit is label</span>
+
+<span class="c1"># look first example</span>
+<span class="n">head</span> <span class="o">-</span><span class="mi">1</span> <span class="n">train</span><span class="o">.</span><span class="n">txt</span>
+<span class="n">tail</span> <span class="o">-</span><span class="mi">1</span> <span class="n">train</span><span class="o">.</span><span class="n">txt</span>
+</pre></div>
+</div>
+<div class="section" id="a-normalize-the-features">
+<h3>3.1a normalize the features<a class="headerlink" href="#a-normalize-the-features" title="Permalink to this headline">¶</a></h3>
+<p>For each examples we used max-min scaling method to normalize the
+examples between 0 and 1 (from 0-16,inclusive). The normalized files are train_norm.txt, devel_norm.txt, and test_norm.txt.</p>
+</div>
+<div class="section" id="b-break-data-into-10-parts">
+<h3>3.1b break data into 10 parts<a class="headerlink" href="#b-break-data-into-10-parts" title="Permalink to this headline">¶</a></h3>
+<p>Each of the dataset (train,devel,test) example has last digit label from 0-9.
+We create 10 copies of the same dataset such that one of the label is
+set to ONE and rest of the labels are set to MINUS-ONE.</p>
+<p>For example, from train_norm.txt we create train0.txt, ..., train9.txt,
+from devel_norm.txt we create devel0.txt to devel9.txt and so on.</p>
+</div>
+</div>
+<div class="section" id="qn-3-2-linear-polynomial-and-gaussian-kernel-perceptron">
+<h2>Qn 3.2 Linear, Polynomial and Gaussian Kernel Perceptron<a class="headerlink" href="#qn-3-2-linear-polynomial-and-gaussian-kernel-perceptron" title="Permalink to this headline">¶</a></h2>
+<p>In this problem we train different perceptron models to our digits dataset.</p>
+<div class="section" id="a-tune-hyperparameter-t-number-of-epochs-for-vanilla-perceptron-from-development-data">
+<h3>3.2a Tune hyperparameter T (number of epochs) for Vanilla Perceptron from Development data<a class="headerlink" href="#a-tune-hyperparameter-t-number-of-epochs-for-vanilla-perceptron-from-development-data" title="Permalink to this headline">¶</a></h3>
+<p>We use training to train the linear perceptron model for
+different epochs T = 1,2,...,20.</p>
+<p>Example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Before</span> <span class="n">we</span> <span class="n">put</span> <span class="n">out</span> <span class="n">feet</span> <span class="n">on</span> <span class="n">the</span> <span class="n">training</span> <span class="n">data</span><span class="p">,</span> <span class="n">we</span> <span class="n">go</span> <span class="n">through</span> <span class="n">the</span> <span class="n">development</span>
+<span class="n">phase</span><span class="o">.</span> <span class="n">We</span> <span class="n">use</span> <span class="n">our</span> <span class="n">development</span> <span class="n">data</span> <span class="n">to</span> <span class="n">tune</span> <span class="n">the</span> <span class="n">number</span> <span class="n">of</span> <span class="n">epoch</span> <span class="n">hyperparameter</span><span class="o">.</span>
+
+<span class="n">We</span> <span class="n">do</span> <span class="ow">not</span> <span class="n">run</span> <span class="n">perceptron</span> <span class="n">until</span> <span class="n">convergence</span> <span class="n">to</span> <span class="n">train</span> <span class="n">our</span> <span class="n">development</span> <span class="n">dataset</span><span class="o">.</span>
+<span class="n">If</span> <span class="n">the</span> <span class="n">dataset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">linearly</span> <span class="n">separable</span><span class="p">,</span> <span class="n">perceptron</span> <span class="n">will</span> <span class="n">never</span> <span class="n">converge</span><span class="o">.</span>
+<span class="n">It</span> <span class="n">will</span> <span class="n">run</span> <span class="n">until</span> <span class="n">the</span> <span class="n">heat</span> <span class="n">death</span> <span class="n">of</span> <span class="n">the</span> <span class="n">universe</span><span class="p">,</span> <span class="ow">or</span> <span class="n">the</span> <span class="n">earth</span> <span class="n">will</span> <span class="n">be</span>
+<span class="n">consumed</span> <span class="n">by</span> <span class="n">a</span> <span class="n">black</span> <span class="n">hole</span><span class="o">.</span>
+
+<span class="n">Let</span><span class="s1">&#39;s say for epoch T =1, we have following case:</span>
+
+<span class="n">examples</span>    <span class="mi">10</span><span class="n">_predictions</span>               <span class="n">maximum</span>    <span class="n">prediction</span>   <span class="kc">True</span> <span class="n">label</span>
+<span class="o">--------</span>    <span class="o">---------------------</span>        <span class="o">-------</span>    <span class="o">----------</span>   <span class="o">-----------</span>
+<span class="n">x0</span>          <span class="n">x0w0</span><span class="p">,</span> <span class="n">x0w1</span><span class="p">,</span><span class="o">...</span><span class="p">,</span> <span class="n">x0w9</span>         <span class="n">x0w3</span>       <span class="n">h0</span> <span class="o">=</span> <span class="n">x0w3</span>    <span class="n">y0</span> <span class="o">=</span> <span class="mi">8</span>
+<span class="n">x1</span>          <span class="n">x1w0</span><span class="p">,</span> <span class="n">x1w1</span><span class="p">,</span><span class="o">...</span><span class="p">,</span> <span class="n">x1w9</span>         <span class="n">x1w5</span>       <span class="n">h1</span> <span class="o">=</span> <span class="n">x1w5</span>    <span class="n">y1</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="o">...</span>
+<span class="n">xn</span>          <span class="n">xnw0</span><span class="p">,</span> <span class="n">xnw1</span><span class="p">,</span><span class="o">...</span><span class="p">,</span> <span class="n">xnw9</span>         <span class="n">x0w7</span>       <span class="n">hn</span> <span class="o">=</span> <span class="n">x0w7</span>    <span class="n">yn</span> <span class="o">=</span> <span class="mi">7</span>
+
+<span class="n">For</span> <span class="mi">20</span> <span class="n">epochs</span> <span class="n">we</span> <span class="n">have</span> <span class="mi">20</span> <span class="n">different</span> <span class="n">accuracies</span> <span class="ow">and</span> <span class="n">we</span> <span class="n">choose</span> <span class="n">the</span> <span class="n">epochs</span> <span class="n">that</span>
+<span class="n">gives</span> <span class="n">the</span> <span class="n">maximum</span> <span class="n">accuracy</span><span class="o">.</span>
+<span class="n">We</span> <span class="n">take</span> <span class="n">this</span> <span class="n">value</span> <span class="n">of</span> <span class="n">epoch</span> <span class="k">for</span> <span class="nb">all</span> <span class="n">the</span> <span class="n">rest</span> <span class="n">of</span> <span class="n">this</span> <span class="n">homework</span><span class="o">.</span>
+<span class="n">After</span> <span class="n">we</span> <span class="n">get</span> <span class="n">the</span> <span class="n">best</span> <span class="n">epoch</span> <span class="n">T</span><span class="o">*</span> <span class="n">we</span> <span class="n">run</span> <span class="n">the</span> <span class="n">linear</span> <span class="n">perceptron</span> <span class="k">with</span> <span class="n">this</span> <span class="n">number</span>
+<span class="n">of</span> <span class="n">epochs</span><span class="o">.</span>
+
+<span class="n">Then</span> <span class="n">we</span> <span class="n">will</span> <span class="n">tune</span> <span class="n">another</span> <span class="n">paramters</span> <span class="k">for</span> <span class="n">kernel</span> <span class="n">perceptrons</span><span class="o">.</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="b-tune-hyperparameter-d-for-polynomial-kernel-from-development-data">
+<h3>3.2b Tune hyperparameter d for Polynomial Kernel from Development data<a class="headerlink" href="#b-tune-hyperparameter-d-for-polynomial-kernel-from-development-data" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="c-tune-hyperparameter-sigma-or-gamma-for-gaussin-kernel-from-development-data">
+<h3>3.2c Tune hyperparameter sigma(or gamma) for Gaussin Kernel from Development data<a class="headerlink" href="#c-tune-hyperparameter-sigma-or-gamma-for-gaussin-kernel-from-development-data" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="d-used-tuned-hyperparameters-t-d-sigma-on-training-data-and-test-with-test-data">
+<h3>3.2d Used tuned hyperparameters T,d,sigma on Training data and test with test data<a class="headerlink" href="#d-used-tuned-hyperparameters-t-d-sigma-on-training-data-and-test-with-test-data" title="Permalink to this headline">¶</a></h3>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Qn 3: Digit Recognition</a><ul>
+<li><a class="reference internal" href="#qn-3-1">Qn 3.1</a><ul>
+<li><a class="reference internal" href="#a-normalize-the-features">3.1a normalize the features</a></li>
+<li><a class="reference internal" href="#b-break-data-into-10-parts">3.1b break data into 10 parts</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#qn-3-2-linear-polynomial-and-gaussian-kernel-perceptron">Qn 3.2 Linear, Polynomial and Gaussian Kernel Perceptron</a><ul>
+<li><a class="reference internal" href="#a-tune-hyperparameter-t-number-of-epochs-for-vanilla-perceptron-from-development-data">3.2a Tune hyperparameter T (number of epochs) for Vanilla Perceptron from Development data</a></li>
+<li><a class="reference internal" href="#b-tune-hyperparameter-d-for-polynomial-kernel-from-development-data">3.2b Tune hyperparameter d for Polynomial Kernel from Development data</a></li>
+<li><a class="reference internal" href="#c-tune-hyperparameter-sigma-or-gamma-for-gaussin-kernel-from-development-data">3.2c Tune hyperparameter sigma(or gamma) for Gaussin Kernel from Development data</a></li>
+<li><a class="reference internal" href="#d-used-tuned-hyperparameters-t-d-sigma-on-training-data-and-test-with-test-data">3.2d Used tuned hyperparameters T,d,sigma on Training data and test with test data</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="hw07_qn2.html"
+                        title="previous chapter">Qn2: Text Classification</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="extraWork.html"
+                        title="next chapter">ExtraWork :</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/hw07_qn3.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="extraWork.html" title="ExtraWork :"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="hw07_qn2.html" title="Qn2: Text Classification"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Bhishan&#39;s 1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Bhishan Poudel.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
+    </div>
+  </body>
+</html>

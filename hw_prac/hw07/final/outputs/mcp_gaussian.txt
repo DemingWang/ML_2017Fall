@@ -1,0 +1,22 @@
+Multiclass Percpetron gaussian Kernel
+Accuracy = 20.14 %
+Number of support vectors = 500
+Confusion Matrix
+
+[[  0  77   0   0   0   0   0 101   0   0]
+ [  0 182   0   0   0   0   0   0   0   0]
+ [  0 174   0   0   0   0   0   3   0   0]
+ [  0 181   0   0   0   0   0   2   0   0]
+ [  0  80   0   0 101   0   0   0   0   0]
+ [  0 171   0   0   0   0   0  11   0   0]
+ [  0 171   0   0   0   0   0  10   0   0]
+ [  0 100   0   0   0   0   0  79   0   0]
+ [  0 173   0   0   0   0   0   1   0   0]
+ [  0 167   0   0   0   0   0  13   0   0]]
+
+ ========================================
+
+Begin time:  Fri Nov 24 17:54:03 2017
+End   time:  Fri Nov 24 19:33:29 2017 
+
+Time taken:  0 days,  1 hours,        39 minutes,  25.819400 seconds.

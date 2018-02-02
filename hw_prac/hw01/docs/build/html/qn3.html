@@ -1,0 +1,140 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Polynomial Regression &#8212; Bhishan&#39;s 1 documentation</title>
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Bhishan&#39;s 1 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="polynomial-regression">
+<h1>Polynomial Regression<a class="headerlink" href="#polynomial-regression" title="Permalink to this headline">¶</a></h1>
+<p>In this question we fit the polynomial regression with and
+without L2 regularization (Ridge Regression).</p>
+<p>The input data is noisy sinusoidal curve generated using
+the formula</p>
+<p>Where epsilon varies from 0 to 0.005 with Gaussian mean zero and variance 0.005.</p>
+<p>There are initially samples generated, however, they are broke into 3 equal
+parts: 10 in train.txt, 10 in test.txt and rest of 10 in devel.txt.</p>
+<p>In the polynomial regression we find hyperparameter Lambda from cross-validation
+set devel.txt, weight vector w from train.txt and we finally fit the data
+test.txt.</p>
+<p>Note that all the data we used train.txt, test.txt, and devel.txt comes from
+the same distrubution function (for example simpel gaussian sample here.).</p>
+<p>The output of running the program polyfit.py is given below.</p>
+<p>Outputs:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1">############################################################</span>
+<span class="n">Ridge</span> <span class="n">Regression</span><span class="p">:</span>
+<span class="n">Degree</span> <span class="n">of</span> <span class="n">polynomial</span> <span class="n">M</span> <span class="o">=</span>  <span class="mi">9</span>
+<span class="n">log</span><span class="p">(</span><span class="n">lam</span><span class="p">)</span>   <span class="n">lam</span>          <span class="n">E_train</span>             <span class="n">E_valid</span>
+ <span class="o">-</span><span class="mf">50.00</span>   <span class="mf">1.92875e-22</span> <span class="mf">0.00071043706916</span>   <span class="mf">0.15294137335788</span>
+ <span class="o">-</span><span class="mf">45.00</span>   <span class="mf">2.86252e-20</span> <span class="mf">0.00071043706916</span>   <span class="mf">0.15294137335788</span>
+ <span class="o">-</span><span class="mf">40.00</span>   <span class="mf">4.24835e-18</span> <span class="mf">0.00023951892261</span>   <span class="mf">0.15535124412418</span>
+ <span class="o">-</span><span class="mf">35.00</span>   <span class="mf">6.30512e-16</span> <span class="mf">0.00297491558846</span>   <span class="mf">0.56445443004290</span>
+ <span class="o">-</span><span class="mf">30.00</span>   <span class="mf">9.35762e-14</span> <span class="mf">0.00988120783719</span>   <span class="mf">1.50774354934759</span>
+ <span class="o">-</span><span class="mf">25.00</span>   <span class="mf">1.38879e-11</span> <span class="mf">0.02993098285872</span>   <span class="mf">0.35402378737031</span>
+ <span class="o">-</span><span class="mf">20.00</span>   <span class="mf">2.06115e-09</span> <span class="mf">0.03852166238462</span>   <span class="mf">0.14257663582101</span>
+ <span class="o">-</span><span class="mf">15.00</span>   <span class="mf">3.05902e-07</span> <span class="mf">0.04104526936869</span>   <span class="mf">0.23631982048812</span>
+ <span class="o">-</span><span class="mf">10.00</span>   <span class="mf">4.53999e-05</span> <span class="mf">0.09851256596825</span>   <span class="mf">0.08394812727602</span>
+ <span class="o">-</span><span class="mf">5.00</span>   <span class="mf">6.73795e-03</span> <span class="mf">0.36797844115190</span>   <span class="mf">0.28555749373793</span>
+ <span class="mf">0.00</span>   <span class="mf">1.00000e+00</span> <span class="mf">0.61657156591915</span>   <span class="mf">0.64265588355401</span>
+<span class="o">------------------------------------------------------------</span>
+<span class="o">-</span><span class="mf">10.0</span>    <span class="mf">4.53999e-05</span>                    <span class="mf">0.08394812727602</span>
+
+<span class="c1">##################################################</span>
+<span class="n">Comparison</span> <span class="n">of</span> <span class="n">regularized</span> <span class="ow">and</span> <span class="n">unregularized</span> <span class="n">cases</span><span class="p">:</span>
+<span class="n">Test</span> <span class="n">RMSE</span> <span class="n">without</span> <span class="n">regularization</span> <span class="k">for</span> <span class="n">M</span> <span class="o">=</span> <span class="mi">9</span><span class="p">:</span> <span class="mf">0.1612</span><span class="o">.</span>
+<span class="n">Test</span> <span class="n">RMSE</span> <span class="k">with</span>    <span class="n">regularization</span> <span class="k">for</span> <span class="n">M</span> <span class="o">=</span> <span class="mi">9</span><span class="p">:</span> <span class="mf">0.1241</span><span class="o">.</span>
+</pre></div>
+</div>
+<p>I have plotted several plots. Which are given below.</p>
+<img alt="_images/hw01qn3_dataset.png" src="_images/hw01qn3_dataset.png" />
+<img alt="_images/hw01qn3_train.png" src="_images/hw01qn3_train.png" />
+<img alt="_images/hw01qn3_test.png" src="_images/hw01qn3_test.png" />
+<img alt="_images/hw01qn3_devel.png" src="_images/hw01qn3_devel.png" />
+<img alt="_images/unreg_poly_reg.png" src="_images/unreg_poly_reg.png" />
+<img alt="_images/table_reg_poly_fitting.png" src="_images/table_reg_poly_fitting.png" />
+<img alt="_images/reg_poly_reg.png" src="_images/reg_poly_reg.png" />
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/qn3.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Bhishan&#39;s 1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Bhishan Poudel.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.4.
+    </div>
+  </body>
+</html>

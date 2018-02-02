@@ -1,0 +1,174 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>qn3a_dat_proc &#8212; Bhishan&#39;s 1 documentation</title>
+    <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Bhishan&#39;s 1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for qn3a_dat_proc</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!python</span>
+<span class="c1"># -*- coding: utf-8 -*-#</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Preprocess the optical digit data.</span>
+
+<span class="sd">@author: Bhishan Poudel</span>
+
+<span class="sd">@date: Nov 16, 2017</span>
+
+<span class="sd">To run this progam we need train and test data for optical digits from</span>
+<span class="sd">the website:</span>
+<span class="sd">    http://archive.ics.uci.edu/ml/datasets/Optical+Recognition+of+Handwritten+Digits</span>
+<span class="sd">    </span>
+<span class="sd">The two datafiles optdigits.tes and optdigits.tes should be in the</span>
+<span class="sd">path ../data/optdigits/</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="c1"># Imports</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">sklearn</span> <span class="k">import</span> <span class="n">preprocessing</span>
+
+<div class="viewcode-block" id="split_devel_train"><a class="viewcode-back" href="../qn3a_dat_proc.html#qn3a_dat_proc.split_devel_train">[docs]</a><span class="k">def</span> <span class="nf">split_devel_train</span><span class="p">(</span><span class="n">fdata</span><span class="p">,</span><span class="n">fdevel</span><span class="p">,</span><span class="n">ftrain</span><span class="p">):</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fdata</span><span class="p">)</span> <span class="k">as</span> <span class="n">fi</span><span class="p">,</span> \
+        <span class="nb">open</span><span class="p">(</span><span class="n">fdevel</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fdv</span><span class="p">,</span> \
+        <span class="nb">open</span><span class="p">(</span><span class="n">ftrain</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">ftr</span><span class="p">:</span>
+         
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">fi</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span><span class="mi">1000</span><span class="p">:</span>
+                <span class="n">fdv</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+             
+            <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="mi">1000</span><span class="p">:</span>
+                <span class="n">ftr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">line</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="split_to10"><a class="viewcode-back" href="../qn3a_dat_proc.html#qn3a_dat_proc.split_to10">[docs]</a><span class="k">def</span> <span class="nf">split_to10</span><span class="p">(</span><span class="n">fdata</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    X_norm = X - X_min / (X_max - X_min)</span>
+<span class="sd">    </span>
+<span class="sd">    Min is calculated for a column by default.</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="o">*</span><span class="n">X</span><span class="p">,</span><span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="n">fdata</span><span class="p">,</span><span class="n">unpack</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;f&#39;</span><span class="p">,</span><span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+    <span class="n">X</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">t</span><span class="p">),</span> <span class="n">t</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="p">),</span><span class="mi">1</span><span class="p">)</span>  
+    
+    <span class="c1">## minmax scalar</span>
+    <span class="n">scaler</span> <span class="o">=</span> <span class="n">preprocessing</span><span class="o">.</span><span class="n">MinMaxScaler</span><span class="p">()</span>
+    <span class="n">X_norm</span> <span class="o">=</span> <span class="n">scaler</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>   <span class="c1"># each rows</span>
+        
+    <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+        <span class="n">t2</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">t2</span><span class="p">[</span><span class="n">t2</span><span class="o">!=</span><span class="n">num</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        
+        <span class="n">t3</span> <span class="o">=</span> <span class="n">t2</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">t3</span><span class="p">[</span><span class="n">t3</span><span class="o">==</span><span class="n">num</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+        
+        <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">c_</span><span class="p">[</span><span class="n">X_norm</span><span class="p">,</span><span class="n">t3</span><span class="p">]</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="n">fdata</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">num</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;.txt&#39;</span><span class="p">,</span><span class="n">data</span><span class="p">,</span><span class="n">fmt</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%.14g</span><span class="s1">&#39;</span><span class="p">,</span><span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../qn3a_dat_proc.html#qn3a_dat_proc.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>    
+    <span class="c1"># data paths</span>
+    <span class="n">idir</span> <span class="o">=</span> <span class="s1">&#39;../data/optdigits/&#39;</span>
+    <span class="n">odir_tr</span> <span class="o">=</span> <span class="s1">&#39;../data/optdigits/train/&#39;</span>
+    <span class="n">odir_dv</span> <span class="o">=</span> <span class="s1">&#39;../data/optdigits/devel/&#39;</span>
+    <span class="n">odir_ts</span> <span class="o">=</span> <span class="s1">&#39;../data/optdigits/test/&#39;</span>
+    
+    <span class="c1"># data files</span>
+    <span class="n">fdata</span> <span class="o">=</span> <span class="n">idir</span> <span class="o">+</span> <span class="s1">&#39;optdigits.tra&#39;</span>
+    <span class="n">ftrain</span> <span class="o">=</span> <span class="n">odir_tr</span> <span class="o">+</span> <span class="s1">&#39;train.txt&#39;</span>
+    <span class="n">fdevel</span> <span class="o">=</span> <span class="n">odir_dv</span> <span class="o">+</span> <span class="s1">&#39;devel.txt&#39;</span>
+    <span class="n">ftest</span> <span class="o">=</span> <span class="n">odir_ts</span>  <span class="o">+</span> <span class="s1">&#39;test.txt&#39;</span>
+    
+    <span class="c1"># first copy test data inside test folder</span>
+    <span class="n">tst1</span> <span class="o">=</span> <span class="s1">&#39;../data/optdigits/optdigits.tes&#39;</span>
+    <span class="n">tst2</span> <span class="o">=</span>  <span class="s1">&#39;../data/optdigits/test/test.txt&#39;</span>
+    <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">tst1</span><span class="p">,</span><span class="n">tst2</span><span class="p">)</span>
+    
+    <span class="c1"># split train-devel</span>
+    <span class="n">split_devel_train</span><span class="p">(</span><span class="n">fdata</span><span class="p">,</span><span class="n">fdevel</span><span class="p">,</span><span class="n">ftrain</span><span class="p">)</span>
+    
+    <span class="c1"># split into 10 groups</span>
+    <span class="n">split_to10</span><span class="p">(</span><span class="n">ftrain</span><span class="p">)</span>
+    <span class="n">split_to10</span><span class="p">(</span><span class="n">fdevel</span><span class="p">)</span>
+    <span class="n">split_to10</span><span class="p">(</span><span class="n">ftest</span><span class="p">)</span></div>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Bhishan&#39;s 1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Bhishan Poudel.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.5.
+    </div>
+  </body>
+</html>

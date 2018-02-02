@@ -1,0 +1,331 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Qn 2: Spam vs. Non-Spam &#8212; Bhishan&#39;s 1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/sidebar.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Qn 3: Atheism vs. Religion" href="hw06_qn3.html" />
+    <link rel="prev" title="Qn1 :Various Perceptron Algorithms (Vanilla, Averaged, and Kernel)" href="hw06_qn1.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="hw06_qn3.html" title="Qn 3: Atheism vs. Religion"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="hw06_qn1.html" title="Qn1 :Various Perceptron Algorithms (Vanilla, Averaged, and Kernel)"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Bhishan&#39;s 1 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="qn-2-spam-vs-non-spam">
+<h1>Qn 2: Spam vs. Non-Spam<a class="headerlink" href="#qn-2-spam-vs-non-spam" title="Permalink to this headline">¶</a></h1>
+<dl class="docutils">
+<dt>In this question we will implement two perceptron algorithms</dt>
+<dd><ul class="first last simple">
+<li>perceptron</li>
+<li>averaged perceptron</li>
+</ul>
+</dd>
+<dt>Here, we have two datasets:</dt>
+<dd><ul class="first last simple">
+<li>spam_train.txt (4000 examples lines)</li>
+<li>spam_test.txt  (1000 examples lines)</li>
+</ul>
+</dd>
+</dl>
+<p>For example: the data.txt looks like this
+.. code:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="mi">1</span> <span class="n">there</span> <span class="ow">is</span> <span class="n">an</span> <span class="n">apple</span> <span class="ow">and</span> <span class="n">a</span> <span class="n">banana</span>
+<span class="mi">0</span> <span class="n">a</span> <span class="n">cow</span> <span class="ow">in</span> <span class="n">a</span> <span class="n">farm</span> <span class="n">a</span> <span class="n">pig</span> <span class="ow">in</span> <span class="n">a</span> <span class="n">farm</span>
+<span class="mi">1</span> <span class="n">an</span> <span class="n">apple</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">tree</span>
+</pre></div>
+</div>
+<div class="section" id="qn-2a-create-feature-vector-vocab-txt">
+<h2>Qn 2a Create feature vector (vocab.txt)<a class="headerlink" href="#qn-2a-create-feature-vector-vocab-txt" title="Permalink to this headline">¶</a></h2>
+<p>The first entry in the <cite>data.txt</cite> is the label (spam or not-spam). We create feature matrix (vocab.txt) such that
+any word in data.txt should appear in at least TWO examples.</p>
+<p>Then vocab.txt looks like this:
+.. code:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="mi">1</span> <span class="n">a</span>
+<span class="mi">2</span> <span class="n">an</span>
+<span class="mi">3</span> <span class="n">apple</span>
+<span class="mi">4</span> <span class="ow">in</span>
+</pre></div>
+</div>
+<p>NOTE: In actual homework we choose least word frequecy to be 30.</p>
+<p>In actual homework:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">function</span><span class="p">:</span> <span class="n">spam_exercise</span><span class="o">.</span><span class="n">py</span><span class="o">==&gt;</span><span class="n">create_vocab</span><span class="p">(</span><span class="n">fdata</span><span class="p">,</span><span class="n">min_freq</span><span class="p">,</span><span class="n">fvocab</span><span class="p">)</span>
+
+<span class="n">datafile</span><span class="p">:</span> <span class="o">../</span><span class="n">data</span><span class="o">/</span><span class="n">spam</span><span class="o">/</span><span class="n">spam_train</span><span class="o">.</span><span class="n">txt</span>
+<span class="n">vocabfile</span><span class="p">:</span> <span class="o">../</span><span class="n">data</span><span class="o">/</span><span class="n">spam</span><span class="o">/</span><span class="n">spam_vocab</span><span class="o">.</span><span class="n">txt</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="qn-2b-create-sparse-feature-matrix">
+<h2>Qn 2b Create sparse feature matrix<a class="headerlink" href="#qn-2b-create-sparse-feature-matrix" title="Permalink to this headline">¶</a></h2>
+<p>Here, we create sparse feature matrix <cite>sparse.txt</cite> from
+the feature matrix vocab.txt.</p>
+<p>The example of sparse.txt is given below:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="mi">1</span> <span class="mi">1</span><span class="p">:</span><span class="mi">1</span> <span class="mi">2</span><span class="p">:</span><span class="mi">1</span> <span class="mi">3</span><span class="p">:</span><span class="mi">1</span>
+<span class="mi">0</span> <span class="mi">1</span><span class="p">:</span><span class="mi">1</span> <span class="mi">4</span><span class="p">:</span><span class="mi">1</span>
+<span class="mi">1</span> <span class="mi">2</span><span class="p">:</span><span class="mi">1</span> <span class="mi">3</span><span class="p">:</span><span class="mi">1</span> <span class="mi">4</span><span class="p">:</span><span class="mi">1</span>
+
+<span class="n">Words</span> <span class="n">common</span> <span class="n">between</span> <span class="n">data_line1</span> <span class="o">&amp;</span> <span class="n">vocab</span><span class="p">:</span>  <span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;an&#39;</span><span class="p">,</span><span class="s1">&#39;apple&#39;</span>
+<span class="n">Their</span> <span class="n">positions</span> <span class="ow">in</span> <span class="n">vocab</span><span class="o">.</span><span class="n">txt</span> <span class="p">:</span> <span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span>
+<span class="n">All</span> <span class="n">values</span> <span class="n">after</span> <span class="n">colon</span> <span class="n">are</span> <span class="mf">1.</span>
+</pre></div>
+</div>
+<p>In actual homework:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">function</span><span class="p">:</span> <span class="n">spam_exercise</span><span class="o">.</span><span class="n">py</span><span class="o">==&gt;</span><span class="n">create_sparse</span><span class="p">(</span><span class="n">fdata</span><span class="p">,</span><span class="n">fvocab</span><span class="p">,</span><span class="n">fsparse</span><span class="p">)</span>
+
+<span class="n">vocab</span> <span class="n">file</span><span class="p">:</span> <span class="o">../</span><span class="n">data</span><span class="o">/</span><span class="n">spam</span><span class="o">/</span><span class="n">spam_vocab</span><span class="o">.</span><span class="n">txt</span>
+<span class="n">sparse</span> <span class="n">file</span> <span class="n">train</span><span class="p">:</span> <span class="o">../</span><span class="n">data</span><span class="o">/</span><span class="n">spam</span><span class="o">/</span><span class="n">spam_train_svm</span><span class="o">.</span><span class="n">txt</span>
+<span class="n">sparse</span> <span class="n">file</span> <span class="n">test</span><span class="p">:</span> <span class="o">../</span><span class="n">data</span><span class="o">/</span><span class="n">spam</span><span class="o">/</span><span class="n">spam_test_svm</span><span class="o">.</span><span class="n">txt</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="qn-2c-read-dense-matrix">
+<h2>Qn 2c Read dense matrix<a class="headerlink" href="#qn-2c-read-dense-matrix" title="Permalink to this headline">¶</a></h2>
+<p>Here, first we create the dense feature matrix (dense.txt)
+and take this as the input design matrix for the perceptron
+algorithm. The first column of the design matrix is label
+and rest part of the matrix is the data.</p>
+<p>Example of dense.txt file:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Let</span><span class="s1">&#39;s say we have total number of features (num of vocab words) is 4.</span>
+<span class="n">Let</span><span class="s1">&#39;s say an examle has sparse svm light file notation:</span>
+<span class="mi">1</span> <span class="mi">1</span><span class="p">:</span><span class="mi">1</span> <span class="mi">2</span><span class="p">:</span><span class="mi">1</span> <span class="mi">3</span><span class="p">:</span><span class="mi">1</span>
+
+<span class="n">Then</span><span class="p">,</span> <span class="n">the</span> <span class="n">first</span> <span class="n">digit</span> <span class="mi">1</span> <span class="ow">is</span> <span class="n">the</span> <span class="n">label</span><span class="o">.</span>
+<span class="mi">1</span><span class="p">:</span><span class="mi">1</span> <span class="mi">2</span><span class="p">:</span><span class="mi">1</span> <span class="mi">3</span><span class="p">:</span><span class="mi">1</span> <span class="ow">is</span> <span class="n">the</span> <span class="n">sparse</span> <span class="n">data</span><span class="o">.</span>
+
+<span class="n">The</span> <span class="mi">1</span><span class="n">th</span><span class="p">,</span> <span class="mi">2</span><span class="n">nd</span><span class="p">,</span> <span class="ow">and</span> <span class="mi">3</span><span class="n">rd</span> <span class="n">element</span> <span class="ow">is</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">all</span> <span class="n">other</span> <span class="n">elemtns</span> <span class="n">are</span> <span class="n">zero</span><span class="o">.</span>
+<span class="mi">1</span><span class="p">:</span><span class="mi">1</span> <span class="mi">2</span><span class="p">:</span><span class="mi">1</span> <span class="mi">3</span><span class="p">:</span><span class="mi">1</span> <span class="o">==&gt;</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">0</span>
+</pre></div>
+</div>
+<p>In actual homework:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">function</span><span class="p">:</span> <span class="n">spam_exercise</span><span class="o">.</span><span class="n">py</span><span class="o">==&gt;</span><span class="n">create_sparse</span><span class="p">(</span><span class="n">fdata</span><span class="p">,</span><span class="n">fvocab</span><span class="p">,</span><span class="n">fsparse</span><span class="p">)</span>
+
+<span class="n">function</span><span class="p">:</span> <span class="n">perceptron</span><span class="o">.</span><span class="n">py</span><span class="o">==&gt;</span><span class="n">read_examples</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
+
+<span class="n">dense</span> <span class="n">file</span> <span class="n">train</span><span class="p">:</span> <span class="o">../</span><span class="n">data</span><span class="o">/</span><span class="n">spam</span><span class="o">/</span><span class="n">dense_train</span><span class="o">.</span><span class="n">txt</span>
+<span class="n">dense</span> <span class="n">file</span> <span class="n">test</span><span class="p">:</span> <span class="o">../</span><span class="n">data</span><span class="o">/</span><span class="n">spam</span><span class="o">/</span><span class="n">dense_test</span><span class="o">.</span><span class="n">txt</span>
+
+<span class="n">labels</span> <span class="p">:</span> <span class="n">first</span> <span class="n">column</span> <span class="n">of</span> <span class="n">dense</span><span class="o">.</span><span class="n">txt</span>
+<span class="n">data</span>   <span class="p">:</span> <span class="nb">all</span> <span class="n">columns</span> <span class="k">except</span> <span class="n">first</span> <span class="n">column</span> <span class="n">of</span> <span class="n">dense</span><span class="o">.</span><span class="n">txt</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="qn-2d-vanilla-perceptron">
+<h2>Qn 2d Vanilla Perceptron<a class="headerlink" href="#qn-2d-vanilla-perceptron" title="Permalink to this headline">¶</a></h2>
+<p>Here we read the data and labels from dense.txt file and
+implement the perceptron algorithm to train the data.
+We find following things:</p>
+<blockquote>
+<div><blockquote>
+<div><ul class="simple">
+<li>number of epochs to converge train data</li>
+<li>total number of mistakes</li>
+<li>final parameter vector w</li>
+</ul>
+<p>We write these things into a text file spam_model_p.txt.</p>
+</div></blockquote>
+<p>Then we test our perceptron model, we first get the parameter
+vector <strong>w</strong> from training data (dense_train.txt).
+Then we train our model
+to the test dataset (dense_test.txt).</p>
+<p>Result:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Vanilla</span> <span class="n">Perceptron</span> <span class="n">Statistics</span>
+<span class="o">=============================</span>
+<span class="n">Final</span> <span class="n">iteration</span> <span class="o">=</span> <span class="mi">18</span>
+<span class="n">Total</span> <span class="n">mistakes</span> <span class="o">=</span> <span class="mi">476</span>
+
+
+<span class="n">Parameter</span> <span class="n">w</span> <span class="o">=</span> <span class="p">[</span> <span class="mf">10.</span>  <span class="o">-</span><span class="mf">1.</span>   <span class="mf">3.</span> <span class="o">...</span><span class="p">,</span>  <span class="o">-</span><span class="mf">6.</span>  <span class="o">-</span><span class="mf">4.</span>   <span class="mf">4.</span><span class="p">]</span>
+<span class="n">Accuracy</span>    <span class="o">=</span> <span class="mf">97.80</span> <span class="o">%</span> <span class="p">(</span><span class="mi">978</span> <span class="n">out</span> <span class="n">of</span> <span class="mi">1000</span> <span class="n">correct</span><span class="p">)</span>
+
+
+<span class="n">F1</span><span class="o">-</span><span class="n">score</span> <span class="o">=</span> <span class="mf">0.97</span>
+<span class="n">Accuracy</span> <span class="o">=</span> <span class="mf">0.98</span>
+<span class="n">Confusion</span> <span class="n">matrix</span> <span class="ow">is</span> <span class="n">given</span> <span class="n">below</span>
+<span class="n">Diagonals</span> <span class="n">are</span> <span class="kc">True</span> <span class="n">values</span><span class="o">.</span>
+       <span class="n">True_0</span> <span class="n">True_1</span>
+       <span class="o">--------------</span>
+<span class="n">Pred_0</span><span class="o">|</span> <span class="mi">683</span>      <span class="mi">8</span>
+<span class="n">Pred_1</span><span class="o">|</span> <span class="mi">12</span>      <span class="mi">295</span>
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="qn-2e-averaged-perceptron">
+<h2>Qn 2e Averaged Perceptron<a class="headerlink" href="#qn-2e-averaged-perceptron" title="Permalink to this headline">¶</a></h2>
+<p>We use the dataset dense_train.txt to train our averaged
+perceptron model and get the paramters vector <strong>w</strong>.</p>
+<p>Then we fit our model to test data (dense_test.txt) and
+found the accuracy.</p>
+<p>Result:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Averaged</span> <span class="n">Perceptron</span> <span class="n">Statistics</span>
+<span class="o">=============================</span>
+<span class="n">Final</span> <span class="n">iteration</span> <span class="o">=</span> <span class="mi">18</span>
+<span class="n">Total</span> <span class="n">mistakes</span> <span class="o">=</span> <span class="mi">476</span>
+
+
+<span class="n">Parameter</span> <span class="n">w</span> <span class="o">=</span> <span class="p">[</span> <span class="mf">9.6</span>  <span class="o">-</span><span class="mf">0.85</span>  <span class="mf">2.85</span> <span class="o">...</span><span class="p">,</span> <span class="o">-</span><span class="mf">5.2</span>  <span class="o">-</span><span class="mf">3.45</span>  <span class="mf">2.8</span> <span class="p">]</span>
+<span class="n">Accuracy</span>    <span class="o">=</span> <span class="mf">98.10</span> <span class="o">%</span> <span class="p">(</span><span class="mi">981</span> <span class="n">out</span> <span class="n">of</span> <span class="mi">1000</span> <span class="n">correct</span><span class="p">)</span>
+
+
+<span class="n">F1</span><span class="o">-</span><span class="n">score</span> <span class="o">=</span> <span class="mf">0.97</span>
+<span class="n">Accuracy</span> <span class="o">=</span> <span class="mf">0.98</span>
+<span class="n">Confusion</span> <span class="n">matrix</span> <span class="ow">is</span> <span class="n">given</span> <span class="n">below</span>
+<span class="n">Diagonals</span> <span class="n">are</span> <span class="kc">True</span> <span class="n">values</span><span class="o">.</span>
+       <span class="n">True_0</span> <span class="n">True_1</span>
+       <span class="o">--------------</span>
+<span class="n">Pred_0</span><span class="o">|</span> <span class="mi">685</span>      <span class="mi">8</span>
+<span class="n">Pred_1</span><span class="o">|</span> <span class="mi">11</span>      <span class="mi">296</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="qn-2f-kernel-perceptron-extra-work">
+<h2>Qn 2f Kernel Perceptron (Extra Work)<a class="headerlink" href="#qn-2f-kernel-perceptron-extra-work" title="Permalink to this headline">¶</a></h2>
+<p>The statistics for kernel is given below:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Final</span> <span class="n">iteration</span> <span class="o">=</span> <span class="mi">6</span>
+<span class="n">Total</span> <span class="n">mistakes</span> <span class="o">=</span> <span class="mi">309</span>
+
+
+  <span class="n">Accuracy</span>    <span class="o">=</span> <span class="mf">98.00</span> <span class="o">%</span> <span class="p">(</span><span class="mi">980</span> <span class="n">out</span> <span class="n">of</span> <span class="mi">1000</span> <span class="n">correct</span><span class="p">)</span>
+
+
+  <span class="n">F1</span><span class="o">-</span><span class="n">score</span> <span class="o">=</span> <span class="mf">0.97</span>
+  <span class="n">Accuracy</span> <span class="o">=</span> <span class="mf">0.98</span>
+  <span class="n">Confusion</span> <span class="n">matrix</span> <span class="ow">is</span> <span class="n">given</span> <span class="n">below</span>
+  <span class="n">Diagonals</span> <span class="n">are</span> <span class="kc">True</span> <span class="n">values</span><span class="o">.</span>
+         <span class="n">True_0</span> <span class="n">True_1</span>
+         <span class="o">--------------</span>
+  <span class="n">Pred_0</span><span class="o">|</span> <span class="mi">680</span>      <span class="mi">13</span>
+  <span class="n">Pred_1</span><span class="o">|</span> <span class="mi">7</span>      <span class="mi">300</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="summary-of-spam-nonspam-classification">
+<h2>Summary of spam-nonSpam Classification<a class="headerlink" href="#summary-of-spam-nonspam-classification" title="Permalink to this headline">¶</a></h2>
+<p>Results for spam vs non-spam classification:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">============</span>  <span class="o">==========</span>   <span class="o">==========</span>
+<span class="n">Perceptron</span>    <span class="n">Accuracy</span>     <span class="n">F1</span><span class="o">-</span><span class="n">score</span>
+<span class="o">============</span>  <span class="o">==========</span>   <span class="o">==========</span>
+<span class="n">Vanilla</span>       <span class="mf">0.98</span>         <span class="mf">0.97</span>
+<span class="n">Averaged</span>      <span class="mf">0.98</span>         <span class="mf">0.97</span>
+<span class="n">Kernel</span>        <span class="mf">0.98</span>         <span class="mf">0.97</span>
+<span class="o">===========</span>   <span class="o">==========</span>   <span class="o">==========</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Qn 2: Spam vs. Non-Spam</a><ul>
+<li><a class="reference internal" href="#qn-2a-create-feature-vector-vocab-txt">Qn 2a Create feature vector (vocab.txt)</a></li>
+<li><a class="reference internal" href="#qn-2b-create-sparse-feature-matrix">Qn 2b Create sparse feature matrix</a></li>
+<li><a class="reference internal" href="#qn-2c-read-dense-matrix">Qn 2c Read dense matrix</a></li>
+<li><a class="reference internal" href="#qn-2d-vanilla-perceptron">Qn 2d Vanilla Perceptron</a></li>
+<li><a class="reference internal" href="#qn-2e-averaged-perceptron">Qn 2e Averaged Perceptron</a></li>
+<li><a class="reference internal" href="#qn-2f-kernel-perceptron-extra-work">Qn 2f Kernel Perceptron (Extra Work)</a></li>
+<li><a class="reference internal" href="#summary-of-spam-nonspam-classification">Summary of spam-nonSpam Classification</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="hw06_qn1.html"
+                        title="previous chapter">Qn1 :Various Perceptron Algorithms (Vanilla, Averaged, and Kernel)</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="hw06_qn3.html"
+                        title="next chapter">Qn 3: Atheism vs. Religion</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/hw06_qn2.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="hw06_qn3.html" title="Qn 3: Atheism vs. Religion"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="hw06_qn1.html" title="Qn1 :Various Perceptron Algorithms (Vanilla, Averaged, and Kernel)"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Bhishan&#39;s 1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Bhishan Poudel.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
+    </div>
+  </body>
+</html>

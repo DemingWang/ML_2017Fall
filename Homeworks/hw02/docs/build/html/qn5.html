@@ -1,0 +1,159 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Stochastic Gradient Descent &#8212; Bhishan&#39;s 1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/sidebar.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="scaling" href="scaling.html" />
+    <link rel="prev" title="Polynomial Regression" href="qn4.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="scaling.html" title="scaling"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="qn4.html" title="Polynomial Regression"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Bhishan&#39;s 1 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="stochastic-gradient-descent">
+<h1>Stochastic Gradient Descent<a class="headerlink" href="#stochastic-gradient-descent" title="Permalink to this headline">¶</a></h1>
+<p>Here I have implemented SGD to questions 1, 2, and 3 using the same hyperparameters.
+All the comparisons are given in the respective questions.</p>
+<p>SGD converged faster than GD mehtod, however, the final weight vectors
+oscillates around the values that we obtained from normal equations method.</p>
+<p>For univariate case:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+<span class="n">w_norm_eqn</span>        <span class="o">=</span> <span class="p">[[</span><span class="mi">254</span><span class="p">,</span><span class="mf">450.0000</span>  <span class="mi">93</span><span class="p">,</span><span class="mf">308.9201</span> <span class="p">]]</span>
+<span class="n">iters</span> <span class="o">=</span> <span class="mi">200</span> <span class="n">w_BGD</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">254</span><span class="p">,</span><span class="mf">449.9998</span>  <span class="mi">93</span><span class="p">,</span><span class="mf">308.9200</span> <span class="p">]]</span>
+<span class="n">iters</span> <span class="o">=</span> <span class="mi">199</span> <span class="n">w_SGD</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">254</span><span class="p">,</span><span class="mf">494.4429</span>  <span class="mi">93</span><span class="p">,</span><span class="mf">244.2965</span> <span class="p">]]</span>
+<span class="n">abs_diff_min</span> <span class="o">=</span> <span class="mf">109.06649000954349</span>
+<span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">abs_diff_min</span><span class="p">)</span> <span class="o">=</span>  <span class="mi">175</span>
+</pre></div>
+</div>
+<p>For multivariate case:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+<span class="n">w_norm_eqn</span>        <span class="o">=</span> <span class="p">[[</span><span class="mi">254</span><span class="p">,</span><span class="mf">450.0000</span>  <span class="mi">78</span><span class="p">,</span><span class="mf">097.1126</span>  <span class="mi">24</span><span class="p">,</span><span class="mf">424.5992</span>  <span class="mi">2</span><span class="p">,</span><span class="mf">079.7085</span> <span class="p">]]</span>
+<span class="n">iters</span> <span class="o">=</span> <span class="mi">500</span> <span class="n">w_BGD</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">254</span><span class="p">,</span><span class="mf">450.0000</span>  <span class="mi">78</span><span class="p">,</span><span class="mf">097.1122</span>  <span class="mi">24</span><span class="p">,</span><span class="mf">424.5995</span>  <span class="mi">2</span><span class="p">,</span><span class="mf">079.7084</span> <span class="p">]]</span>
+<span class="n">iters</span> <span class="o">=</span> <span class="mi">499</span> <span class="n">w_SGD</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">254</span><span class="p">,</span><span class="mf">516.1325</span>  <span class="mi">78</span><span class="p">,</span><span class="mf">063.9833</span>  <span class="mi">24</span><span class="p">,</span><span class="mf">487.8213</span>  <span class="mi">2</span><span class="p">,</span><span class="mf">003.9658</span> <span class="p">]]</span>
+<span class="n">abs_diff_min</span> <span class="o">=</span> <span class="mf">238.22658943321608</span>
+<span class="nb">len</span><span class="p">(</span><span class="n">abs_diff_min_lst</span><span class="p">)</span> <span class="o">=</span> <span class="mi">500</span>
+<span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">abs_diff_min_lst</span><span class="p">)</span> <span class="o">=</span>  <span class="mi">468</span>
+</pre></div>
+</div>
+<p>For polynomial case:</p>
+<p>For unregularized case:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># NOTE: I used threshold = 0.001 not 1e-10 for Unregularized cased (bgd and sgd)</span>
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span> <span class="c1"># for SGD to get same results</span>
+<span class="n">shrinkage</span> <span class="o">=</span> <span class="mf">0.00</span> <span class="n">iters</span> <span class="o">=</span> <span class="mi">238</span> <span class="n">learning_rate</span> <span class="o">=</span> <span class="mf">0.10</span> <span class="n">deg</span> <span class="o">=</span> <span class="mi">5</span> <span class="n">threshold</span> <span class="o">=</span> <span class="mf">1.00e-04</span>
+<span class="n">w_norm_eqn</span>  <span class="o">=</span> <span class="p">[[</span><span class="mf">0.1711</span>  <span class="mf">1.6086</span>  <span class="mf">5.8353</span>  <span class="o">-</span><span class="mf">35.1236</span>  <span class="mf">43.5586</span>  <span class="o">-</span><span class="mf">16.1171</span> <span class="p">]]</span>
+<span class="n">w_unreg_bgd</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.1711</span>  <span class="o">-</span><span class="mf">0.0314</span>  <span class="o">-</span><span class="mf">0.6621</span>  <span class="o">-</span><span class="mf">0.3889</span>  <span class="mf">0.1045</span>  <span class="mf">0.5930</span> <span class="p">]]</span>
+<span class="n">w_unreg_sgd</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.1747</span>  <span class="o">-</span><span class="mf">0.0231</span>  <span class="o">-</span><span class="mf">0.6722</span>  <span class="o">-</span><span class="mf">0.3940</span>  <span class="mf">0.1107</span>  <span class="mf">0.6114</span> <span class="p">]]</span>
+</pre></div>
+</div>
+<p>For regularized case:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span> <span class="c1"># for SGD to get same results</span>
+<span class="n">shrinkage</span>  <span class="o">=</span> <span class="mf">0.10</span> <span class="n">final_iter</span> <span class="o">=</span> <span class="mi">657</span> <span class="n">learning_rate</span> <span class="o">=</span> <span class="mf">0.10</span> <span class="n">deg</span> <span class="o">=</span> <span class="mi">5</span> <span class="n">threshold</span> <span class="o">=</span> <span class="mf">1.00e-10</span>
+<span class="n">w_norm_eqn</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.1711</span>  <span class="o">-</span><span class="mf">0.1535</span>  <span class="o">-</span><span class="mf">0.3607</span>  <span class="o">-</span><span class="mf">0.1988</span>  <span class="mf">0.0442</span>  <span class="mf">0.2763</span> <span class="p">]]</span>
+<span class="n">w_reg_bgd</span>  <span class="o">=</span> <span class="p">[[</span><span class="mf">0.1555</span>  <span class="o">-</span><span class="mf">0.1537</span>  <span class="o">-</span><span class="mf">0.3606</span>  <span class="o">-</span><span class="mf">0.1987</span>  <span class="mf">0.0442</span>  <span class="mf">0.2762</span> <span class="p">]]</span>
+<span class="n">w_reg_sgd</span>  <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0890</span>  <span class="o">-</span><span class="mf">0.1079</span>  <span class="o">-</span><span class="mf">0.1054</span>  <span class="o">-</span><span class="mf">0.0680</span>  <span class="o">-</span><span class="mf">0.0268</span>  <span class="mf">0.0098</span> <span class="p">]]</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="qn4.html"
+                        title="previous chapter">Polynomial Regression</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="scaling.html"
+                        title="next chapter">scaling</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/qn5.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="scaling.html" title="scaling"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="qn4.html" title="Polynomial Regression"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Bhishan&#39;s 1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Bhishan Poudel.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
+    </div>
+  </body>
+</html>

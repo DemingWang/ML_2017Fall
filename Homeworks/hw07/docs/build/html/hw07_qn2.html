@@ -1,0 +1,171 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Qn2: Text Classification &#8212; Bhishan&#39;s 1 documentation</title>
+    <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/sidebar.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Qn 3: Digit Recognition" href="hw07_qn3a.html" />
+    <link rel="prev" title="Homework 7" href="hw.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="hw07_qn3a.html" title="Qn 3: Digit Recognition"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="hw.html" title="Homework 7"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Bhishan&#39;s 1 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="qn2-text-classification">
+<h1>Qn2: Text Classification<a class="headerlink" href="#qn2-text-classification" title="Permalink to this headline">¶</a></h1>
+<p>In this question, we trained SVM model to classify spam vs non-spam and atheism vs
+religion problem. We choose linear kernel and cost parameter 5.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.svm</span> <span class="k">import</span> <span class="n">SVC</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">SVC</span><span class="p">(</span><span class="n">kernel</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">C</span><span class="o">=</span><span class="mf">5.0</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span><span class="n">y_train</span><span class="p">)</span>
+<span class="n">y_pred</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+<span class="n">correct</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">y_test</span> <span class="o">==</span> <span class="n">y_pred</span><span class="p">)</span>
+<span class="n">accuracy</span> <span class="o">=</span> <span class="n">correct</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">y_test</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>For the SVM method the results is following:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">spam</span><span class="p">:</span> <span class="n">accuracy</span> <span class="o">=</span> <span class="mf">0.977</span>
+<span class="n">Confusion</span> <span class="n">Matrix</span>
+<span class="p">[[</span><span class="mi">683</span>  <span class="mi">10</span><span class="p">]</span>
+ <span class="p">[</span> <span class="mi">13</span> <span class="mi">294</span><span class="p">]]</span>
+</pre></div>
+</div>
+<p>Comparison with Perceptron method is given below:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Results</span> <span class="k">for</span> <span class="n">spam</span> <span class="n">vs</span> <span class="n">non</span><span class="o">-</span><span class="n">spam</span> <span class="n">classification</span><span class="p">::</span>
+
+<span class="o">======================</span>  <span class="o">==========</span>
+<span class="n">Model</span>                    <span class="n">Accuracy</span>
+<span class="o">======================</span>  <span class="o">==========</span>
+<span class="n">Vanilla</span>  <span class="n">Perceptron</span>     <span class="mf">0.98</span>
+<span class="n">Averaged</span> <span class="n">Perceptron</span>     <span class="mf">0.98</span>
+<span class="n">Kernel</span>   <span class="n">Perceptron</span>     <span class="mf">0.98</span>
+<span class="n">Linear</span>   <span class="n">SVM</span>            <span class="mf">0.977</span>
+<span class="o">=====================</span>   <span class="o">==========</span>
+</pre></div>
+</div>
+<div class="section" id="newgroups-classification">
+<h2>Newgroups Classification<a class="headerlink" href="#newgroups-classification" title="Permalink to this headline">¶</a></h2>
+<p>For SVM model, the results for newsgrops classification is given below:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">news1</span><span class="p">:</span> <span class="n">accuracy</span> <span class="o">=</span> <span class="mf">0.6649122807017543</span>
+<span class="n">Confusion</span> <span class="n">Matrix</span>
+<span class="p">[[</span><span class="mi">149</span> <span class="mi">102</span><span class="p">]</span>
+ <span class="p">[</span> <span class="mi">89</span> <span class="mi">230</span><span class="p">]]</span>
+
+<span class="n">news2</span><span class="p">:</span> <span class="n">accuracy</span> <span class="o">=</span> <span class="mf">0.6298245614035087</span>
+<span class="n">Confusion</span> <span class="n">Matrix</span>
+<span class="p">[[</span><span class="mi">136</span> <span class="mi">115</span><span class="p">]</span>
+ <span class="p">[</span> <span class="mi">96</span> <span class="mi">223</span><span class="p">]]</span>
+</pre></div>
+</div>
+<p>Comparison of SVM with Perceptron model:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># Results for 20 newsgroups atheism vs religion classification::</span>
+
+<span class="o">==============</span>    <span class="o">======================</span>  <span class="o">======================</span>
+<span class="n">Model</span>             <span class="n">Version</span> <span class="mi">1</span> <span class="n">Accuracy</span> <span class="o">%</span>    <span class="n">Version</span> <span class="mi">2</span> <span class="n">Accuracy</span> <span class="o">%</span>
+<span class="o">==============</span>    <span class="o">======================</span>  <span class="o">======================</span>
+<span class="n">Vanilla</span>  <span class="n">Perc</span>     <span class="mf">59.12</span>                   <span class="mf">58.42</span>
+<span class="n">Averaged</span> <span class="n">Perc</span>     <span class="mf">60.53</span>                   <span class="mf">61.58</span>
+<span class="n">Kernel</span>   <span class="n">Perc</span>     <span class="mf">61.40</span>                   <span class="mf">58.77</span>
+<span class="n">Linear</span> <span class="n">SVM</span>        <span class="mf">66.49</span>                   <span class="mf">62.98</span>
+<span class="o">=============</span>     <span class="o">======================</span>  <span class="o">======================</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="conclusion">
+<h2>Conclusion<a class="headerlink" href="#conclusion" title="Permalink to this headline">¶</a></h2>
+<p>I got better result for 20 newsgroup classification and almost same result
+for spam classification.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="hw.html"
+                        title="previous chapter">Homework 7</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="hw07_qn3a.html"
+                        title="next chapter">Qn 3: Digit Recognition</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="hw07_qn3a.html" title="Qn 3: Digit Recognition"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="hw.html" title="Homework 7"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Bhishan&#39;s 1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Bhishan Poudel.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.5.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,330 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Qn 3: Digit Recognition &#8212; Bhishan&#39;s 1 documentation</title>
+    <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/sidebar.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="ExtraWork : Plot 20 newsgroups text and SVM model for iris data" href="extraWork.html" />
+    <link rel="prev" title="Qn 3.2 Linear, Polynomial and Gaussian Kernel Perceptron" href="hw07_qn3b.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="extraWork.html" title="ExtraWork : Plot 20 newsgroups text and SVM model for iris data"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="hw07_qn3b.html" title="Qn 3.2 Linear, Polynomial and Gaussian Kernel Perceptron"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Bhishan&#39;s 1 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="qn-3-digit-recognition">
+<h1>Qn 3: Digit Recognition<a class="headerlink" href="#qn-3-digit-recognition" title="Permalink to this headline">¶</a></h1>
+<p>In this problem learn to classify the optical digits using Perceptron and SVM:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Perceptron<ul>
+<li>Vanilla Perceptron</li>
+<li>Linear Kernel Perceptron</li>
+<li>Polynomial Kernel Perceptron (degree= 2,3,4,5,6)</li>
+<li>Gaussian Kernel Perceptron (sigma = 0.1, 0.5, 2, 5, 10)</li>
+</ul>
+</li>
+<li>Support Vector Machines (SVM)<ul>
+<li>Linear SVM</li>
+<li>Polynomial Kernel SVM</li>
+<li>Gaussian Kernel SVM</li>
+</ul>
+</li>
+</ul>
+</div></blockquote>
+<div class="section" id="qn-3-1-one-vs-rest-multiclass-classification">
+<h2>Qn 3.1 One vs. Rest Multiclass Classification<a class="headerlink" href="#qn-3-1-one-vs-rest-multiclass-classification" title="Permalink to this headline">¶</a></h2>
+<p>For the one-vs-rest multiclass classification using perceptron,
+we first download the data from UCI website:
+<a class="reference external" href="http://archive.ics.uci.edu/ml/datasets/Optical+Recognition+of+Handwritten+Digits">http://archive.ics.uci.edu/ml/datasets/Optical+Recognition+of+Handwritten+Digits</a></p>
+<p>We download two files:</p>
+<blockquote>
+<div><ul class="simple">
+<li>optdigits.tra</li>
+<li>optdigits.tes</li>
+</ul>
+</div></blockquote>
+<p>From the original training data, we chose first 1000 examples as
+the development data and rest 2833 examples as the training data.
+In case of test data, we took all the 1797 test examples as test data.</p>
+<p>All the examples contain 65 numbers separated by comma.
+For example the first example of training data looks like this:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">15</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="mi">4</span>
+<span class="c1"># each example is a gray-scale image of grid 8*8 = 64 features</span>
+<span class="c1"># last digit is the label.</span>
+<span class="c1"># Here, the last digit 4 is the label.</span>
+<span class="c1"># Initial 64 digits are the features.</span>
+
+<span class="c1"># bash command to look first example</span>
+<span class="n">head</span> <span class="o">-</span><span class="mi">1</span> <span class="n">train</span><span class="o">.</span><span class="n">txt</span>
+<span class="n">tail</span> <span class="o">-</span><span class="mi">1</span> <span class="n">train</span><span class="o">.</span><span class="n">txt</span>
+</pre></div>
+</div>
+<div class="section" id="a-maxmin-scale-the-features">
+<h3>3.1a MaxMin Scale the Features<a class="headerlink" href="#a-maxmin-scale-the-features" title="Permalink to this headline">¶</a></h3>
+<p>For each examples we used max-min scaling method to scale the
+examples between 0 and 1 (from 0-16,inclusive). The scaled files are train_norm.txt, devel_norm.txt, and test_norm.txt.</p>
+</div>
+<div class="section" id="b-break-data-into-10-parts-one-vs-rest">
+<h3>3.1b break data into 10 parts (one-vs-rest)<a class="headerlink" href="#b-break-data-into-10-parts-one-vs-rest" title="Permalink to this headline">¶</a></h3>
+<p>Each of the dataset (train,devel,test) example has last digit label from 0-9.
+We create 10 copies of the same dataset such that one of the label is
+set to ONE and rest of the labels are set to MINUS-ONE.</p>
+<p>For example, from train_norm.txt we create train0.txt, …, train9.txt,
+from devel_norm.txt we create devel0.txt to devel9.txt and so on.</p>
+</div>
+</div>
+<div class="section" id="qn-3-2-linear-polynomial-and-gaussian-kernel-perceptron">
+<h2>Qn 3.2 Linear, Polynomial and Gaussian Kernel Perceptron<a class="headerlink" href="#qn-3-2-linear-polynomial-and-gaussian-kernel-perceptron" title="Permalink to this headline">¶</a></h2>
+<p>In this problem we train different perceptron models to our digits dataset.</p>
+<div class="section" id="a-tune-hyperparameter-t-number-of-epochs-for-vanilla-perceptron-from-development-data">
+<h3>3.2a Tune hyperparameter T (number of epochs) for Vanilla Perceptron from Development data<a class="headerlink" href="#a-tune-hyperparameter-t-number-of-epochs-for-vanilla-perceptron-from-development-data" title="Permalink to this headline">¶</a></h3>
+<p>We use training to train the linear perceptron model for
+different epochs T = 1,2,…,20.</p>
+<p>Example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Before</span> <span class="n">we</span> <span class="n">put</span> <span class="n">out</span> <span class="n">feet</span> <span class="n">on</span> <span class="n">the</span> <span class="n">training</span> <span class="n">data</span><span class="p">,</span> <span class="n">we</span> <span class="n">go</span> <span class="n">through</span> <span class="n">the</span> <span class="n">development</span>
+<span class="n">phase</span><span class="o">.</span> <span class="n">We</span> <span class="n">use</span> <span class="n">our</span> <span class="n">development</span> <span class="n">data</span> <span class="n">to</span> <span class="n">tune</span> <span class="n">the</span> <span class="n">number</span> <span class="n">of</span> <span class="n">epoch</span> <span class="n">hyperparameter</span><span class="o">.</span>
+
+<span class="n">We</span> <span class="n">do</span> <span class="ow">not</span> <span class="n">run</span> <span class="n">perceptron</span> <span class="n">until</span> <span class="n">convergence</span> <span class="n">to</span> <span class="n">train</span> <span class="n">our</span> <span class="n">development</span> <span class="n">dataset</span><span class="o">.</span>
+<span class="n">If</span> <span class="n">the</span> <span class="n">dataset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">linearly</span> <span class="n">separable</span><span class="p">,</span> <span class="n">perceptron</span> <span class="n">will</span> <span class="n">never</span> <span class="n">converge</span><span class="o">.</span>
+<span class="n">It</span> <span class="n">will</span> <span class="n">run</span> <span class="n">until</span> <span class="n">the</span> <span class="n">heat</span> <span class="n">death</span> <span class="n">of</span> <span class="n">the</span> <span class="n">universe</span><span class="p">,</span> <span class="ow">or</span> <span class="n">until</span> <span class="n">the</span> <span class="n">earth</span> <span class="n">will</span> <span class="n">be</span>
+<span class="n">consumed</span> <span class="n">by</span> <span class="n">a</span> <span class="n">black</span> <span class="n">hole</span><span class="o">.</span>
+
+<span class="n">Let</span><span class="s1">&#39;s say for epoch T =1, we have following case:</span>
+
+<span class="n">examples</span>    <span class="mi">10</span><span class="n">_predictions</span>               <span class="n">maximum</span>    <span class="n">hypothesis</span>   <span class="kc">True</span> <span class="n">label</span>
+<span class="o">--------</span>    <span class="o">---------------------</span>        <span class="o">-------</span>    <span class="o">----------</span>   <span class="o">-----------</span>
+<span class="n">x0</span>          <span class="n">x0w0</span><span class="p">,</span> <span class="n">x0w1</span><span class="p">,</span><span class="o">...</span><span class="p">,</span> <span class="n">x0w9</span>         <span class="n">x0w3</span>       <span class="n">h0</span> <span class="o">=</span> <span class="mi">3</span>    <span class="n">y0</span> <span class="o">=</span> <span class="mi">8</span>
+<span class="n">x1</span>          <span class="n">x1w0</span><span class="p">,</span> <span class="n">x1w1</span><span class="p">,</span><span class="o">...</span><span class="p">,</span> <span class="n">x1w9</span>         <span class="n">x1w5</span>       <span class="n">h1</span> <span class="o">=</span> <span class="mi">5</span>    <span class="n">y1</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="o">...</span>
+<span class="n">xn</span>          <span class="n">xnw0</span><span class="p">,</span> <span class="n">xnw1</span><span class="p">,</span><span class="o">...</span><span class="p">,</span> <span class="n">xnw9</span>         <span class="n">x0w7</span>       <span class="n">hn</span> <span class="o">=</span> <span class="mi">7</span>    <span class="n">yn</span> <span class="o">=</span> <span class="mi">7</span>
+
+<span class="n">Accuracy</span> <span class="o">=</span> <span class="mi">90</span> <span class="o">%</span> <span class="k">for</span> <span class="n">epochs</span> <span class="mf">1.</span>
+<span class="n">Accuracy</span> <span class="o">=</span> <span class="mi">88</span> <span class="o">%</span> <span class="k">for</span> <span class="n">epochs</span> <span class="mf">2.</span>
+<span class="n">Accuracy</span> <span class="o">=</span> <span class="n">maximum</span> <span class="o">%</span> <span class="k">for</span> <span class="n">epoch</span> <span class="n">tuned_epoch</span><span class="o">.</span>
+
+<span class="n">I</span> <span class="n">found</span> <span class="n">tuned_epoch</span> <span class="o">=</span> <span class="mf">4.</span>
+<span class="n">File</span><span class="p">:</span> <span class="n">code</span><span class="o">/</span><span class="n">outputs</span><span class="o">/</span><span class="n">tune_epochs</span><span class="o">.</span><span class="n">txt</span>
+<span class="n">Then</span> <span class="n">we</span> <span class="n">will</span> <span class="n">tune</span> <span class="n">another</span> <span class="n">paramters</span> <span class="k">for</span> <span class="n">kernel</span> <span class="n">perceptrons</span><span class="o">.</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="b-tune-hyperparameter-d-for-polynomial-kernel-from-development-data">
+<h3>3.2b Tune hyperparameter d for Polynomial Kernel from Development data<a class="headerlink" href="#b-tune-hyperparameter-d-for-polynomial-kernel-from-development-data" title="Permalink to this headline">¶</a></h3>
+<p>I found the tuned value of d = 6 (outputs/tune_d.txt).</p>
+</div>
+<div class="section" id="c-tune-hyperparameter-sigma-or-gamma-for-gaussin-kernel-from-development-data">
+<h3>3.2c Tune hyperparameter sigma(or gamma) for Gaussin Kernel from Development data<a class="headerlink" href="#c-tune-hyperparameter-sigma-or-gamma-for-gaussin-kernel-from-development-data" title="Permalink to this headline">¶</a></h3>
+<p>I found the tuned value of sigma = 6 (outputs/tune_sigma.txt).</p>
+</div>
+<div class="section" id="d-use-the-tuned-hyperparameters-t-d-sigma-on-training-data-and-test-with-test-data">
+<h3>3.2d Use the tuned hyperparameters T,d,sigma on Training data and test with test data<a class="headerlink" href="#d-use-the-tuned-hyperparameters-t-d-sigma-on-training-data-and-test-with-test-data" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="d-use-the-tuned-hyperparameters-t-d-sigma-on-training-data-to-test-the-accuracy-of-test-data">
+<h3>3.2d Use the tuned hyperparameters T,d,sigma on Training data to test the accuracy of test data<a class="headerlink" href="#d-use-the-tuned-hyperparameters-t-d-sigma-on-training-data-to-test-the-accuracy-of-test-data" title="Permalink to this headline">¶</a></h3>
+<p>Now we have the tuned parameters:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">tuned_T</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="n">tuned_d</span> <span class="o">=</span> <span class="mi">6</span>
+<span class="n">tuned_sigma</span> <span class="o">=</span> <span class="mi">10</span>
+</pre></div>
+</div>
+<p>Using these values we tested the one-vs-rest multiclass perceptron on the testing data.
+The summary of results is given below:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Model</span>                           <span class="n">Accuracy</span><span class="p">(</span><span class="o">%</span><span class="p">)</span>    <span class="c1"># of Sup. Vecs  Runtime</span>
+<span class="o">------</span>                          <span class="o">-----------</span>   <span class="o">--------------</span>  <span class="o">--------</span>
+<span class="n">Vanilla</span> <span class="n">Perceptron</span>              <span class="mf">92.487</span>        <span class="n">N</span><span class="o">/</span><span class="n">A</span>             <span class="mi">2</span> <span class="n">seconds</span>
+<span class="n">Linear</span> <span class="n">Kernel</span> <span class="n">Perceptron</span>        <span class="mf">91.04</span>         <span class="mi">317</span>             <span class="mi">1</span> <span class="nb">min</span> <span class="mi">39</span> <span class="n">seconds</span>
+<span class="n">Polynomial</span> <span class="n">Kernel</span> <span class="n">Perceptron</span>    <span class="mf">95.492</span>        <span class="mi">157</span>             <span class="mi">1</span> <span class="nb">min</span> <span class="mi">58</span> <span class="n">seconds</span>
+<span class="n">Gaussian</span> <span class="n">Kernel</span> <span class="n">Perceptron</span>      <span class="mf">29.1597</span>       <span class="mi">491</span>             <span class="mi">9</span> <span class="nb">min</span> <span class="mi">14</span> <span class="n">seconds</span>
+
+<span class="n">Polynomial</span> <span class="n">Kernel</span> <span class="n">Perceptron</span> <span class="n">achieves</span> <span class="n">best</span> <span class="n">performance</span><span class="o">.</span>
+<span class="n">Gaussian</span> <span class="n">Kernel</span> <span class="n">Perceptron</span> <span class="n">takes</span> <span class="n">longest</span> <span class="n">time</span> <span class="n">to</span> <span class="n">run</span><span class="o">.</span>
+<span class="n">Since</span> <span class="n">it</span> <span class="n">has</span> <span class="n">to</span>  <span class="n">compute</span> <span class="n">exponentials</span> <span class="n">of</span> <span class="nb">all</span> <span class="n">the</span> <span class="n">elements</span> <span class="ow">and</span>
+<span class="n">have</span> <span class="n">to</span> <span class="n">create</span> <span class="n">a</span> <span class="n">large</span> <span class="n">Gram</span> <span class="n">matrix</span><span class="o">.</span>
+
+<span class="n">NOTE</span><span class="p">:</span> <span class="k">for</span> <span class="n">polynomial</span> <span class="n">kernel</span> <span class="n">the</span> <span class="n">true</span> <span class="n">digit</span> <span class="mi">1</span> <span class="n">was</span> <span class="n">most</span> <span class="n">confused</span> <span class="k">with</span> <span class="n">predicted</span> <span class="mf">4.</span>
+</pre></div>
+</div>
+<p>The outputs for vanilla perceptron is given below:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Accuracy</span> <span class="o">=</span> <span class="mf">92.48747913188647</span>
+
+<span class="n">y_true</span> <span class="ow">is</span> <span class="n">y</span><span class="o">-</span><span class="n">axis</span>
+<span class="n">y_pred</span> <span class="ow">is</span> <span class="n">x_axis</span>
+
+<span class="p">[[</span><span class="mi">177</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">1</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span><span class="p">]</span>
+ <span class="p">[</span>  <span class="mi">0</span> <span class="mi">143</span>  <span class="mi">15</span>   <span class="mi">0</span>   <span class="mi">5</span>   <span class="mi">1</span>   <span class="mi">1</span>   <span class="mi">0</span>   <span class="mi">5</span>  <span class="mi">12</span><span class="p">]</span>
+ <span class="p">[</span>  <span class="mi">0</span>   <span class="mi">0</span> <span class="mi">175</span>   <span class="mi">0</span>   <span class="mi">1</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">1</span>   <span class="mi">0</span>   <span class="mi">0</span><span class="p">]</span>
+ <span class="p">[</span>  <span class="mi">1</span>   <span class="mi">0</span>   <span class="mi">7</span> <span class="mi">155</span>   <span class="mi">0</span>   <span class="mi">3</span>   <span class="mi">0</span>   <span class="mi">2</span>   <span class="mi">1</span>  <span class="mi">14</span><span class="p">]</span>
+ <span class="p">[</span>  <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span> <span class="mi">177</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">1</span>   <span class="mi">3</span>   <span class="mi">0</span><span class="p">]</span>
+ <span class="p">[</span>  <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">1</span>   <span class="mi">0</span>   <span class="mi">0</span> <span class="mi">176</span>   <span class="mi">0</span>   <span class="mi">1</span>   <span class="mi">0</span>   <span class="mi">4</span><span class="p">]</span>
+ <span class="p">[</span>  <span class="mi">1</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">2</span>   <span class="mi">0</span> <span class="mi">178</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span><span class="p">]</span>
+ <span class="p">[</span>  <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">1</span>   <span class="mi">9</span>   <span class="mi">0</span> <span class="mi">161</span>   <span class="mi">1</span>   <span class="mi">7</span><span class="p">]</span>
+ <span class="p">[</span>  <span class="mi">1</span>  <span class="mi">10</span>   <span class="mi">2</span>   <span class="mi">1</span>   <span class="mi">1</span>   <span class="mi">5</span>   <span class="mi">1</span>   <span class="mi">0</span> <span class="mi">149</span>   <span class="mi">4</span><span class="p">]</span>
+ <span class="p">[</span>  <span class="mi">0</span>   <span class="mi">1</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">3</span>   <span class="mi">2</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">3</span> <span class="mi">171</span><span class="p">]]</span>
+
+<span class="n">Begin</span> <span class="n">time</span><span class="p">:</span>  <span class="n">Fri</span> <span class="n">Dec</span>  <span class="mi">1</span> <span class="mi">21</span><span class="p">:</span><span class="mi">50</span><span class="p">:</span><span class="mi">23</span> <span class="mi">2017</span>
+<span class="n">End</span>   <span class="n">time</span><span class="p">:</span>  <span class="n">Fri</span> <span class="n">Dec</span>  <span class="mi">1</span> <span class="mi">21</span><span class="p">:</span><span class="mi">50</span><span class="p">:</span><span class="mi">24</span> <span class="mi">2017</span>
+
+<span class="n">Time</span> <span class="n">taken</span><span class="p">:</span>  <span class="mi">0</span> <span class="n">days</span><span class="p">,</span>  <span class="mi">0</span> <span class="n">hours</span><span class="p">,</span>        <span class="mi">0</span> <span class="n">minutes</span><span class="p">,</span>  <span class="mf">1.652384</span> <span class="n">seconds</span><span class="o">.</span>
+</pre></div>
+</div>
+<p>The outputs for Linear Kernel Perceptron is given below:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Accuracy</span> <span class="o">=</span> <span class="mf">91.04062326099054</span>
+<span class="n">Number</span> <span class="n">of</span> <span class="n">support</span> <span class="n">vectors</span> <span class="o">=</span> <span class="mi">317</span>
+
+
+<span class="p">[[</span><span class="mi">176</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">2</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span><span class="p">]</span>
+ <span class="p">[</span>  <span class="mi">0</span> <span class="mi">137</span>  <span class="mi">16</span>   <span class="mi">0</span>   <span class="mi">9</span>   <span class="mi">2</span>   <span class="mi">5</span>   <span class="mi">0</span>   <span class="mi">2</span>  <span class="mi">11</span><span class="p">]</span>
+ <span class="p">[</span>  <span class="mi">0</span>   <span class="mi">0</span> <span class="mi">175</span>   <span class="mi">0</span>   <span class="mi">1</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">1</span>   <span class="mi">0</span>   <span class="mi">0</span><span class="p">]</span>
+ <span class="p">[</span>  <span class="mi">1</span>   <span class="mi">0</span>   <span class="mi">9</span> <span class="mi">156</span>   <span class="mi">0</span>   <span class="mi">3</span>   <span class="mi">1</span>   <span class="mi">3</span>   <span class="mi">0</span>  <span class="mi">10</span><span class="p">]</span>
+ <span class="p">[</span>  <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span> <span class="mi">177</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">1</span>   <span class="mi">1</span>   <span class="mi">2</span><span class="p">]</span>
+ <span class="p">[</span>  <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">1</span>   <span class="mi">1</span>   <span class="mi">0</span> <span class="mi">178</span>   <span class="mi">0</span>   <span class="mi">1</span>   <span class="mi">0</span>   <span class="mi">1</span><span class="p">]</span>
+ <span class="p">[</span>  <span class="mi">1</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">2</span>   <span class="mi">0</span> <span class="mi">178</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span><span class="p">]</span>
+ <span class="p">[</span>  <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">1</span>   <span class="mi">9</span>   <span class="mi">0</span> <span class="mi">164</span>   <span class="mi">1</span>   <span class="mi">4</span><span class="p">]</span>
+ <span class="p">[</span>  <span class="mi">4</span>   <span class="mi">8</span>   <span class="mi">6</span>   <span class="mi">2</span>   <span class="mi">4</span>   <span class="mi">7</span>  <span class="mi">10</span>   <span class="mi">0</span> <span class="mi">127</span>   <span class="mi">6</span><span class="p">]</span>
+ <span class="p">[</span>  <span class="mi">1</span>   <span class="mi">1</span>   <span class="mi">1</span>   <span class="mi">1</span>   <span class="mi">5</span>   <span class="mi">2</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">1</span> <span class="mi">168</span><span class="p">]]</span>
+
+<span class="n">Begin</span> <span class="n">time</span><span class="p">:</span>  <span class="n">Fri</span> <span class="n">Dec</span>  <span class="mi">1</span> <span class="mi">21</span><span class="p">:</span><span class="mi">53</span><span class="p">:</span><span class="mi">57</span> <span class="mi">2017</span>
+<span class="n">End</span>   <span class="n">time</span><span class="p">:</span>  <span class="n">Fri</span> <span class="n">Dec</span>  <span class="mi">1</span> <span class="mi">21</span><span class="p">:</span><span class="mi">55</span><span class="p">:</span><span class="mi">35</span> <span class="mi">2017</span>
+
+<span class="n">Time</span> <span class="n">taken</span><span class="p">:</span>  <span class="mi">0</span> <span class="n">days</span><span class="p">,</span>  <span class="mi">0</span> <span class="n">hours</span><span class="p">,</span>        <span class="mi">1</span> <span class="n">minutes</span><span class="p">,</span>  <span class="mf">38.330967</span> <span class="n">seconds</span><span class="o">.</span>
+</pre></div>
+</div>
+<p>The outputs for Polynomial Kernel Perceptron is given below:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Accuracy</span> <span class="o">=</span> <span class="mf">95.49248747913188</span>
+<span class="n">Number</span> <span class="n">of</span> <span class="n">support</span> <span class="n">vectors</span> <span class="o">=</span> <span class="mi">157</span>
+
+
+<span class="p">[[</span><span class="mi">178</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span><span class="p">]</span>
+ <span class="p">[</span>  <span class="mi">0</span> <span class="mi">182</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span><span class="p">]</span>
+ <span class="p">[</span>  <span class="mi">0</span>   <span class="mi">6</span> <span class="mi">168</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">1</span>   <span class="mi">2</span>   <span class="mi">0</span><span class="p">]</span>
+ <span class="p">[</span>  <span class="mi">0</span>   <span class="mi">1</span>   <span class="mi">1</span> <span class="mi">173</span>   <span class="mi">0</span>   <span class="mi">1</span>   <span class="mi">0</span>   <span class="mi">1</span>   <span class="mi">3</span>   <span class="mi">3</span><span class="p">]</span>
+ <span class="p">[</span>  <span class="mi">0</span>  <span class="mi">20</span>   <span class="mi">0</span>   <span class="mi">0</span> <span class="mi">161</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span><span class="p">]</span>
+ <span class="p">[</span>  <span class="mi">0</span>   <span class="mi">2</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span> <span class="mi">176</span>   <span class="mi">2</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">2</span><span class="p">]</span>
+ <span class="p">[</span>  <span class="mi">2</span>   <span class="mi">2</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span> <span class="mi">177</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span><span class="p">]</span>
+ <span class="p">[</span>  <span class="mi">0</span>   <span class="mi">1</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">2</span>   <span class="mi">0</span> <span class="mi">164</span>   <span class="mi">1</span>  <span class="mi">11</span><span class="p">]</span>
+ <span class="p">[</span>  <span class="mi">0</span>  <span class="mi">12</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span> <span class="mi">161</span>   <span class="mi">1</span><span class="p">]</span>
+ <span class="p">[</span>  <span class="mi">0</span>   <span class="mi">1</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">1</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">2</span> <span class="mi">176</span><span class="p">]]</span>
+
+<span class="n">Begin</span> <span class="n">time</span><span class="p">:</span>  <span class="n">Fri</span> <span class="n">Dec</span>  <span class="mi">1</span> <span class="mi">22</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">01</span> <span class="mi">2017</span>
+<span class="n">End</span>   <span class="n">time</span><span class="p">:</span>  <span class="n">Fri</span> <span class="n">Dec</span>  <span class="mi">1</span> <span class="mi">22</span><span class="p">:</span><span class="mi">01</span><span class="p">:</span><span class="mi">59</span> <span class="mi">2017</span>
+
+<span class="n">Time</span> <span class="n">taken</span><span class="p">:</span>  <span class="mi">0</span> <span class="n">days</span><span class="p">,</span>  <span class="mi">0</span> <span class="n">hours</span><span class="p">,</span>        <span class="mi">1</span> <span class="n">minutes</span><span class="p">,</span>  <span class="mf">57.998752</span> <span class="n">seconds</span><span class="o">.</span>
+</pre></div>
+</div>
+<p>The outputs for Gaussian Kernel Perceptron is given below:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Accuracy</span> <span class="o">=</span> <span class="mf">29.15971062882582</span>
+<span class="n">Number</span> <span class="n">of</span> <span class="n">support</span> <span class="n">vectors</span> <span class="o">=</span> <span class="mi">491</span>
+
+
+<span class="p">[[</span>  <span class="mi">0</span>  <span class="mi">64</span> <span class="mi">113</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">1</span>   <span class="mi">0</span>   <span class="mi">0</span><span class="p">]</span>
+ <span class="p">[</span>  <span class="mi">0</span> <span class="mi">182</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span><span class="p">]</span>
+ <span class="p">[</span>  <span class="mi">0</span>  <span class="mi">52</span> <span class="mi">125</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span><span class="p">]</span>
+ <span class="p">[</span>  <span class="mi">0</span> <span class="mi">165</span>  <span class="mi">15</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">3</span>   <span class="mi">0</span>   <span class="mi">0</span><span class="p">]</span>
+ <span class="p">[</span>  <span class="mi">0</span>  <span class="mi">77</span>   <span class="mi">0</span>   <span class="mi">0</span> <span class="mi">104</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span><span class="p">]</span>
+ <span class="p">[</span>  <span class="mi">0</span> <span class="mi">153</span>  <span class="mi">13</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span>  <span class="mi">16</span>   <span class="mi">0</span>   <span class="mi">0</span><span class="p">]</span>
+ <span class="p">[</span>  <span class="mi">0</span> <span class="mi">162</span>  <span class="mi">15</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">4</span>   <span class="mi">0</span>   <span class="mi">0</span><span class="p">]</span>
+ <span class="p">[</span>  <span class="mi">0</span>  <span class="mi">66</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span> <span class="mi">113</span>   <span class="mi">0</span>   <span class="mi">0</span><span class="p">]</span>
+ <span class="p">[</span>  <span class="mi">0</span> <span class="mi">172</span>   <span class="mi">1</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">1</span>   <span class="mi">0</span>   <span class="mi">0</span><span class="p">]</span>
+ <span class="p">[</span>  <span class="mi">0</span> <span class="mi">151</span>  <span class="mi">19</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span>  <span class="mi">10</span>   <span class="mi">0</span>   <span class="mi">0</span><span class="p">]]</span>
+
+<span class="n">Begin</span> <span class="n">time</span><span class="p">:</span>  <span class="n">Fri</span> <span class="n">Dec</span>  <span class="mi">1</span> <span class="mi">22</span><span class="p">:</span><span class="mi">03</span><span class="p">:</span><span class="mi">27</span> <span class="mi">2017</span>
+<span class="n">End</span>   <span class="n">time</span><span class="p">:</span>  <span class="n">Fri</span> <span class="n">Dec</span>  <span class="mi">1</span> <span class="mi">22</span><span class="p">:</span><span class="mi">12</span><span class="p">:</span><span class="mi">41</span> <span class="mi">2017</span>
+
+<span class="n">Time</span> <span class="n">taken</span><span class="p">:</span>  <span class="mi">0</span> <span class="n">days</span><span class="p">,</span>  <span class="mi">0</span> <span class="n">hours</span><span class="p">,</span>        <span class="mi">9</span> <span class="n">minutes</span><span class="p">,</span>  <span class="mf">13.341146</span> <span class="n">seconds</span><span class="o">.</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="hw07_qn3b.html"
+                        title="previous chapter">Qn 3.2 Linear, Polynomial and Gaussian Kernel Perceptron</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="extraWork.html"
+                        title="next chapter">ExtraWork : Plot 20 newsgroups text and SVM model for iris data</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="extraWork.html" title="ExtraWork : Plot 20 newsgroups text and SVM model for iris data"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="hw07_qn3b.html" title="Qn 3.2 Linear, Polynomial and Gaussian Kernel Perceptron"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Bhishan&#39;s 1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Bhishan Poudel.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.5.
+    </div>
+  </body>
+</html>

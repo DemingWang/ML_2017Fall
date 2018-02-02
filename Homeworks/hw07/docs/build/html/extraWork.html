@@ -1,0 +1,138 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>ExtraWork : Plot 20 newsgroups text and SVM model for iris data &#8212; Bhishan&#39;s 1 documentation</title>
+    <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/sidebar.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="qn2_svm_text" href="qn2_svm_text.html" />
+    <link rel="prev" title="Qn 3: Digit Recognition" href="hw07_qn3c.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="qn2_svm_text.html" title="qn2_svm_text"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="hw07_qn3c.html" title="Qn 3: Digit Recognition"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Bhishan&#39;s 1 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="extrawork-plot-20-newsgroups-text-and-svm-model-for-iris-data">
+<h1>ExtraWork : Plot 20 newsgroups text and SVM model for iris data<a class="headerlink" href="#extrawork-plot-20-newsgroups-text-and-svm-model-for-iris-data" title="Permalink to this headline">¶</a></h1>
+<p>I did following two tasks for the extra work.</p>
+<blockquote>
+<div><ul class="simple">
+<li><dl class="first docutils">
+<dt>plot the text with text size vary according to frequency of the text</dt>
+<dd><ul class="first last">
+<li>fit the svm model to famous iris dataset.</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+<div class="section" id="qn1-plot-20-newsgroups-text-with-text-size-vary-according-to-text-frequency">
+<h2>Qn1: Plot 20 newsgroups text with text size vary according to text frequency<a class="headerlink" href="#qn1-plot-20-newsgroups-text-with-text-size-vary-according-to-text-frequency" title="Permalink to this headline">¶</a></h2>
+<p>Here, I plotted the vocabulary text file for 20 newsgroups classification.</p>
+<img alt="_images/newsgroups_vocab.png" src="_images/newsgroups_vocab.png" />
+</div>
+<div class="section" id="qn1-svm-for-iris-data">
+<h2>Qn1: SVM for iris data<a class="headerlink" href="#qn1-svm-for-iris-data" title="Permalink to this headline">¶</a></h2>
+<p>Here, I used the linear kernel svm for the iris data. I got 97% accuracy.
+The confusion matrix is given below</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">cm</span> <span class="o">=</span>
+<span class="p">[[</span><span class="mi">13</span>  <span class="mi">0</span>  <span class="mi">0</span><span class="p">]</span>
+ <span class="p">[</span> <span class="mi">0</span> <span class="mi">15</span>  <span class="mi">1</span><span class="p">]</span>
+ <span class="p">[</span> <span class="mi">0</span>  <span class="mi">0</span>  <span class="mi">9</span><span class="p">]]</span>
+<span class="n">accuracy</span> <span class="o">=</span> <span class="mf">0.9736842105263158</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="hw07_qn3c.html"
+                        title="previous chapter">Qn 3: Digit Recognition</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="qn2_svm_text.html"
+                        title="next chapter">qn2_svm_text</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="qn2_svm_text.html" title="qn2_svm_text"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="hw07_qn3c.html" title="Qn 3: Digit Recognition"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Bhishan&#39;s 1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Bhishan Poudel.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.5.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,15 @@
+
+spam: accuracy = 0.977
+Confusion Matrix
+[[683  10]
+ [ 13 294]]
+
+news1: accuracy = 0.6649122807017543
+Confusion Matrix
+[[149 102]
+ [ 89 230]]
+
+news2: accuracy = 0.6298245614035087
+Confusion Matrix
+[[136 115]
+ [ 96 223]]

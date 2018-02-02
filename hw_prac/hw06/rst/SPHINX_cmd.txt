@@ -1,0 +1,13 @@
+Sphinx commands
+==============
+1. create png from pdf
+convert hw06.pdf hw06.png # gives hw06-0.png etc.
+
+2. To get pyton file names
+cd code
+ls *.py | pbcopy
+
+3. To use sphinx
+spml  # it does all the things itself
+
+4. To add another folder (Extra)

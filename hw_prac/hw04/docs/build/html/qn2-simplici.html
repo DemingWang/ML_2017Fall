@@ -1,0 +1,133 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Scipy Implementation of Softmax Regression &#8212; Bhishan&#39;s 1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/sidebar.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Bhishan&#39;s 1 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="scipy-implementation-of-softmax-regression">
+<h1>Scipy Implementation of Softmax Regression<a class="headerlink" href="#scipy-implementation-of-softmax-regression" title="Permalink to this headline">¶</a></h1>
+<p>In this question we implement the softmax regression with scipy library.
+We evaluate the digit recognition task from the mnist data.</p>
+<div class="section" id="c-parameter">
+<h2>1 C Parameter<a class="headerlink" href="#c-parameter" title="Permalink to this headline">¶</a></h2>
+<p>The cost function with L2 regularizaion in scikit library is given below:</p>
+<p>When the target labels t_n belongs to {-1,1 } then:
+.. math:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">J</span><span class="p">(</span><span class="n">w</span><span class="p">)</span> <span class="o">=</span> <span class="n">C</span> \<span class="n">sum_</span><span class="p">{</span><span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">}</span><span class="o">^</span><span class="n">N</span> <span class="n">ln</span> <span class="n">C</span> <span class="p">(</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">e</span><span class="o">^</span><span class="p">{</span><span class="o">-</span><span class="n">t_n</span> <span class="n">W</span><span class="o">^</span><span class="n">T</span> <span class="n">x_n</span><span class="p">})</span> <span class="o">+</span> \<span class="n">frac</span><span class="p">{</span><span class="mi">1</span><span class="p">}{</span><span class="mi">2</span><span class="p">}</span> <span class="n">W</span><span class="o">^</span><span class="n">T</span> <span class="n">W</span>
+</pre></div>
+</div>
+<p>But when the target label t_n belongs to {0,1} then the L2 regularized cost
+function for logistic regression is given by:</p>
+<div class="math">
+<p><img src="_images/math/3c55da55ff978304c74711e61e86cbfd2db4f204.png" alt="J(w) = \sum_{n=1}^N ln C ( 1 + e^{-t_n W^T x_n}) + \frac{\lambda}{2} W^T W"/></p>
+</div><p>While getting the maximum likelihood estimate of parameter w, we have:</p>
+<div class="math">
+<p><img src="_images/math/1850b71eadecf138edfee0eed641f2bba89749f2.png" alt="\hat{w} = \operatorname*{argmin}_w J(w)"/></p>
+</div><p>And we get <img class="math" src="_images/math/b5643aa0e66b997b106f9a037e7152f2cfa8cfdf.png" alt="C = \frac{1}{\lambda}"/>.</p>
+</div>
+<div class="section" id="softmax-training">
+<h2>2 Softmax  training<a class="headerlink" href="#softmax-training" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="softmax-testing">
+<h2>3 Softmax testing<a class="headerlink" href="#softmax-testing" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Scipy Implementation of Softmax Regression</a><ul>
+<li><a class="reference internal" href="#c-parameter">1 C Parameter</a></li>
+<li><a class="reference internal" href="#softmax-training">2 Softmax  training</a></li>
+<li><a class="reference internal" href="#softmax-testing">3 Softmax testing</a></li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/qn2-simplici.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Bhishan&#39;s 1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Bhishan Poudel.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
+    </div>
+  </body>
+</html>
